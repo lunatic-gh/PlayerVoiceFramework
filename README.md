@@ -37,7 +37,7 @@ Pretty simple:
     }
 }
 ```
-- Now, you want to decide what events you want to have voices for - You can find a list of events here (This file is live updated by me during development, so it might include events at the end that aren't uploaded here yet!) - For this example, we'll use the light-attack swing:
+- Now, you want to decide what events you want to have voices for - You can find a list of events [here](./Event_List.jsonc) For this example, we'll use the light-attack swing:
 ```json
 {
     "sounds": {
