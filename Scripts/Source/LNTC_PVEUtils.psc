@@ -5,7 +5,6 @@ Scriptname LNTC_PVEUtils
 ;
 ; Function PlaySound(String _category, String _subCategory = "", Bool _addToQueue = false) Global
 ;
-
 Function PlaySound(String _category, String _subCategory = "") Global
     Int categoriesMap = LNTC_PVEStorageUtils.GetJContainer("LNTC_PVE", "sounds")
     Int categoryCooldowns = LNTC_PVEStorageUtils.GetJContainer("LNTC_PVE", "categoryCooldowns", JArray.object())
