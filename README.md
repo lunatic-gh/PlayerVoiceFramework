@@ -9,7 +9,7 @@ See the Mod-Page at [Nexusmods](https://www.nexusmods.com/skyrimspecialedition/m
 <br>
 This Mod is essentially a modern replacement for both PCHT and Dragonborn Voice-Barks. It allows for way more customization, with way less issues.
 
-- Why?
+### Why?
 Pretty simple:
 - PC Head-Tracking has the issue that it uses Sound-Descriptors. Those were never meant for Voice-Files, they have no support for lip-sync, and are limited in dynamics. For instance, if you wanted to use more (or less) than 5 files for an event, you cannot, because a file descriptor expects a specific set of wav-file-paths. You could increase/decrease those via xEdit in the ESP, but that would not be a viable solutions to Voicepack-Creators.
 - Dragonborn Voice-Barks fixes this issue and uses the console-command `speaksound`, which can directly play any arbitary voice-file from the disk.
@@ -26,7 +26,7 @@ Every one of those categories has the following:
 - A delay that specifies how many milliseconds have to pass after a file plays until a new file can play - This essentially makes sure that voice-files don't overlap, since there is technically no option to detect if a dialogue is playing. If the queue-option is enabled for the current event, any even that gets triggered during the playtime of a file will play automatically afterwards, so it doesn't get swallowed.
 
 
-- How to create a Voicepack?
+### How to create a Voicepack?
 Pretty simple:
 - Create a new mod in your mod-manager. Please for the love of god use a mod manager...
 - Create a config file called `config.json` inside the virtual file-tree `<Data>/Sound/FX/LNTC_PlayerVoiceEvents/`
