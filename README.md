@@ -31,11 +31,14 @@ Pretty simple:
 - Create a new mod in your mod-manager. Please for the love of god use a mod manager...
 - Create a config file called `config.json` inside the virtual file-tree `<Data>/Sound/FX/LNTC_PlayerVoiceEvents/`
 - This file should have the following base:
+```
 ﻿﻿{
     "sounds": {
     }
 }
+```
 - Now, you want to decide what events you want to have voices for - You can find a list of events here﻿ (This file is live updated by me during development, so it might include events at the end that aren't uploaded here yet!) - For this example, we'll use the light-attack swing:
+```
 ﻿{
     "sounds": {
         "PVEAttackMelee": {
@@ -53,6 +56,7 @@ Pretty simple:
         }
     }
 }
+```
 
 Here, We tell the mod that we want to play sounds for the event `PVEAttackMelee`, which is the light-attack event.
 We Also tell it that it has a 100% chance to play (aka always), a cooldown of 0.0seconds (aka none), and a list of wav-files and their relative paths. relative means that the path is going from the config-directory. so in this case, it wants the files in `<Data>/Sound/FX/LNTC_PlayerVoiceEvents/path/to/file**.wav`
@@ -67,12 +71,12 @@ Please if you used this and you notice any issues, bugs, problems, or just have 
 
 Credits:
 - Credits go to the creators of the following mods:
-- Dragonborn Voice-Barks
-- PC Head-Tracking
-- SKSE
-- Papyrus Extender
-- JContainers
-- ConsoleUtilSSE NG
+    - Dragonborn Voice-Barks
+    - PC Head-Tracking
+    - SKSE
+    - Papyrus Extender
+    - JContainers
+    - ConsoleUtilSSE NG
 - Additional Credits go to Bethesda for creating Skyrim!
 
 - If you think i forgot you here, just tell me. It was not intentional <3
