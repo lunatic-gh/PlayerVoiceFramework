@@ -31,14 +31,14 @@ Pretty simple:
 - Create a new mod in your mod-manager. Please for the love of god use a mod manager...
 - Create a config file called `config.json` inside the virtual file-tree `<Data>/Sound/FX/LNTC_PlayerVoiceEvents/`
 - This file should have the following base:
-```
+```json
 ﻿﻿{
     "sounds": {
     }
 }
 ```
 - Now, you want to decide what events you want to have voices for - You can find a list of events here﻿ (This file is live updated by me during development, so it might include events at the end that aren't uploaded here yet!) - For this example, we'll use the light-attack swing:
-```
+```json
 ﻿{
     "sounds": {
         "PVEAttackMelee": {
@@ -51,8 +51,7 @@ Pretty simple:
             ]
         },
         "SomeOtherEvent": {
-﻿﻿﻿ ...
-﻿﻿﻿ ...
+            "...": ""
         }
     }
 }
