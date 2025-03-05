@@ -1,0 +1,20 @@
+<?xml version='1.0'?><!-- Game is either sse, tesv, or fo4 -->
+<PapyrusProject xmlns="PapyrusProject.xsd" 
+    Flags="TESV_Papyrus_Flags.flg" 
+    Game="sse" 
+    Output="Scripts" 
+    Optimize="false" 
+    Release="false" 
+    Final="false"
+    Anonymize="false">
+    <Imports>
+        <Import>C:\Users\luna\AppData\Local\ModOrganizer\Skyrim Special Edition - Dev\mods\powerofthree's Papyrus Extender\Source\scripts</Import>
+        <Import>C:\Users\luna\AppData\Local\ModOrganizer\Skyrim Special Edition - Dev\mods\JContainers SE\scripts\source</Import>
+        <Import>C:\Users\luna\AppData\Local\ModOrganizer\Skyrim Special Edition - Dev\mods\ConsoleUtilSSE NG\Scripts\Source</Import>
+        <Import>.\Scripts\Source</Import>
+        <Import>C:\Game-Dev\Skyrim Special Edition\Data\Scripts\Source</Import>
+    </Imports>
+    <Folders>
+        <Folder>.\Scripts\Source</Folder>
+    </Folders>
+</PapyrusProject>
