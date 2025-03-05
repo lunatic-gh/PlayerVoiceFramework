@@ -11,19 +11,19 @@ This Mod is essentially a modern replacement for both PCHT and Dragonborn Voice-
 
 - Why?
 Pretty simple:
-﻿- PC Head-Tracking has the issue that it uses Sound-Descriptors. Those were never meant for Voice-Files, they have no support for lip-sync, and are limited ﻿in dynamics. For instance, if you wanted to use more (or less) than 5 files for an event, you cannot, because a file descriptor expects a specific set of ﻿wav-file-paths. You could increase/decrease those via xEdit in the ESP, but that would not be a viable solutions to Voicepack-Creators.
-﻿- Dragonborn Voice-Barks fixes this issue and uses the console-command `speaksound`, which can directly play any arbitary voice-file from the disk.
-﻿However, it comes with both a lot of voice-overlap, and completely lacks any customization. Essentially, all it allows to change is one chance-slider for every ﻿category. This will become an issue very quickly.
-﻿Also, it does not seem to get any updates anymore, and is practically dead at this point with the words "I might fix it"
+- PC Head-Tracking has the issue that it uses Sound-Descriptors. Those were never meant for Voice-Files, they have no support for lip-sync, and are limited in dynamics. For instance, if you wanted to use more (or less) than 5 files for an event, you cannot, because a file descriptor expects a specific set of wav-file-paths. You could increase/decrease those via xEdit in the ESP, but that would not be a viable solutions to Voicepack-Creators.
+- Dragonborn Voice-Barks fixes this issue and uses the console-command `speaksound`, which can directly play any arbitary voice-file from the disk.
+However, it comes with both a lot of voice-overlap, and completely lacks any customization. Essentially, all it allows to change is one chance-slider for every category. This will become an issue very quickly.
+Also, it does not seem to get any updates anymore, and is practically dead at this point with the words "I might fix it"
 
 Now, my mod uses the same way as DBVB to play files, the console command `speaksound` - However, instead of using hardcoded cooldowns and paths, it uses a config-file from a voice-pack, that defines a list of registered categories.
 Every one of those categories has the following:
 - A percentage-chance to play a sound whenever the event triggers - This is per-event, and can therefore allow for a lot more immersion, since now combat-events don't always play at the same rate as idle-events. - Defaults to 100% if not specified
 - A cooldown that can be used to make sure that an event never plays more often than every X seconds - Really useful for dialogue-type voicelines. - Defaults to 0.0seconds
 - A file-queue - If enabled (per event), if this event triggers while another dialogue-file is playing, it gets added to a queue, and played automatically ~1s after the current voice-line is done - This allows for "important" voice-lines to not become ignored.
-﻿- NOTE: This queue has no effect on the above cooldown - That cooldown is only for making sure a specific category doesn't play too often.
+- NOTE: This queue has no effect on the above cooldown - That cooldown is only for making sure a specific category doesn't play too often.
 - A list of voice-file-paths for this category. Each of those files additionally has the following configuration options:
-﻿- A delay that specifies how many milliseconds have to pass after a file plays until a new file can play - This essentially makes sure that voice-files don't overlap, since there is technically no option to detect if a dialogue is playing. If the queue-option is enabled for the current event, any even that gets triggered during the playtime of a file will play automatically afterwards, so it doesn't get swallowed.
+- A delay that specifies how many milliseconds have to pass after a file plays until a new file can play - This essentially makes sure that voice-files don't overlap, since there is technically no option to detect if a dialogue is playing. If the queue-option is enabled for the current event, any even that gets triggered during the playtime of a file will play automatically afterwards, so it doesn't get swallowed.
 
 
 - How to create a Voicepack?
@@ -32,14 +32,14 @@ Pretty simple:
 - Create a config file called `config.json` inside the virtual file-tree `<Data>/Sound/FX/LNTC_PlayerVoiceEvents/`
 - This file should have the following base:
 ```json
-﻿﻿{
+{
     "sounds": {
     }
 }
 ```
-- Now, you want to decide what events you want to have voices for - You can find a list of events here﻿ (This file is live updated by me during development, so it might include events at the end that aren't uploaded here yet!) - For this example, we'll use the light-attack swing:
+- Now, you want to decide what events you want to have voices for - You can find a list of events here (This file is live updated by me during development, so it might include events at the end that aren't uploaded here yet!) - For this example, we'll use the light-attack swing:
 ```json
-﻿{
+{
     "sounds": {
         "PVEAttackMelee": {
             "chance": 100,
