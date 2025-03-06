@@ -9,6 +9,12 @@ See the Mod-Page at [Nexusmods](https://www.nexusmods.com/skyrimspecialedition/m
 <br>
 This Mod is essentially a modern replacement for both PCHT and Dragonborn Voice-Barks. It allows for way more customization, with way less issues.
 
+### Requirements:
+- SKSE | Nowadays every mod requires this. So does mine, otherwise the simplest functions as #getName wouldn't exist.
+- ConsoleUtilSSE NG - Used for playing the sounds.
+- JContainers SE - Used for everything file-related, and for help with data-storage.
+- powerofthree's Papyrus Extender - For another set of helpful functions
+
 ### Why?
 Pretty simple:
 - PC Head-Tracking has the issue that it uses Sound-Descriptors. Those were never meant for Voice-Files, they have no support for lip-sync, and are limited in dynamics. For instance, if you wanted to use more (or less) than 5 files for an event, you cannot, because a file descriptor expects a specific set of wav-file-paths. You could increase/decrease those via xEdit in the ESP, but that would not be a viable solutions to Voicepack-Creators.
