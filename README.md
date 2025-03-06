@@ -10,7 +10,7 @@ See the Mod-Page at [Nexusmods](https://www.nexusmods.com/skyrimspecialedition/m
 This Mod is essentially a modern replacement for both PCHT and Dragonborn Voice-Barks. It allows for way more customization, with way less issues.
 
 ### Requirements:
-- SKSE | Nowadays every mod requires this. So does mine, otherwise the simplest functions as #getName wouldn't exist.
+- SKSE - Nowadays every mod requires this. So does mine, otherwise the simplest functions as #getName wouldn't exist.
 - ConsoleUtilSSE NG - Used for playing the sounds.
 - JContainers SE - Used for everything file-related, and for help with data-storage.
 - powerofthree's Papyrus Extender - For another set of helpful functions
