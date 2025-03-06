@@ -37,6 +37,7 @@ Function Load()
     Debug.Trace("[Player Voice Events] Done Loading.")
     LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isSoundPlaying", 0)
     LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isHitOnCooldown", 0)
+    LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isPickupOnCooldown", 0)
 EndFunction
 
 Event OnActorAction(int _actionType, Actor _actor, Form _source, int _slot)
@@ -158,4 +159,27 @@ EndEvent
 
 Event OnSleepStop(bool _interrupted)    
     LNTC_PVEUtils.PlaySound("PVESleepEnd")
+EndEvent
+
+Event OnItemAdded(Form _item, int _count, ObjectReference _itemRef, ObjectReference _srcContainer)
+    If !_srcContainer
+        If !LNTC_PVEStorageUtils.getInt("LNTC_PVE", "isPickupOnCooldown", 0)
+            LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isPickupOnCooldown", 1)
+            If _item.GetType() == 26
+                LNTC_PVEUtils.PlaySound("PVEPickupItem", "PVEPickupItemArmor")
+            ElseIf _item.GetType() == 27
+                LNTC_PVEUtils.PlaySound("PVEPickupItem", "PVEPickupItemBook")
+            ElseIf _item.GetType() == 41
+                LNTC_PVEUtils.PlaySound("PVEPickupItem", "PVEPickupItemWeapon")
+            ElseIf _item.GetType() == 42
+                LNTC_PVEUtils.PlaySound("PVEPickupItem", "PVEPickupItemAmmo")
+            ElseIf _item.GetType() == 46
+                LNTC_PVEUtils.PlaySound("PVEPickupItem", "PVEPickupItemPotion")
+            Else
+                LNTC_PVEUtils.PlaySound("PVEPickupItem")
+            EndIf
+            Utility.Wait(1.0)
+            LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isPickupOnCooldown", 0)
+        EndIf
+    EndIf
 EndEvent

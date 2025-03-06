@@ -54,5 +54,12 @@
     "PVEMountDragon": [],
     "PVEDismountDragon": [], // Couldn't test this myself due to story-requirements, but i assume this will work the same as PVEDismountHorse?
     "PVESprintIdle": [], // Called whenever the right foot touches the ground (according to the UESP-Wiki)
-    "PVEChangeCell<CellName>": [] // BE CAREFUL WITH THIS - This gets called on literally every cell change - Riverwood alone consists of more than 5 exterior-cells.
+    "PVEChangeCell<CellName>": [], // BE CAREFUL WITH THIS - This gets called on literally every cell change - Riverwood alone consists of more than 5 exterior-cells.
+    "PVEPickupItem": [
+      "PVEPickupItemArmor",
+      "PVEPickupItemBook",
+      "PVEPickupItemWeapon",
+      "PVEPickupItemAmmo",
+      "PVEPickupItemPotion"
+    ]
   }

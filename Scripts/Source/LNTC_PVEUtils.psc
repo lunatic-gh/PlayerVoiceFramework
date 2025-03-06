@@ -86,3 +86,16 @@ Function LogDebug(String _msg) Global
         Log(_msg)
     EndIf
 EndFunction
+
+; Returns true if the string _input starts with the given sequence _seqToCheck, false otherwise
+Bool Function StringStartsWith(String _input, String _seqToCheck) Global
+    Int i = 0
+    While i < StringUtil.GetLength(_seqToCheck)
+        String char = StringUtil.GetNthChar(_input, i)
+        If char != StringUtil.GetNthChar(_seqToCheck, i)
+            Return False
+        EndIf
+        i += 1
+    EndWhile
+    Return True
+EndFunction
