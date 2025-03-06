@@ -12,6 +12,7 @@ Event OnInit()
     RegisterForActorAction(1)
     RegisterForActorAction(2)
     RegisterForActorAction(8)
+    RegisterForActorAction(9)
     RegisterForActorAction(10)
     RegisterForAnimationEvent(playerActor, "SoundPlay.NPCHumanCombatShieldBash")
     RegisterForAnimationEvent(playerActor, "JumpUp")
@@ -76,13 +77,15 @@ Event OnActorAction(int _actionType, Actor _actor, Form _source, int _slot)
             Else
                 LNTC_PVEUtils.PlaySound("PVEUnsheathe", "PVEUnsheatheMelee")
             EndIf
-        ElseIf _actionType == 10
+        ElseIf _actionType == 9
             If _source.HasKeywordString("WeapTypeBow")
                 LNTC_PVEUtils.PlaySound("PVESheathe", "PVESheatheBow")
-            ElseIf _source.GetType() == 22
-                LNTC_PVEUtils.PlaySound("PVESheathe", "PVESheatheSpell")
             Else
                 LNTC_PVEUtils.PlaySound("PVESheathe", "PVESheatheMelee")
+            EndIf
+        ElseIf _actionType == 10
+            If _source.GetType() == 22
+                LNTC_PVEUtils.PlaySound("PVESheathe", "PVESheatheSpell")
             EndIf
         EndIf
     EndIf
