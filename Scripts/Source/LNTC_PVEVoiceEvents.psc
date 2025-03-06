@@ -25,19 +25,35 @@ Event OnPlayerLoadGame()
     Load()
 EndEvent
 
+Event OnUpdate()
+    ; Periodically fix voice types if they got reset (e.g. on race change)
+    ; This disables vanilla's race-specific voice grunts
+    Bool b = false
+    If playerActor.GetRace().GetDefaultVoiceType(true) != PVEVoiceType
+        playerActor.GetRace().SetDefaultVoiceType(true, PVEVoiceType)    
+        b = true
+    EndIf
+    If playerActor.GetRace().GetDefaultVoiceType(false) != PVEVoiceType
+        playerActor.GetRace().SetDefaultVoiceType(false, PVEVoiceType)    
+        b = true
+    EndIf
+    If b
+        LNTC_PVEUtils.LogDebug("Updated Voice Type...")
+    Endif
+    RegisterForSingleUpdate(10)
+EndEvent
+
 Function Load()
     Debug.Notification("[Player Voice Events] Loading Sounds. This might take a moment...")
     Debug.Trace("[Player Voice Events] Loading Sounds. This might take a moment...")
-    ; TODO: Do this for all playable races
-    playerActor.GetRace().SetDefaultVoiceType(true, PVEVoiceType)
-    playerActor.GetRace().SetDefaultVoiceType(false, PVEVoiceType)
     Int sounds = JMap.getObj(JValue.readFromFile("Data/Sound/FX/LNTC_PlayerVoiceEvents/config.json"), "sounds")
     LNTC_PVEStorageUtils.SetJMap("LNTC_PVE", "sounds", sounds)
-    Debug.Notification("[Player Voice Events] Done Loading.")
-    Debug.Trace("[Player Voice Events] Done Loading.")
     LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isSoundPlaying", 0)
     LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isHitOnCooldown", 0)
     LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isPickupOnCooldown", 0)
+    Debug.Notification("[Player Voice Events] Done Loading.")
+    Debug.Trace("[Player Voice Events] Done Loading.")
+    RegisterForSingleUpdate(10)
 EndFunction
 
 Event OnActorAction(int _actionType, Actor _actor, Form _source, int _slot)
