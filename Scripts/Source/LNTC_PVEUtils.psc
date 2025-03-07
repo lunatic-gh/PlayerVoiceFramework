@@ -1,10 +1,5 @@
 Scriptname LNTC_PVEUtils
 
-;
-; NOTE TO MYSELF: NEVER CHANGE DESCRIPTOR, OR ELSE A LOT OF PEOPLE WILL CRY.
-;
-; Function PlaySound(String _category, String _subCategory = "", Bool _addToQueue = false) Global
-;
 Function PlaySound(String _category, String _subCategory = "") Global
     Int categoriesMap = LNTC_PVEStorageUtils.GetJContainer("LNTC_PVE", "sounds")
     Int categoryCooldowns = LNTC_PVEStorageUtils.GetJContainer("LNTC_PVE", "categoryCooldowns", JArray.object())
@@ -19,12 +14,13 @@ Function PlaySound(String _category, String _subCategory = "") Global
         s = _category
         i = categoryMap
     Else
-        LNTC_PVEUtils.LogDebug("Category '" + _category + "' Ignored...")
+        LNTC_PVEUtils.LogDebug("Category '" + _category + "' Ignored.")
         Return
     EndIf
-    If LNTC_PVEStorageUtils.GetInt("LNTC_PVE", "isSoundPlaying", 0) == 0 && JArray.countString(categoryCooldowns, _category) == 0
+    If JArray.countString(categoryCooldowns, _category) == 0
         Int categoryChance = JMap.getInt(i, "chance", 100) ; Default
         Float categoryCooldown = JMap.GetFlt(i, "cooldown", 0.15) ; Default
+        Int categoryOverrideMode = JMap.getInt(i, "overrideMode", 0) ; Default
         String[] files = JArray.asStringArray(JMap.GetObj(i, "files", JArray.object()))
         If Utility.RandomInt(0, 99) < categoryChance
             String fileEntry = files[Utility.RandomInt(0, files.Length - 1)]
@@ -34,6 +30,15 @@ Function PlaySound(String _category, String _subCategory = "") Global
             If split.Length >= 2
                 fileLength = split[1] as Float
             EndIf
+            Bool isSoundPlaying = LNTC_PVEStorageUtils.GetInt("LNTC_PVE", "isSoundPlaying", 0) == 1
+            If isSoundPlaying
+                If categoryOverrideMode == 0
+                    LNTC_PVESKSEFunctions.StopSound()
+                ElseIf categoryOverrideMode == 1
+                    Return
+                    LNTC_PVEUtils.LogDebug("Category '" + _category + "' Ignored.")
+                EndIf
+            EndIf
             LNTC_PVEStorageUtils.SetInt("LNTC_PVE", "isSoundPlaying", 1)
             LNTC_PVEStorageUtils.AddStringToJArray("LNTC_PVE", "categoryCooldowns", _category)
             ConsoleUtil.ExecuteCommand("player.speaksound \"FX/LNTC_PlayerVoiceEvents/" + filePath + "\"")
@@ -42,32 +47,10 @@ Function PlaySound(String _category, String _subCategory = "") Global
             LNTC_PVEStorageUtils.SetInt("LNTC_PVE", "isSoundPlaying", 0)
             Utility.Wait(categoryCooldown)
             LNTC_PVEStorageUtils.RemoveStringFromJArray("LNTC_PVE", "categoryCooldowns", _category)
-            ProcessQueue()
+            ;;
         EndIf
-    ElseIf JMap.getInt(i, "addToQueue", 0)
-        LNTC_PVEStorageUtils.AddStringToJArray("LNTC_PVE", "queuedSounds", _category + "|" + _subCategory)
-        LNTC_PVEUtils.LogDebug("Sound '" + _category + "/" + _subCategory + "' added to queue")
     EndIf
 EndFunction
-
-Function ProcessQueue() Global
-    Int i = LNTC_PVEStorageUtils.GetJContainer("LNTC_PVE", "queuedSounds", JArray.object())
-    If JArray.count(i) > 0
-        String snd = JArray.getStr(i, 0)
-        String[] split = StringUtil.Split(snd, "|")
-        String s = ""
-        String s1 = ""
-        If split.Length > 0
-            s = split[0]
-            If split.Length > 1
-                s1 = split[1]
-            EndIf
-        EndIf
-        LNTC_PVEStorageUtils.RemoveStringFromJArray("LNTC_PVE", "queuedSounds", snd)
-        PlaySound(s, s1)
-    EndIf
-EndFunction
-
 
 ; Returns true if the file `.LNTC_PVE_DEV_MODE` exists in "<Game>/Data"
 ; Used for more verbose logging and testing.
@@ -85,17 +68,4 @@ Function LogDebug(String _msg) Global
     If IsDeveloperMode()
         Log(_msg)
     EndIf
-EndFunction
-
-; Returns true if the string _input starts with the given sequence _seqToCheck, false otherwise
-Bool Function StringStartsWith(String _input, String _seqToCheck) Global
-    Int i = 0
-    While i < StringUtil.GetLength(_seqToCheck)
-        String char = StringUtil.GetNthChar(_input, i)
-        If char != StringUtil.GetNthChar(_seqToCheck, i)
-            Return False
-        EndIf
-        i += 1
-    EndWhile
-    Return True
 EndFunction

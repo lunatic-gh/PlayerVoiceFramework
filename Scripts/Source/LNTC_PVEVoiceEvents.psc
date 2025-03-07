@@ -26,9 +26,24 @@ Event OnPlayerLoadGame()
     Load()
 EndEvent
 
+Function Load()
+    LNTC_PVEUtils.Log("Loading Sounds...")
+    Int sounds = JMap.getObj(JValue.readFromFile("Data/Sound/FX/LNTC_PlayerVoiceEvents/config.json"), "sounds", JMap.object())
+    LNTC_PVEStorageUtils.SetJMap("LNTC_PVE", "sounds", sounds)
+    LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isSoundPlaying", 0)
+    LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isHitOnCooldown", 0)
+    LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isPickupOnCooldown", 0)
+    LNTC_PVEUtils.Log("Sounds Loaded...")
+    OnUpdate()
+EndFunction
+
 Event OnUpdate()
+    UpdateVoiceTypes()
+    RegisterForSingleUpdate(5)
+EndEvent
+
+Function UpdateVoiceTypes()
     ; Periodically fix voice types if they got reset (e.g. on race change)
-    ; This disables vanilla's race-specific voice grunts
     Bool b = false
     If playerActor.GetRace().GetDefaultVoiceType(true) != PVEVoiceType
         playerActor.GetRace().SetDefaultVoiceType(true, PVEVoiceType)    
@@ -39,22 +54,8 @@ Event OnUpdate()
         b = true
     EndIf
     If b
-        LNTC_PVEUtils.LogDebug("Updated Voice Type...")
+        LNTC_PVEUtils.Log("Updated Voice Type.")
     Endif
-    RegisterForSingleUpdate(10)
-EndEvent
-
-Function Load()
-    Debug.Notification("[Player Voice Events] Loading Sounds. This might take a moment...")
-    Debug.Trace("[Player Voice Events] Loading Sounds. This might take a moment...")
-    Int sounds = JMap.getObj(JValue.readFromFile("Data/Sound/FX/LNTC_PlayerVoiceEvents/config.json"), "sounds")
-    LNTC_PVEStorageUtils.SetJMap("LNTC_PVE", "sounds", sounds)
-    LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isSoundPlaying", 0)
-    LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isHitOnCooldown", 0)
-    LNTC_PVEStorageUtils.setInt("LNTC_PVE", "isPickupOnCooldown", 0)
-    Debug.Notification("[Player Voice Events] Done Loading.")
-    Debug.Trace("[Player Voice Events] Done Loading.")
-    RegisterForSingleUpdate(10)
 EndFunction
 
 Event OnActorAction(int _actionType, Actor _actor, Form _source, int _slot)
