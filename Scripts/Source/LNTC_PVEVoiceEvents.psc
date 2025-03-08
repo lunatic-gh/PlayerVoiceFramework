@@ -19,7 +19,12 @@ Event OnInit()
     RegisterForAnimationEvent(playerActor, "FootSprintRight")
     RegisterForCameraState()
     RegisterForSleep()
+    PO3_Events_Alias.RegisterForQuestStage(Self, Game.GetForm(0x39645) as Quest)
     Load()
+EndEvent
+
+Event OnQuestStageChange(Quest akQuest, Int aiNewStage)
+    LNTC_PVEUtils.LogDebug("New Quest Stage: " + aiNewStage)
 EndEvent
 
 Event OnPlayerLoadGame()

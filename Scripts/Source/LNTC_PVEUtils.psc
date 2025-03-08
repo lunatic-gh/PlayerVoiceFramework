@@ -1,4 +1,4 @@
-Scriptname LNTC_PVEUtils
+Scriptname LNTC_PVEUtils extends Quest
 
 Function PlaySound(String _category, String _subCategory = "") Global
     Int categoriesMap = LNTC_PVEStorageUtils.GetJContainer("LNTC_PVE", "sounds")
