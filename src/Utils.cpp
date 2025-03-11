@@ -4,8 +4,6 @@
 #include <unordered_set>
 #include <nlohmann/json.hpp>
 
-#include "Logger.h"
-
 namespace PVE {
     void Utils::LoadConfig() {
         std::ifstream file("Data/Sound/FX/LNTC_PlayerVoiceEvents/config.json");
@@ -35,7 +33,7 @@ namespace PVE {
         const auto catIt = categoriesMap.find(soundEventName);
         const auto subCatIt = categoriesMap.find(subSoundEventName);
         std::string s = strcmp(subSoundEventName.c_str(), "") == 0 ? soundEventName : subSoundEventName;
-        Utils::LogDebug(std::format("Attempting to play sound '{}'", s));
+        LogDebug(std::format("Attempting to play sound '{}'", s));
         SoundEvent event;
         if (subCatIt != categoriesMap.end() && !subCatIt->second.files.empty()) {
             event = subCatIt->second;

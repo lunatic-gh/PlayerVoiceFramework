@@ -3,7 +3,7 @@
 
 SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     SKSE::Init(skse);
-    SetupLog();
+    PVE::Logger::Init();
     PVE::Main::Init();
     return true;
 }

@@ -5,61 +5,67 @@
 //   - For example, If "AttackMelee" has a sub-category "AttackMeleeStaminaLow", when used this means that when you're at low stamina, the mod will play the low-stamina voice/sound in place of the default one.
 //   - If no sub-category is used (or none matches the current situation), the mod will just use the default one.
 {
-    "PVEAttackMelee": [
-      "PVEAttackMeleeStaminaLow",
-      "PVEAttackMeleeStaminaOut"
-    ],
-    "PVEPowerAttackMelee": [
-      "PVEPowerAttackMeleeStaminaLow"
-    ],
-    "PVEAttackBow": [
-      "PVEAttackBowLow"
-    ],
-    "PVEUnsheathe": [
-      "PVEUnsheatheBow",
-      "PVEUnsheatheSpell",
-      "PVEUnsheatheMelee"
-    ],
-    "PVESheathe": [
-      "PVESheatheBow",
-      "PVESheatheSpell",
-      "PVESheatheMelee"
-    ],
-    "PVEBash": [
-      "PVEBashStaminaLow"
-    ],
-    "PVEDeath": [],
-    "PVEReceivedHit": [
-      "PVEReceivedPowerHit"
-    ],
-    "PVEBlockReceivedHit": [
-      "PVEBlockReceivedPowerHit"
-    ],
-    "PVEReceivedFriendlyHeal": [],
-    "PVEFinisherStart": [],
-    "PVEFinisherEnd": [],
-    "PVECastSpell": [
-      "PVECastSpell<SpellName>" // "<SpellName>" is being replaced by whatever is returned by "spell#getName()". For "Flames", this would result in "PVECastSpellFlames"
-    ],
-    "PVEFireSpell": [
-      "PVEFireSpell<SpellName>" // "<SpellName>" is being replaced by whatever is returned by "spell#getName()". For "Flames", this would result in "PVEFireSpellFlames"
-    ],
-    "PVESit": [],
-    "PVEGetUp": [],
-    "PVESleepStart": [],
-    "PVESleepEnd": [],
-    "PVEJump": [],
-    "PVEMountHorse": [],
-    "PVEDismountHorse": [], // Called at the end of dismounting rather than the start... Nothing to do about it i guess...
-    "PVEMountDragon": [],
-    "PVEDismountDragon": [], // Couldn't test this myself due to story-requirements, but i assume this will work the same as PVEDismountHorse?
-    "PVESprintIdle": [], // Called whenever the right foot touches the ground (according to the UESP-Wiki)
-    "PVEChangeCell<CellName>": [], // BE CAREFUL WITH THIS - This gets called on literally every cell change - Riverwood alone consists of more than 5 exterior-cells.
-    "PVEPickupItem": [
-      "PVEPickupItemArmor",
-      "PVEPickupItemBook",
-      "PVEPickupItemWeapon",
-      "PVEPickupItemAmmo",
-      "PVEPickupItemPotion"
-    ]
-  }
+  "PVEAttackMelee": [
+    "PVEAttackMeleeStaminaLow",
+    "PVEAttackMeleeStaminaOut"
+  ],
+  "PVEPowerAttackMelee": [
+    "PVEPowerAttackMeleeStaminaLow"
+  ],
+  "PVEAttackBow": [
+    "PVEAttackBowLow"
+  ],
+  "PVEUnsheathe": [
+    "PVEUnsheatheBow",
+    "PVEUnsheatheSpell",
+    "PVEUnsheatheMelee"
+  ],
+  "PVESheathe": [
+    "PVESheatheBow",
+    "PVESheatheSpell",
+    "PVESheatheMelee"
+  ],
+  "PVEBash": [
+    "PVEBashStaminaLow"
+  ],
+  "PVEDeath": [],
+  "PVEReceivedHit": [
+    "PVEReceivedPowerHit"
+  ],
+  "PVEBlockReceivedHit": [
+    "PVEBlockReceivedPowerHit"
+  ],
+  "PVEReceivedFriendlyHeal": [],
+  "PVEFinisherStart": [],
+  "PVEFinisherEnd": [],
+  "PVECastSpell": [
+    "PVECastSpell<SpellName>"
+    // "<SpellName>" is being replaced by whatever is returned by "spell#getName()". For "Flames", this would result in "PVECastSpellFlames"
+  ],
+  "PVEFireSpell": [
+    "PVEFireSpell<SpellName>"
+    // "<SpellName>" is being replaced by whatever is returned by "spell#getName()". For "Flames", this would result in "PVEFireSpellFlames"
+  ],
+  "PVESit": [],
+  "PVEGetUp": [],
+  "PVESleepStart": [],
+  "PVESleepEnd": [],
+  "PVEJump": [],
+  "PVEMountHorse": [],
+  "PVEDismountHorse": [],
+  // Called at the end of dismounting rather than the start... Nothing to do about it i guess...
+  "PVEMountDragon": [],
+  "PVEDismountDragon": [],
+  // Couldn't test this myself due to story-requirements, but i assume this will work the same as PVEDismountHorse?
+  "PVESprintIdle": [],
+  // Called whenever the right foot touches the ground (according to the UESP-Wiki)
+  "PVEChangeCell<CellName>": [],
+  // BE CAREFUL WITH THIS - This gets called on literally every cell change - Riverwood alone consists of more than 5 exterior-cells.
+  "PVEPickupItem": [
+    "PVEPickupItemArmor",
+    "PVEPickupItemBook",
+    "PVEPickupItemWeapon",
+    "PVEPickupItemAmmo",
+    "PVEPickupItemPotion"
+  ]
+}
