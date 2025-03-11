@@ -51,15 +51,15 @@ namespace PVE {
     }
 
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const SKSE::ActionEvent *event, RE::BSTEventSource<SKSE::ActionEvent> *) {
-        auto type = event->type;
-        auto source = event->sourceForm;
-        if (auto actor = event->actor) {
+        const auto type = event->type;
+        const auto source = event->sourceForm;
+        if (const auto actor = event->actor) {
             if (actor->IsPlayerRef()) {
                 if (type == SKSE::ActionEvent::Type::kWeaponSwing) {
-                    bool lowStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) < 0.25f;
-                    if (auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
-                        if (auto high = currentProcess->high) {
-                            if (auto attackData = high->attackData) {
+                    if (const auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
+                        if (const auto high = currentProcess->high) {
+                            if (const auto attackData = high->attackData) {
+                                const bool lowStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) < 0.25f;
                                 if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
                                     Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
                                 } else {
@@ -68,32 +68,32 @@ namespace PVE {
                             }
                         }
                     }
-                }
-            } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
-                Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", source->GetName()));
-            } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
-                Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", source->GetName()));
-            } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
-                if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
-                    Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheBow");
-                } else if (source && source->GetFormType() == RE::FormType::Spell) {
-                    Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheSpell");
-                } else if (source) {
-                    Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheMelee");
-                } else {
-                    Utils::PlaySound("PVEUnsheathe");
-                }
-            } else if (type == SKSE::ActionEvent::Type::kBeginSheathe) {
-                if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
-                    Utils::PlaySound("PVESheathe", "PVESheatheBow");
-                } else if (source && source->GetFormType() != RE::FormType::Spell) {
-                    Utils::PlaySound("PVESheathe", "PVESheatheMelee");
-                } else {
-                    Utils::PlaySound("PVESheathe");
-                }
-            } else if (type == SKSE::ActionEvent::Type::kEndSheathe) {
-                if (source && source->GetFormType() == RE::FormType::Spell) {
-                    Utils::PlaySound("PVESheathe", "PVESheatheSpell");
+                } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
+                    Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", source->GetName()));
+                } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
+                    Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", source->GetName()));
+                } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
+                    if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
+                        Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheBow");
+                    } else if (source && source->GetFormType() == RE::FormType::Spell) {
+                        Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheSpell");
+                    } else if (source) {
+                        Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheMelee");
+                    } else {
+                        Utils::PlaySound("PVEUnsheathe");
+                    }
+                } else if (type == SKSE::ActionEvent::Type::kBeginSheathe) {
+                    if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
+                        Utils::PlaySound("PVESheathe", "PVESheatheBow");
+                    } else if (source && source->GetFormType() != RE::FormType::Spell) {
+                        Utils::PlaySound("PVESheathe", "PVESheatheMelee");
+                    } else {
+                        Utils::PlaySound("PVESheathe");
+                    }
+                } else if (type == SKSE::ActionEvent::Type::kEndSheathe) {
+                    if (source && source->GetFormType() == RE::FormType::Spell) {
+                        Utils::PlaySound("PVESheathe", "PVESheatheSpell");
+                    }
                 }
             }
         }
@@ -138,8 +138,8 @@ namespace PVE {
 
     RE::BSEventNotifyControl DynamicEventSink::ProcessEvent(const SKSE::CameraEvent *event, RE::BSTEventSource<SKSE::CameraEvent> *) {
         if (event && event->oldState && event->newState) {
-            auto newState = event->newState->id;
-            auto oldState = event->oldState->id;
+            const auto newState = event->newState->id;
+            const auto oldState = event->oldState->id;
             if (newState == RE::CameraState::kVATS) {
                 Utils::PlaySound("PVEFinisherStart");
             } else if (oldState == RE::CameraState::kVATS) {
