@@ -2,3 +2,7 @@
 /Scripts/*.pex
 /SKSE/
 /.vscode/
+/build/
+/pyro/
+/.idea/
+/release
