@@ -17,9 +17,7 @@ namespace PVE {
                 if (event->flags.any(RE::TESHitEvent::Flag::kHitBlocked)) {
                     Utils::PlaySound("PVEBlockReceivedHit", event->flags.any(RE::TESHitEvent::Flag::kPowerAttack) ? "PVEBlockReceivedPowerHit" : "");
                 } else {
-                    if (cause && cause->As<RE::Actor>() && cause->As<RE::Actor>()->IsPlayerTeammate() &&
-                        source && source->Is(RE::FormType::Spell) &&
-                        Utils::FormHasKeywordString(source, "MagicRestoreHealth")) {
+                    if (cause && cause->As<RE::Actor>() && cause->As<RE::Actor>()->IsPlayerTeammate() && source && source->Is(RE::FormType::Spell) && Utils::FormHasKeywordString(source, "MagicRestoreHealth")) {
                         Utils::PlaySound("PVEReceivedFriendlyHeal");
                     } else {
                         if (cause && (!cause->As<RE::Actor>()->IsInKillMove()) || cause->GetFormType() != RE::FormType::ActorCharacter) {
@@ -51,7 +49,6 @@ namespace PVE {
         }
         return RE::BSEventNotifyControl::kContinue;
     }
-
 
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const SKSE::ActionEvent *event, RE::BSTEventSource<SKSE::ActionEvent> *) {
         auto type = event->type;
@@ -128,28 +125,29 @@ namespace PVE {
         return RE::BSEventNotifyControl::kContinue;
     }
 
-
     RE::BSEventNotifyControl DynamicEventSink::ProcessEvent(const SKSE::CameraEvent *event, RE::BSTEventSource<SKSE::CameraEvent> *) {
-        auto newState = event->newState->id;
-        auto oldState = event->oldState->id;
-        if (newState == RE::CameraState::kVATS) {
-            Utils::PlaySound("PVEFinisherStart");
-        } else if (oldState == RE::CameraState::kVATS) {
-            Utils::PlaySound("PVEFinisherEnd");
-        } else if (newState == RE::CameraState::kFurniture) {
-            Utils::PlaySound("PVESit");
-        } else if (oldState == RE::CameraState::kFurniture) {
-            Utils::PlaySound("PVEGetUp");
-        } else if (newState == RE::CameraState::kMount) {
-            Utils::PlaySound("PVEMountHorse");
-        } else if (oldState == RE::CameraState::kMount) {
-            Utils::PlaySound("PVEDismountHorse");
-        } else if (newState == RE::CameraState::kBleedout) {
-            Utils::PlaySound("PVEDeath");
-        } else if (newState == RE::CameraState::kDragon) {
-            Utils::PlaySound("PVEMountDragon");
-        } else if (oldState == RE::CameraState::kDragon) {
-            Utils::PlaySound("PVEDismountDragon");
+        if (event->oldState && event->newState) {
+            auto newState = event->newState->id;
+            auto oldState = event->oldState->id;
+            if (newState == RE::CameraState::kVATS) {
+                Utils::PlaySound("PVEFinisherStart");
+            } else if (oldState == RE::CameraState::kVATS) {
+                Utils::PlaySound("PVEFinisherEnd");
+            } else if (newState == RE::CameraState::kFurniture) {
+                Utils::PlaySound("PVESit");
+            } else if (oldState == RE::CameraState::kFurniture) {
+                Utils::PlaySound("PVEGetUp");
+            } else if (newState == RE::CameraState::kMount) {
+                Utils::PlaySound("PVEMountHorse");
+            } else if (oldState == RE::CameraState::kMount) {
+                Utils::PlaySound("PVEDismountHorse");
+            } else if (newState == RE::CameraState::kBleedout) {
+                Utils::PlaySound("PVEDeath");
+            } else if (newState == RE::CameraState::kDragon) {
+                Utils::PlaySound("PVEMountDragon");
+            } else if (oldState == RE::CameraState::kDragon) {
+                Utils::PlaySound("PVEDismountDragon");
+            }
         }
         return RE::BSEventNotifyControl::kContinue;
     }
