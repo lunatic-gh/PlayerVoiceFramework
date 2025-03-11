@@ -57,17 +57,13 @@ namespace PVE {
         if (actor->IsPlayerRef()) {
             if (type == SKSE::ActionEvent::Type::kWeaponSwing) {
                 bool lowStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) < 0.25f;
-                bool b = false;
-                if (actor->GetActorRuntimeData().currentProcess) {
-                    if (auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
-                        if (auto high = currentProcess->high) {
-                            if (auto attackData = high->attackData) {
-                                if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
-                                    b = true;
-                                    Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
-                                } else {
-                                    Utils::PlaySound("PVEAttackMelee", lowStamina ? "PVEAttackMeleeStaminaLow" : "");
-                                }
+                if (auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
+                    if (auto high = currentProcess->high) {
+                        if (auto attackData = high->attackData) {
+                            if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
+                                Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
+                            } else {
+                                Utils::PlaySound("PVEAttackMelee", lowStamina ? "PVEAttackMeleeStaminaLow" : "");
                             }
                         }
                     }
