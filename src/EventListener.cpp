@@ -52,18 +52,19 @@ namespace PVE {
 
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const SKSE::ActionEvent *event, RE::BSTEventSource<SKSE::ActionEvent> *) {
         auto type = event->type;
-        auto actor = event->actor;
         auto source = event->sourceForm;
-        if (actor->IsPlayerRef()) {
-            if (type == SKSE::ActionEvent::Type::kWeaponSwing) {
-                bool lowStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) < 0.25f;
-                if (auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
-                    if (auto high = currentProcess->high) {
-                        if (auto attackData = high->attackData) {
-                            if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
-                                Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
-                            } else {
-                                Utils::PlaySound("PVEAttackMelee", lowStamina ? "PVEAttackMeleeStaminaLow" : "");
+        if (auto actor = event->actor) {
+            if (actor->IsPlayerRef()) {
+                if (type == SKSE::ActionEvent::Type::kWeaponSwing) {
+                    bool lowStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) < 0.25f;
+                    if (auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
+                        if (auto high = currentProcess->high) {
+                            if (auto attackData = high->attackData) {
+                                if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
+                                    Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
+                                } else {
+                                    Utils::PlaySound("PVEAttackMelee", lowStamina ? "PVEAttackMeleeStaminaLow" : "");
+                                }
                             }
                         }
                     }
