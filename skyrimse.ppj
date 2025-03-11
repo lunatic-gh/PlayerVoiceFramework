@@ -7,12 +7,12 @@
     Release="false" 
     Final="false"
     Anonymize="false">
+    <Variables>
+        <Variable Name="GameFolder" Value="C:\Game-Dev\Skyrim Special Edition" />
+    </Variables>
     <Imports>
-        <Import>C:\Users\luna\AppData\Local\ModOrganizer\Skyrim Special Edition - Dev\mods\powerofthree's Papyrus Extender\Source\scripts</Import>
-        <Import>C:\Users\luna\AppData\Local\ModOrganizer\Skyrim Special Edition - Dev\mods\JContainers SE\scripts\source</Import>
-        <Import>C:\Users\luna\AppData\Local\ModOrganizer\Skyrim Special Edition - Dev\mods\ConsoleUtilSSE NG\Scripts\Source</Import>
         <Import>.\Scripts\Source</Import>
-        <Import>C:\Game-Dev\Skyrim Special Edition\Data\Scripts\Source</Import>
+        <Import>@GameFolder\Data\Scripts\Source/</Import>
     </Imports>
     <Folders>
         <Folder>.\Scripts\Source</Folder>
