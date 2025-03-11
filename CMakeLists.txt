@@ -41,6 +41,11 @@ if (DEFINED OUTPUT_FOLDER)
             VERBATIM
     )
     add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
+            COMMAND echo Compiling Papyrus-Scripts...
+            COMMAND "C:/Users/luna/.vscode/extensions/joelday.papyrus-lang-vscode-3.2.0/pyro/pyro.exe" --input-path skyrimse.ppj --game-path "C:/Game-Dev/Skyrim Special Edition"
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+    add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
             COMMAND echo Creating Release...
             COMMAND create-release.bat
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
