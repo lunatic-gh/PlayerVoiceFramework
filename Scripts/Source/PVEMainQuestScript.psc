@@ -18,7 +18,6 @@ Event OnRaceSwitchComplete()
 EndEvent
 
 Function SetVoiceType()
-    Return
     Int sex = Self.GetActorRef().GetActorBase().GetSex()
     If sex == 0
         Self.GetActorRef().GetRace().SetDefaultVoiceType(false, PVEVoiceTypeMale)
