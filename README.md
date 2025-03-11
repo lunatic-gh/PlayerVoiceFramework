@@ -17,7 +17,7 @@ customization, with way less issues.
 
 ### Building/Compiling:
 
-- First, you'll need the vanilla papyrus script in ``<GameDir>/Data/Scripts/Source``
+- First, you'll need the vanilla papyrus scripts in ``<GameDir>/Data/Scripts/Source``
     - Not ``Source/Scripts``. I fixed the path for this mod.
     - You can get these by downloading the SSE-CreationKit on Steam. It puts a ``scripts.zip`` into the Data folder,
       that you can extract. Make sure that when extracting you fix the path as mentioned above. Bethesda fucked it up...
