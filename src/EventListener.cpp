@@ -57,14 +57,24 @@ namespace PVE {
         if (actor->IsPlayerRef()) {
             if (type == SKSE::ActionEvent::Type::kWeaponSwing) {
                 bool lowStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) < 0.25f;
-                if (actor->GetActorRuntimeData().currentProcess->high->attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
-                    Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
-                } else {
-                    Utils::PlaySound("PVEAttackMelee", lowStamina ? "PVEAttackMeleeStaminaLow" : "");
+                bool b = false;
+                if (actor->GetActorRuntimeData().currentProcess) {
+                    if (auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
+                        if (auto high = currentProcess->high) {
+                            if (auto attackData = high->attackData) {
+                                if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
+                                    b = true;
+                                    Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
+                                } else {
+                                    Utils::PlaySound("PVEAttackMelee", lowStamina ? "PVEAttackMeleeStaminaLow" : "");
+                                }
+                            }
+                        }
+                    }
                 }
-            } else if (type == SKSE::ActionEvent::Type::kSpellCast && source) {
+            } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
                 Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", source->GetName()));
-            } else if (type == SKSE::ActionEvent::Type::kSpellFire) {
+            } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
                 Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", source->GetName()));
             } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
                 if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {

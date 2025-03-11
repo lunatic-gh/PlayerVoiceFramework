@@ -6,7 +6,7 @@ VoiceType Property PVEVoiceTypeMale Auto
 VoiceType Property PVEVoiceTypeFemale Auto
 
 Event OnInit()
-    Debug.MessageBox(Self.GetOwningQuest().GetFormID())
+    SetVoiceType()
 EndEvent
 
 Event OnPlayerLoadGame()
