@@ -27,7 +27,7 @@ customization, with way less issues.
 - Then, Open it in your preferred C++ IDE. I am using CLion.
     - NOTE: When using CLion, it'll likely ask you for a compiler-preset on import. Disable the ``debug`` preset by
       disabling ``enable profile``, and enable it on the ``release`` preset. Then click apply.
-- IMPORTANT: Change your Skyrim Game-Path inside ``skyrimse.ppj`` and save the file.
+- IMPORTANT: Change your Skyrim Game-Path inside both the ``skyrimse.ppj`` and at the end of ``CMakeLists.txt`` and save the files.
 - Build the Project. In CLion, this will be under ``File -> Build -> Build all in 'release'`` - It'll automatically run
   the included batch files, and build/compile both the Papyrus-Scripts and the SKSE-Plugin. This might take a while
   depending on your Hardware.
