@@ -27,6 +27,7 @@ if (DEFINED OUTPUT_FOLDER)
     add_custom_command(
             TARGET "${PROJECT_NAME}"
             POST_BUILD
+            COMMAND echo Copying Plugin-DLL...
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${DLL_FOLDER}"
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
             VERBATIM
@@ -35,7 +36,13 @@ if (DEFINED OUTPUT_FOLDER)
     add_custom_command(
             TARGET "${PROJECT_NAME}"
             POST_BUILD
+            COMMAND echo Copying Plugin-PDB...
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_PDB_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_PDB_FILE_NAME:${PROJECT_NAME}>"
             VERBATIM
+    )
+    add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
+            COMMAND echo Creating Release...
+            COMMAND create-release.bat
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 endif ()
