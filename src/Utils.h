@@ -7,35 +7,29 @@ namespace PVE {
     struct SoundEvent {
         int chance;
         float cooldown;
-        int overrideMode;
+        bool canBeOverridden;
+        bool forceOverrideOthers;
         std::map<std::string, float> files;
     };
 
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
-    inline std::vector<std::string> soundEventCooldowns;
-    inline bool isPickupOnCooldown = false;
-    inline bool isSoundPlaying = false;
+    inline std::map<std::string, bool> cooldownMap;
+    //inline bool isPickupOnCooldown = false;
+    inline std::optional<SoundEvent> prevEvent;
 
     class Utils {
     public:
-        static bool IsDevelopmentMode() {
-            return std::filesystem::exists("Data/.LNTC_PVE_DEV_MODE");
-        }
+        static bool IsDevelopmentMode() { return std::filesystem::exists("Data/.LNTC_PVE_DEV_MODE"); }
 
         static void LoadConfig();
 
         static void PlaySound(const std::string &soundEventName, const std::string &subSoundEventName = "");
 
-        static void StopSound() {
-            RE::PlayerCharacter::GetSingleton()->PauseCurrentDialogue();
-        }
+        static void StopSound() { RE::PlayerCharacter::GetSingleton()->PauseCurrentDialogue(); }
 
-        static void Log(const std::string &msg) {
-            logger::info("{}", msg);
-        }
+        static void Log(const std::string &msg) { logger::info("{}", msg); }
 
-
-        static void LogDebug(std::string msg) {
+        static void LogDebug(const std::string &msg) {
             if (IsDevelopmentMode()) {
                 Log(msg);
             }

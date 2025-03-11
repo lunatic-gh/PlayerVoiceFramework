@@ -59,11 +59,11 @@ namespace PVE {
                     if (const auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
                         if (const auto high = currentProcess->high) {
                             if (const auto attackData = high->attackData) {
-                                const bool lowStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) < 0.25f;
+                                const float stamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina);
                                 if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
-                                    Utils::PlaySound("PVEPowerAttackMelee", lowStamina ? "PVEPowerAttackMeleeStaminaLow" : "");
+                                    Utils::PlaySound("PVEPowerAttackMelee", stamina < 0.25f ? "PVEPowerAttackMeleeStaminaLow" : "");
                                 } else {
-                                    Utils::PlaySound("PVEAttackMelee", lowStamina ? "PVEAttackMeleeStaminaLow" : "");
+                                    Utils::PlaySound("PVEAttackMelee", stamina == 0 ? "PVEAttackMeleeStaminaOut" : stamina < 0.25f ? "PVEAttackMeleeStaminaLow" : "");
                                 }
                             }
                         }
@@ -137,7 +137,9 @@ namespace PVE {
     }
 
     RE::BSEventNotifyControl DynamicEventSink::ProcessEvent(const SKSE::CameraEvent *event, RE::BSTEventSource<SKSE::CameraEvent> *) {
+        Utils::LogDebug("1");
         if (event && event->oldState && event->newState) {
+            Utils::LogDebug("2");
             const auto newState = event->newState->id;
             const auto oldState = event->oldState->id;
             if (newState == RE::CameraState::kVATS) {
