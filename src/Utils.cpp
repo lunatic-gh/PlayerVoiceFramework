@@ -30,6 +30,10 @@ namespace PVE {
     }
 
     void Utils::PlaySound(const std::string &soundEventName, const std::string &subSoundEventName) {
+        // If Werewolf
+        if (RE::PlayerCharacter::GetSingleton()->GetRace()->GetFormID() == 0xCDD84) {
+            return;
+        }
         const auto eventIt = registeredSoundEvents.find(soundEventName);
         const auto subEventIt = registeredSoundEvents.find(subSoundEventName);
         std::string s = strcmp(subSoundEventName.c_str(), "") == 0 ? soundEventName : subSoundEventName;

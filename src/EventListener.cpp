@@ -16,7 +16,7 @@ namespace PVE {
         if (cause && cause->IsPlayerRef()) {
             return RE::BSEventNotifyControl::kContinue;
         }
-        if (target && target->IsPlayerRef() && target->As<RE::Actor>()->GetRace()->GetFormID() != 0xCDD84) {
+        if (target && target->IsPlayerRef()) {
             if (!target->IsDead()) {
                 if (event->flags.any(RE::TESHitEvent::Flag::kHitBlocked)) {
                     Utils::PlaySound("PVEBlockReceivedHit", event->flags.any(RE::TESHitEvent::Flag::kPowerAttack) ? "PVEBlockReceivedPowerHit" : "");
@@ -78,15 +78,6 @@ namespace PVE {
                     Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", source->GetName()));
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
                     Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", source->GetName()));
-                } else if (source && type == SKSE::ActionEvent::Type::kVoiceCast) {
-                    if (source->Is(RE::FormType::Shout)) {
-                        PlayShoutWord(source->As<RE::TESShout>(), 0);
-                    }
-                } else if (source && type == SKSE::ActionEvent::Type::kVoiceFire) {
-                    if (source->Is(RE::FormType::Shout)) {
-                        RE::TESShout *shout = source->As<RE::TESShout>();
-                        currentShout.emplace(shout);
-                    }
                 } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
                     if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
                         Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheBow");
@@ -146,24 +137,6 @@ namespace PVE {
                 default:
                     Utils::PlaySound("PVEPickupItem");
                     break;
-            }
-        }
-        return RE::BSEventNotifyControl::kContinue;
-    }
-    RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESSpellCastEvent *event, RE::BSTEventSource<RE::TESSpellCastEvent> *) {
-        if (event && event->spell) {
-            const auto form = RE::TESForm::LookupByID(event->spell);
-            if (currentShout.has_value()) {
-                const auto eventSpl = form->As<RE::SpellItem>();
-                const auto shout = currentShout.value();
-                for (int i1 = 0; i1 < std::size(shout->variations); ++i1) {
-                    if (eventSpl && shout->variations && shout->variations[i1].spell && eventSpl->GetFormID() == shout->variations[i1].spell->GetFormID()) {
-                        if (i1 > 0) {
-                            PlayShoutWord(shout, i1);
-                        }
-                        break;
-                    }
-                }
             }
         }
         return RE::BSEventNotifyControl::kContinue;

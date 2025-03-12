@@ -14,7 +14,7 @@ namespace PVE {
 
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
     inline std::map<std::string, bool> cooldownMap;
-    //inline bool isPickupOnCooldown = false;
+    // inline bool isPickupOnCooldown = false;
     inline std::optional<SoundEvent> prevEvent;
 
     class Utils {
@@ -33,6 +33,19 @@ namespace PVE {
             if (IsDevelopmentMode()) {
                 Log(msg);
             }
+        }
+
+        static std::string Replace(const std::string &text, const std::string &oldSeq, const std::string &newSeq) {
+            if (oldSeq.empty()) {
+                return text;
+            }
+            std::string result = text;
+            size_t pos = 0;
+            while ((pos = result.find(oldSeq, pos)) != std::string::npos) {
+                result.replace(pos, oldSeq.length(), newSeq);
+                pos += newSeq.length();
+            }
+            return result;
         }
 
         static int generateRandomInt(int minInclusive, int maxInclusive) {
