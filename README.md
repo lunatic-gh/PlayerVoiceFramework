@@ -17,11 +17,12 @@ customization, with way less issues.
 
 ### Building/Compiling:
 
-- First, you'll need the vanilla papyrus scripts in ``<GameDir>/Data/Scripts/Source``
+- First, you'll need both vanilla & skse's papyrus scripts in ``<GameDir>/Data/Scripts/Source``
     - Not ``Source/Scripts``. I fixed the path for this mod.
-    - You can get these by downloading the SSE-CreationKit on Steam. It puts a ``scripts.zip`` into the Data folder,
+    - You can get the vanilla ones by downloading the SSE-CreationKit on Steam. It puts a ``scripts.zip`` into the Data folder,
       that you can extract. Make sure that when extracting you fix the path as mentioned above. Bethesda fucked it up...
       Yet Again...
+    - For the SKSE-Ones, they come with SKSE. Just make sure to ovewrite the vanilla-scripts from the CreationKit with those from SKSE.
 - You also need Visual Studio installed (Yes, the entire god damn fucking dick sucking IDE. NO MATTER IF YOU USE ANOTHER
   IDE, IT IS REQUIRED), together with the ``Desktop Development with C++`` Package.
 - Then, Open it in your preferred C++ IDE. I am using CLion.
