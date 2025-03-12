@@ -15,6 +15,7 @@ namespace PVE {
                 case SKSE::MessagingInterface::kDataLoaded: {
                     Utils::LoadConfig();
                     DefaultEventSink::Register();
+                    RegisterDynamicSinks();
                     break;
                 }
                 case SKSE::MessagingInterface::kNewGame:
