@@ -3,6 +3,7 @@
 #include "Utils.h"
 
 namespace PVE {
+
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESPlayerBowShotEvent *event, RE::BSTEventSource<RE::TESPlayerBowShotEvent> *) {
         Utils::PlaySound("PVEAttackBow", event->shotPower < 1.0f ? "PVEAttackBowLow" : "");
         return RE::BSEventNotifyControl::kContinue;
@@ -12,12 +13,16 @@ namespace PVE {
         const auto cause = event->cause;
         const auto target = event->target;
         const auto source = RE::TESForm::LookupByID(event->source);
-        if (!cause->IsPlayerRef() && target->IsPlayerRef()) {
+        if (cause && cause->IsPlayerRef()) {
+            return RE::BSEventNotifyControl::kContinue;
+        }
+        if (target && target->IsPlayerRef() && target->As<RE::Actor>()->GetRace()->GetFormID() != 0xCDD84) {
             if (!target->IsDead()) {
                 if (event->flags.any(RE::TESHitEvent::Flag::kHitBlocked)) {
                     Utils::PlaySound("PVEBlockReceivedHit", event->flags.any(RE::TESHitEvent::Flag::kPowerAttack) ? "PVEBlockReceivedPowerHit" : "");
                 } else {
-                    if (cause && cause->As<RE::Actor>() && cause->As<RE::Actor>()->IsPlayerTeammate() && source && source->Is(RE::FormType::Spell) && Utils::FormHasKeywordString(source, "MagicRestoreHealth")) {
+                    if (cause && cause->As<RE::Actor>() && cause->As<RE::Actor>()->IsPlayerTeammate() && source && source->Is(RE::FormType::Spell) &&
+                        Utils::FormHasKeywordString(source, "MagicRestoreHealth")) {
                         Utils::PlaySound("PVEReceivedFriendlyHeal");
                     } else {
                         if (cause && (!cause->As<RE::Actor>()->IsInKillMove()) || cause->GetFormType() != RE::FormType::ActorCharacter) {
@@ -59,7 +64,8 @@ namespace PVE {
                     if (const auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
                         if (const auto high = currentProcess->high) {
                             if (const auto attackData = high->attackData) {
-                                const float stamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina);
+                                const float stamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) /
+                                                      actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina);
                                 if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
                                     Utils::PlaySound("PVEPowerAttackMelee", stamina < 0.25f ? "PVEPowerAttackMeleeStaminaLow" : "");
                                 } else {
@@ -72,6 +78,15 @@ namespace PVE {
                     Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", source->GetName()));
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
                     Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", source->GetName()));
+                } else if (source && type == SKSE::ActionEvent::Type::kVoiceCast) {
+                    if (source->Is(RE::FormType::Shout)) {
+                        PlayShoutWord(source->As<RE::TESShout>(), 0);
+                    }
+                } else if (source && type == SKSE::ActionEvent::Type::kVoiceFire) {
+                    if (source->Is(RE::FormType::Shout)) {
+                        RE::TESShout *shout = source->As<RE::TESShout>();
+                        currentShout.emplace(shout);
+                    }
                 } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
                     if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
                         Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheBow");
@@ -135,11 +150,27 @@ namespace PVE {
         }
         return RE::BSEventNotifyControl::kContinue;
     }
+    RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESSpellCastEvent *event, RE::BSTEventSource<RE::TESSpellCastEvent> *) {
+        if (event && event->spell) {
+            const auto form = RE::TESForm::LookupByID(event->spell);
+            if (currentShout.has_value()) {
+                const auto eventSpl = form->As<RE::SpellItem>();
+                const auto shout = currentShout.value();
+                for (int i1 = 0; i1 < std::size(shout->variations); ++i1) {
+                    if (eventSpl && shout->variations && shout->variations[i1].spell && eventSpl->GetFormID() == shout->variations[i1].spell->GetFormID()) {
+                        if (i1 > 0) {
+                            PlayShoutWord(shout, i1);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return RE::BSEventNotifyControl::kContinue;
+    }
 
     RE::BSEventNotifyControl DynamicEventSink::ProcessEvent(const SKSE::CameraEvent *event, RE::BSTEventSource<SKSE::CameraEvent> *) {
-        Utils::LogDebug("1");
         if (event && event->oldState && event->newState) {
-            Utils::LogDebug("2");
             const auto newState = event->newState->id;
             const auto oldState = event->oldState->id;
             if (newState == RE::CameraState::kVATS) {

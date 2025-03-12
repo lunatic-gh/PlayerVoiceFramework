@@ -14,7 +14,8 @@ namespace PVE {
             soundEvent.chance = value.contains("chance") && value.at("chance").is_number_integer() ? value.at("chance").get<int>() : 100;
             soundEvent.cooldown = value.contains("cooldown") && value.at("cooldown").is_number_float() ? value.at("cooldown").get<float>() : 0.0f;
             soundEvent.canBeOverridden = value.contains("canBeOverridden") && value.at("canBeOverridden").is_boolean() ? value.at("canBeOverridden").get<bool>() : false;
-            soundEvent.forceOverrideOthers = value.contains("forceOverrideOthers") && value.at("forceOverrideOthers").is_boolean() ? value.at("forceOverrideOthers").get<bool>() : false;
+            soundEvent.forceOverrideOthers =
+                value.contains("forceOverrideOthers") && value.at("forceOverrideOthers").is_boolean() ? value.at("forceOverrideOthers").get<bool>() : false;
             cooldownMap[key] = false;
             for (const auto &f : value.at("files")) {
                 auto fileStr = f.get<std::string>();
@@ -34,10 +35,13 @@ namespace PVE {
         std::string s = strcmp(subSoundEventName.c_str(), "") == 0 ? soundEventName : subSoundEventName;
         LogDebug(std::format("Attempting to play sound for event '{}'", s));
         SoundEvent event;
+        std::string eventName = "";
         if (subEventIt != registeredSoundEvents.end() && !subEventIt->second.files.empty()) {
             event = subEventIt->second;
+            eventName = subSoundEventName;
         } else if (eventIt != registeredSoundEvents.end() && !eventIt->second.files.empty()) {
             event = eventIt->second;
+            eventName = soundEventName;
         } else {
             return;
         }
@@ -73,4 +77,4 @@ namespace PVE {
             }
         }
     }
-}
+}  // namespace PVE

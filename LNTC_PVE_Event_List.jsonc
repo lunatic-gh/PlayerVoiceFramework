@@ -67,5 +67,16 @@
     "PVEPickupItemWeapon",
     "PVEPickupItemAmmo",
     "PVEPickupItemPotion"
-  ]
+  ],
+  // This is VERY complicated. Shout-Sounds are separated into their word-parts.
+  // Here's a really, really simple rundown with "Unrelenting Force" as an example
+  // The first word "Fus" will be "PVECastShoutUnrelentingForce-Fus"
+  // The second word "Ro" will be "PVECastShoutUnrelentingForce-FusRo" - This will be used when shouting "Fus-Ro", without the third word.
+  // The third word "Dah" will be "PVECastShoutUnrelentingForce-FusRoDa" (Without "h" at the end) - This will SKIP THE SECOND WORD when shouting all 3 words, aka "Fus-Ro-Dah"
+  //
+  // So when using 3 words, it'd call "PVECastShoutUnrelentingForce-Fus" for the first word, and then "PVECastShoutUnrelentingForce-FusRoDa" afterward.
+  // However when using 2 words, it'd call "PVECastShoutUnrelentingForce-Fus" for the first word, and then "PVECastShoutUnrelentingForce-FusRo" afterward.
+  // When using only one word, it'd only call ""PVECastShoutUnrelentingForce-Fus", and that's it.
+  // If you need ANY help with this, please ask on my discord server, I understand you... Implementing those wasn't easy either...
+  "PVECastShout<ShoutName>-<WordSequence>": []
 }
