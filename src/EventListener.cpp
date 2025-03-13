@@ -184,15 +184,15 @@ namespace PVE {
                 currentWorldspace.emplace(worldspace);
                 const std::string s = actor->GetWorldspace()->GetName();
                 if (s == "Whiterun") {
-                    Utils::PlaySound("PVELocationEnterCityWhiterun");
+                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityWhiterun");
                 } else if (s == "Solitude") {
-                    Utils::PlaySound("PVELocationEnterCitySolitude");
+                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCitySolitude");
                 } else if (s == "Markarth") {
-                    Utils::PlaySound("PVELocationEnterCityMarkarth");
+                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityMarkarth");
                 } else if (s == "Windhelm") {
-                    Utils::PlaySound("PVELocationEnterCityWindhelm");
+                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityWindhelm");
                 } else if (s == "Riften") {
-                    Utils::PlaySound("PVELocationEnterCityRiften");
+                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityRiften");
                 }
             }).detach();
         }
