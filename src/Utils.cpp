@@ -30,8 +30,13 @@ namespace PVE {
     }
 
     void Utils::PlaySound(const std::string &soundEventName, const std::string &subSoundEventName) {
+        const auto player = RE::PlayerCharacter::GetSingleton();
         // If Werewolf
-        if (RE::PlayerCharacter::GetSingleton()->GetRace()->GetFormID() == 0xCDD84) {
+        if (player->GetRace()->GetFormID() == 0xCDD84) {
+            return;
+        }
+        // If not loaded into the world (e.g. in loading screens)
+        if (!player->Is3DLoaded()) {
             return;
         }
         const auto eventIt = registeredSoundEvents.find(soundEventName);

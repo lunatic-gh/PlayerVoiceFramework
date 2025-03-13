@@ -15,11 +15,11 @@ namespace PVE {
                 case SKSE::MessagingInterface::kDataLoaded: {
                     Utils::LoadConfig();
                     DefaultEventSink::Register();
-                    RegisterDynamicSinks();
                     break;
                 }
                 case SKSE::MessagingInterface::kNewGame:
                 case SKSE::MessagingInterface::kPostLoadGame: {
+                    Utils::Log("Registering Dynamic Sinks.");
                     RegisterDynamicSinks();
                     break;
                 }

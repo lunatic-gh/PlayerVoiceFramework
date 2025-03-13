@@ -40,11 +40,9 @@
   "PVEFinisherEnd": [],
   "PVECastSpell": [
     "PVECastSpell<SpellName>"
-    // "<SpellName>" is being replaced by whatever is returned by "spell#getName()". For "Flames", this would result in "PVECastSpellFlames"
   ],
   "PVEFireSpell": [
     "PVEFireSpell<SpellName>"
-    // "<SpellName>" is being replaced by whatever is returned by "spell#getName()". For "Flames", this would result in "PVEFireSpellFlames"
   ],
   "PVESit": [],
   "PVEGetUp": [],
@@ -53,14 +51,9 @@
   "PVEJump": [],
   "PVEMountHorse": [],
   "PVEDismountHorse": [],
-  // Called at the end of dismounting rather than the start... Nothing to do about it i guess...
   "PVEMountDragon": [],
   "PVEDismountDragon": [],
-  // Couldn't test this myself due to story-requirements, but i assume this will work the same as PVEDismountHorse?
   "PVESprintIdle": [],
-  // Called whenever the right foot touches the ground (according to the UESP-Wiki)
-  "PVEChangeCell<CellName>": [],
-  // BE CAREFUL WITH THIS - This gets called on literally every cell change - Riverwood alone consists of more than 5 exterior-cells.
   "PVEPickupItem": [
     "PVEPickupItemArmor",
     "PVEPickupItemBook",
@@ -75,5 +68,12 @@
   // "PVEShoutUnrelentingForce_1" - Fus (Hold)
   // "PVEShoutUnrelentingForce_2" - Ro
   // "PVEShoutUnrelentingForce_3" - Ro-Dah
-  "PVEShout<Name>_<Word>": []
+  "PVEShout<Name>_<Word>": [],
+  "PVELocationEnterCity": [
+    "PVELocationEnterCityWhiterun",
+    "PVELocationEnterCitySolitude",
+    "PVELocationEnterCityMarkarth",
+    "PVELocationEnterCityWindhelm",
+    "PVELocationEnterCityRiften"
+  ]
 }

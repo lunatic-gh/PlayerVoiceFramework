@@ -14,8 +14,8 @@ namespace PVE {
 
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
     inline std::map<std::string, bool> cooldownMap;
-    // inline bool isPickupOnCooldown = false;
     inline std::optional<SoundEvent> prevEvent;
+    inline std::optional<RE::TESWorldSpace *> currentWorldspace;
 
     class Utils {
     public:

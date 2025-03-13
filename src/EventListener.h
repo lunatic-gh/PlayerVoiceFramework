@@ -4,29 +4,12 @@
 
 namespace PVE {
     // Those can be registered once per game start, and they'll stay registered.
-
-    // Those need to be registered every time a save is loaded.
-    class DynamicEventSink : public RE::BSTEventSink<RE::BSAnimationGraphEvent>, public RE::BSTEventSink<SKSE::CameraEvent> {
-    public:
-        RE::BSEventNotifyControl ProcessEvent(const RE::BSAnimationGraphEvent *event, RE::BSTEventSource<RE::BSAnimationGraphEvent> *) override;
-
-        RE::BSEventNotifyControl ProcessEvent(const SKSE::CameraEvent *event, RE::BSTEventSource<SKSE::CameraEvent> *) override;
-
-        static void Register() {
-            static DynamicEventSink sink;
-            RE::PlayerCharacter::GetSingleton()->RemoveAnimationGraphEventSink(&sink);
-            SKSE::GetCameraEventSource()->RemoveEventSink(&sink);
-            RE::PlayerCharacter::GetSingleton()->AddAnimationGraphEventSink(&sink);
-            SKSE::GetCameraEventSource()->AddEventSink(&sink);
-        }
-    };
-    class DefaultEventSink : public RE::BSTEventSink<RE::TESPlayerBowShotEvent>,
-                             public RE::BSTEventSink<RE::TESHitEvent>,
-                             public RE::BSTEventSink<SKSE::ActionEvent>,
-                             public RE::BSTEventSink<RE::TESSleepStartEvent>,
-                             public RE::BSTEventSink<RE::TESSleepStopEvent>,
-                             public RE::BSTEventSink<RE::TESContainerChangedEvent> {
-
+    class DefaultEventSink final : public RE::BSTEventSink<RE::TESPlayerBowShotEvent>,
+                                   public RE::BSTEventSink<RE::TESHitEvent>,
+                                   public RE::BSTEventSink<SKSE::ActionEvent>,
+                                   public RE::BSTEventSink<RE::TESSleepStartEvent>,
+                                   public RE::BSTEventSink<RE::TESSleepStopEvent>,
+                                   public RE::BSTEventSink<RE::TESContainerChangedEvent> {
     public:
         RE::BSEventNotifyControl ProcessEvent(const RE::TESPlayerBowShotEvent *event, RE::BSTEventSource<RE::TESPlayerBowShotEvent> *) override;
 
@@ -48,6 +31,28 @@ namespace PVE {
             RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESSleepStopEvent>(&sink);
             RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESContainerChangedEvent>(&sink);
             SKSE::GetActionEventSource()->AddEventSink(&sink);
+        }
+    };
+
+    // Those need to be registered every time a save is loaded.
+    class DynamicEventSink final : public RE::BSTEventSink<RE::BSAnimationGraphEvent>,
+                                   public RE::BSTEventSink<SKSE::CameraEvent>,
+                                   public RE::BSTEventSink<RE::BGSActorCellEvent> {
+    public:
+        RE::BSEventNotifyControl ProcessEvent(const RE::BSAnimationGraphEvent *event, RE::BSTEventSource<RE::BSAnimationGraphEvent> *) override;
+
+        RE::BSEventNotifyControl ProcessEvent(const SKSE::CameraEvent *event, RE::BSTEventSource<SKSE::CameraEvent> *) override;
+
+        RE::BSEventNotifyControl ProcessEvent(const RE::BGSActorCellEvent *event, RE::BSTEventSource<RE::BGSActorCellEvent> *) override;
+
+        static void Register() {
+            static DynamicEventSink sink;
+            RE::PlayerCharacter::GetSingleton()->RemoveAnimationGraphEventSink(&sink);
+            SKSE::GetCameraEventSource()->RemoveEventSink(&sink);
+            RE::PlayerCharacter::GetSingleton()->AsBGSActorCellEventSource()->RemoveEventSink(&sink);
+            RE::PlayerCharacter::GetSingleton()->AddAnimationGraphEventSink(&sink);
+            SKSE::GetCameraEventSource()->AddEventSink(&sink);
+            RE::PlayerCharacter::GetSingleton()->AsBGSActorCellEventSource()->AddEventSink(&sink);
         }
     };
 }

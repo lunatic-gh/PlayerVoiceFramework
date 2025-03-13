@@ -3,7 +3,6 @@
 #include "Utils.h"
 
 namespace PVE {
-
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESPlayerBowShotEvent *event, RE::BSTEventSource<RE::TESPlayerBowShotEvent> *) {
         Utils::PlaySound("PVEAttackBow", event->shotPower < 1.0f ? "PVEAttackBowLow" : "");
         return RE::BSEventNotifyControl::kContinue;
@@ -147,7 +146,9 @@ namespace PVE {
             const auto newState = event->newState->id;
             const auto oldState = event->oldState->id;
             if (newState == RE::CameraState::kVATS) {
-                Utils::PlaySound("PVEFinisherStart");
+                if (RE::PlayerCharacter::GetSingleton()->IsInKillMove()) {
+                    Utils::PlaySound("PVEFinisherStart");
+                }
             } else if (oldState == RE::CameraState::kVATS) {
                 Utils::PlaySound("PVEFinisherEnd");
             } else if (newState == RE::CameraState::kFurniture) {
@@ -165,6 +166,35 @@ namespace PVE {
             } else if (oldState == RE::CameraState::kDragon) {
                 Utils::PlaySound("PVEDismountDragon");
             }
+        }
+        return RE::BSEventNotifyControl::kContinue;
+    }
+
+    RE::BSEventNotifyControl DynamicEventSink::ProcessEvent(const RE::BGSActorCellEvent *event, RE::BSTEventSource<RE::BGSActorCellEvent> *) {
+        if (event->actor && event->actor.get()->IsPlayerRef() && !event->flags.any(RE::BGSActorCellEvent::CellFlag::kLeave)) {
+            auto actor = event->actor.get();
+            std::thread([actor] {
+                while (!actor->GetWorldspace()) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                }
+                auto worldspace = actor->GetWorldspace();
+                if (currentWorldspace.has_value() && currentWorldspace.value() == worldspace) {
+                    return;
+                }
+                currentWorldspace.emplace(worldspace);
+                const std::string s = actor->GetWorldspace()->GetName();
+                if (s == "Whiterun") {
+                    Utils::PlaySound("PVELocationEnterCityWhiterun");
+                } else if (s == "Solitude") {
+                    Utils::PlaySound("PVELocationEnterCitySolitude");
+                } else if (s == "Markarth") {
+                    Utils::PlaySound("PVELocationEnterCityMarkarth");
+                } else if (s == "Windhelm") {
+                    Utils::PlaySound("PVELocationEnterCityWindhelm");
+                } else if (s == "Riften") {
+                    Utils::PlaySound("PVELocationEnterCityRiften");
+                }
+            }).detach();
         }
         return RE::BSEventNotifyControl::kContinue;
     }
