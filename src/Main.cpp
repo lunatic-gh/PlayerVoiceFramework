@@ -35,7 +35,7 @@ namespace PVE {
                         Utils::LogDebug("If you are using fuz or lip-files, those are known to cause various issues, so you might want to consider using wav's instead.");
                         break;
                     }
-                    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
                 while (voiceTimer > voiceTimerDelay + 0.500) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
