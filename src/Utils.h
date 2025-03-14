@@ -9,12 +9,12 @@ namespace PVE {
         float cooldown;
         bool canBeOverridden;
         bool forceOverrideOthers;
-        std::map<std::string, float> files;
+        std::vector<std::string> files;
     };
 
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
-    inline std::map<std::string, bool> cooldownMap;
-    inline std::optional<SoundEvent> prevEvent;
+    inline std::map<std::string, float> cooldownMap;
+    inline std::optional<SoundEvent> currentSound;
     inline std::optional<RE::TESWorldSpace *> currentWorldspace;
 
     class Utils {
@@ -48,7 +48,7 @@ namespace PVE {
             return result;
         }
 
-        static int generateRandomInt(int minInclusive, int maxInclusive) {
+        static int GenerateRandomInt(int minInclusive, int maxInclusive) {
             std::random_device randomDev;
             std::mt19937 randomGen(randomDev());
             std::uniform_int_distribution<> randomRange(minInclusive, maxInclusive);
@@ -70,6 +70,35 @@ namespace PVE {
             const auto keywordForm = form->As<RE::BGSKeywordForm>();
             if (!keywordForm) return false;
             return keywordForm->HasKeywordString(keyword);
+        }
+
+        static float CalculateDistance(const float x1, const float y1, const float x2, const float y2) {
+            return std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        }
+
+        /**
+         * This basically queries if the current player-location has changed from the saved "currentLocation"
+         * @param player the player (RE::PlayerCharacter).
+         * @param locData the location data to query for. This should be a tuple with the location's name, the X and Y coordinates of the location's center, and the
+         * distance between location-center and border.
+         * @param currentLocation the player's current location. This will be used for tracking enter & leave.
+         * @return 0 If the location was left, 1 if it was entered, -1 if nothing changed.
+         */
+        static int QueryLocationChange(const RE::PlayerCharacter &player, const std::tuple<std::string, float, float, float> &locData, std::string &currentLocation) {
+            const float x = player.GetPositionX();
+            const float y = player.GetPositionY();
+
+            auto [locName, locX, locY, locRadius] = locData;
+            const float dist = CalculateDistance(x, y, locX, locY);
+            if (dist <= locRadius && locName != currentLocation) {
+                currentLocation = locName;
+                return 1;
+            }
+            if ((dist * 1.15f) > locRadius && locName == currentLocation) {
+                currentLocation = "";
+                return 0;
+            }
+            return -1;
         }
 
     private:

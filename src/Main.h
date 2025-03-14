@@ -1,11 +1,13 @@
 #pragma once
+#include "LoopManager.h"
 
 namespace PVE {
-    class Main {
 
+    static LoopManager loopManager;
+    class Main {
     public:
         static void Init();
 
-        static void RegisterDynamicSinks();
+        static void Load();
     };
 }

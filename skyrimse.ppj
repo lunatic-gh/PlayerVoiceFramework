@@ -7,12 +7,10 @@
     Release="false" 
     Final="false"
     Anonymize="false">
-    <Variables>
-        <Variable Name="GameFolder" Value="C:\Game-Dev\Skyrim Special Edition" />
-    </Variables>
     <Imports>
         <Import>.\Scripts\Source</Import>
-        <Import>@GameFolder\Data\Scripts\Source/</Import>
+        <Import>https://github.com/MrOctopus/nl_online/tree/main/skse64/source</Import>
+        <Import>https://github.com/MrOctopus/nl_online/tree/main/sse/source</Import>
     </Imports>
     <Folders>
         <Folder>.\Scripts\Source</Folder>

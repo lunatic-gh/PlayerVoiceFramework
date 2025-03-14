@@ -18,11 +18,7 @@ namespace PVE {
                 value.contains("forceOverrideOthers") && value.at("forceOverrideOthers").is_boolean() ? value.at("forceOverrideOthers").get<bool>() : false;
             cooldownMap[key] = false;
             for (const auto &f : value.at("files")) {
-                auto fileStr = f.get<std::string>();
-                const size_t pos = fileStr.find(':');
-                std::string filePath = fileStr.substr(0, pos);
-                const float fileDuration = (pos != std::string::npos) ? std::stof(fileStr.substr(pos + 1)) : 0.0f;
-                soundEvent.files[filePath] = fileDuration;
+                soundEvent.files.push_back(f.get<std::string>());
             }
             soundEvents[key] = soundEvent;
         }
@@ -44,46 +40,23 @@ namespace PVE {
         std::string s = strcmp(subSoundEventName.c_str(), "") == 0 ? soundEventName : subSoundEventName;
         LogDebug(std::format("Attempting to play sound for event '{}'", s));
         SoundEvent event;
-        std::string eventName = "";
         if (subEventIt != registeredSoundEvents.end() && !subEventIt->second.files.empty()) {
             event = subEventIt->second;
-            eventName = subSoundEventName;
         } else if (eventIt != registeredSoundEvents.end() && !eventIt->second.files.empty()) {
             event = eventIt->second;
-            eventName = soundEventName;
         } else {
             return;
         }
-        if ((!prevEvent.has_value()) || (prevEvent.has_value() && prevEvent.value().canBeOverridden || event.forceOverrideOthers)) {
-            RE::PlayerCharacter::GetSingleton()->GetActorRuntimeData().voiceTimer;
-            if (!cooldownMap[soundEventName]) {
-                const int chance = event.chance;
-                float cooldown = event.cooldown;
-                auto &files = event.files;
-                if (generateRandomInt(0, 99) < chance) {
-                    auto it = files.begin();
-                    std::advance(it, generateRandomInt(0, static_cast<int>(files.size() - 1)));
-                    auto &[filePath, fileDuration] = *it;
-                    prevEvent.emplace(event);
-                    cooldownMap[soundEventName] = true;
+        if (!currentSound.has_value() || (currentSound.value().canBeOverridden || event.forceOverrideOthers)) {
+            if (cooldownMap[soundEventName] == 0.0f) {
+                if (GenerateRandomInt(0, 99) < event.chance) {
                     StopSound();
-                    RunConsoleCommand("player.speaksound \"FX/LNTC_PlayerVoiceEvents/" + filePath + "\"");
-                    std::thread([fileDuration, cooldown, soundEventName]() {
-                        float f = fileDuration;
-                        while (f > 0) {
-                            if (!RE::UI::GetSingleton()->GameIsPaused()) f -= 0.010f;
-                            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                        }
-                        prevEvent.reset();
-                        f = cooldown - fileDuration;
-                        while (f > 0) {
-                            if (!RE::UI::GetSingleton()->GameIsPaused()) f -= 0.010f;
-                            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                        }
-                        cooldownMap[soundEventName] = false;
-                    }).detach();
+                    currentSound.emplace(event);
+                    cooldownMap[soundEventName] = event.cooldown;
+                    const std::string file = event.files[GenerateRandomInt(0, static_cast<int>(event.files.size()) - 1)];
+                    RunConsoleCommand("player.speaksound \"FX/LNTC_PlayerVoiceEvents/" + file + "\"");
                 }
             }
         }
     }
-}  // namespace PVE
+}

@@ -74,9 +74,9 @@ namespace PVE {
                         }
                     }
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
-                    Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", source->GetName()));
+                    Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", Utils::Replace(source->GetName(), " ", "")));
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
-                    Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", source->GetName()));
+                    Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", Utils::Replace(source->GetName(), " ", "")));
                 } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
                     if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
                         Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheBow");
