@@ -5,9 +5,21 @@
 
 namespace PVE {
     void Utils::LoadConfig() {
-        std::ifstream file("Data/Sound/FX/LNTC_PlayerVoiceEvents/config.json");
+        const std::string path = "Data/Sound/FX/LNTC_PlayerVoiceEvents/config.json";
+        std::ifstream file(path);
+        if (!file.is_open()) {
+            Log(std::format("Warning: Could not find file '{}' - If you don't have a Voice-Pack installed, this can be safely ignored.", path));
+            return;
+        }
+
         nlohmann::json config;
-        file >> config;
+        try {
+            file >> config;
+        } catch (const nlohmann::json::parse_error &) {
+            Log(std::format("Error: Could not parse Voice-Pack Configuration - Please make sure it is in proper json-format."));
+            return;
+        }
+
         std::map<std::string, SoundEvent> soundEvents;
         for (auto &[key, value] : config["sounds"].items()) {
             SoundEvent soundEvent;
