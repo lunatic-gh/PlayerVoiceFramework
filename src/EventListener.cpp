@@ -77,15 +77,17 @@ namespace PVE {
                     Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", Utils::Replace(source->GetName(), " ", "")));
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
                     Utils::PlaySound("PVESpellFire", std::format("PVESpellFire{}", Utils::Replace(source->GetName(), " ", "")));
-                } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
+                } else if (type == SKSE::ActionEvent::Type::kBeginDraw) {
                     if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
                         Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheBow");
-                    } else if (source && source->GetFormType() == RE::FormType::Spell) {
-                        Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheSpell");
-                    } else if (source) {
+                    } else if (source && source->GetFormType() != RE::FormType::Spell) {
                         Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheMelee");
                     } else {
                         Utils::PlaySound("PVEUnsheathe");
+                    }
+                } else if (type == SKSE::ActionEvent::Type::kEndDraw) {
+                    if (source && source->GetFormType() == RE::FormType::Spell) {
+                        Utils::PlaySound("PVEUnsheathe", "PVEUnsheatheSpell");
                     }
                 } else if (type == SKSE::ActionEvent::Type::kBeginSheathe) {
                     if (source && Utils::FormHasKeywordString(source, "WeapTypeBow")) {
