@@ -50,7 +50,7 @@ namespace PVE {
         const auto eventIt = registeredSoundEvents.find(soundEventName);
         const auto subEventIt = registeredSoundEvents.find(subSoundEventName);
         std::string s = strcmp(subSoundEventName.c_str(), "") == 0 ? soundEventName : subSoundEventName;
-        LogDebug(std::format("Attempting to play sound for event '{}'", s));
+        Log(std::format("Attempting to play sound for event '{}'", s));
         SoundEvent event;
         if (subEventIt != registeredSoundEvents.end() && !subEventIt->second.files.empty()) {
             event = subEventIt->second;

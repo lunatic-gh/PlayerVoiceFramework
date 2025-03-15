@@ -19,7 +19,7 @@ namespace PVE {
         void Start(const std::string& id, std::function<void()> fnct) {
             std::lock_guard lock(mutex_);
             if (loops.contains(id)) {
-                Utils::LogDebug(std::format("Warning: Tried to start already running loop '{}', Ignoring call.", id));
+                Utils::Log(std::format("Warning: Tried to start already running loop '{}', Ignoring call.", id));
                 return;
             }
             auto running = new std::atomic_bool(true);
@@ -30,7 +30,7 @@ namespace PVE {
                     fnct();
                 }
             }).detach();
-            Utils::LogDebug(std::format("Started loop '{}'.", id));
+            Utils::Log(std::format("Started loop '{}'.", id));
         }
 
         void Stop(const std::string& id) {
@@ -42,7 +42,7 @@ namespace PVE {
             *(loops[id]) = false;
             delete loops[id];
             loops.erase(id);
-            Utils::LogDebug(std::format("Stopped loop '{}'", id));
+            Utils::Log(std::format("Stopped loop '{}'", id));
         }
 
         void StopAll() {
@@ -52,7 +52,7 @@ namespace PVE {
                 delete loop.second;
             }
             loops.clear();
-            Utils::LogDebug("Stopped all running loops.");
+            Utils::Log("Stopped all running loops.");
         }
 
         bool IsRunning(const std::string& id) {
