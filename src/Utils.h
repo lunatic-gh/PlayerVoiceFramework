@@ -12,16 +12,19 @@ namespace PVE {
         std::vector<std::string> files;
     };
 
+    inline std::vector<std::tuple<std::string, std::string, float, float, float, float>> locations;
+    inline std::vector<std::tuple<std::string, std::pair<std::string, int>, std::map<int, float>>> quests;
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
     inline std::map<std::string, float> cooldownMap;
     inline std::optional<SoundEvent> currentSound;
     inline std::optional<RE::TESWorldSpace *> currentWorldspace;
+    inline std::string currentLocation;
 
     class Utils {
     public:
         static bool IsDevelopmentMode() { return std::filesystem::exists("Data/.LNTC_PVE_DEV_MODE"); }
 
-        static void LoadConfig();
+        static void LoadData();
 
         static void PlaySound(const std::string &soundEventName, const std::string &subSoundEventName = "");
 
@@ -77,28 +80,37 @@ namespace PVE {
         }
 
         /**
-         * This basically queries if the current player-location has changed from the saved "currentLocation"
-         * @param player the player (RE::PlayerCharacter).
-         * @param locData the location data to query for. This should be a tuple with the location's name, the X and Y coordinates of the location's center, and the
-         * distance between location-center and border.
-         * @param currentLocation the player's current location. This will be used for tracking enter & leave.
-         * @return 0 If the location was left, 1 if it was entered, -1 if nothing changed.
+         * This queries if the player-location has changed for the location from locData.
+         * @param locData the location data to query for.
+         * @return 1 If the given location was left, 2 if it was entered, 0 if nothing changed.
          */
-        static int QueryLocationChange(const RE::PlayerCharacter &player, const std::tuple<std::string, float, float, float> &locData, std::string &currentLocation) {
-            const float x = player.GetPositionX();
-            const float y = player.GetPositionY();
+        static int QueryLocationChange(const std::tuple<std::string, std::string, float, float, float, float> &locData) {
+            const auto player = RE::PlayerCharacter::GetSingleton();
 
-            auto [locName, locX, locY, locRadius] = locData;
-            const float dist = CalculateDistance(x, y, locX, locY);
-            if (dist <= locRadius && locName != currentLocation) {
-                currentLocation = locName;
-                return 1;
+            const float x = player->GetPositionX();
+            const float y = player->GetPositionY();
+
+            auto [locName, worldspaceName, locX, locY, locRadiusEnter, locRadiusLeave] = locData;
+            if (player->GetWorldspace() != nullptr && player->GetWorldspace()->GetFullName() == worldspaceName) {
+                const float dist = CalculateDistance(x, y, locX, locY);
+                if (dist < locRadiusEnter && locName != currentLocation) {
+                    currentLocation = locName;
+                    return 2;
+                }
+                if (dist > (locRadiusLeave) && locName == currentLocation) {
+                    currentLocation = "";
+                    return 1;
+                }
             }
-            if ((dist * 1.15f) > locRadius && locName == currentLocation) {
-                currentLocation = "";
-                return 0;
-            }
-            return -1;
+            return 0;
+        }
+
+        static std::vector<std::string> SplitByChar(const std::string &input, const char &delimiter) {
+            std::vector<std::string> result;
+            std::stringstream ss(input);
+            std::string s;
+            while (std::getline(ss, s, delimiter)) result.push_back(s);
+            return result;
         }
 
     private:

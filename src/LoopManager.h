@@ -33,6 +33,11 @@ namespace PVE {
             Utils::Log(std::format("Started loop '{}'.", id));
         }
 
+        void StartNew(const std::string& id, std::function<void()> fnct) {
+            Stop(id);
+            Start(id, fnct);
+        }
+
         void Stop(const std::string& id) {
             std::lock_guard lock(mutex_);
             if (!loops.contains(id)) {
@@ -55,9 +60,7 @@ namespace PVE {
             Utils::Log("Stopped all running loops.");
         }
 
-        bool IsRunning(const std::string& id) {
-            return loops.contains(id);
-        }
+        bool IsRunning(const std::string& id) { return loops.contains(id); }
 
     private:
         std::unordered_map<std::string, std::atomic_bool*> loops;

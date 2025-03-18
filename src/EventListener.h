@@ -9,7 +9,8 @@ namespace PVE {
                                    public RE::BSTEventSink<SKSE::ActionEvent>,
                                    public RE::BSTEventSink<RE::TESSleepStartEvent>,
                                    public RE::BSTEventSink<RE::TESSleepStopEvent>,
-                                   public RE::BSTEventSink<RE::TESContainerChangedEvent> {
+                                   public RE::BSTEventSink<RE::TESContainerChangedEvent>,
+                                   public RE::BSTEventSink<RE::TESQuestStageEvent> {
     public:
         RE::BSEventNotifyControl ProcessEvent(const RE::TESPlayerBowShotEvent *event, RE::BSTEventSource<RE::TESPlayerBowShotEvent> *) override;
 
@@ -23,6 +24,8 @@ namespace PVE {
 
         RE::BSEventNotifyControl ProcessEvent(const RE::TESContainerChangedEvent *event, RE::BSTEventSource<RE::TESContainerChangedEvent> *) override;
 
+        RE::BSEventNotifyControl ProcessEvent(const RE::TESQuestStageEvent *event, RE::BSTEventSource<RE::TESQuestStageEvent> *) override;
+
         static void Register() {
             static DefaultEventSink sink;
             RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESPlayerBowShotEvent>(&sink);
@@ -30,6 +33,7 @@ namespace PVE {
             RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESSleepStartEvent>(&sink);
             RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESSleepStopEvent>(&sink);
             RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESContainerChangedEvent>(&sink);
+            RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESQuestStageEvent>(&sink);
             SKSE::GetActionEventSource()->AddEventSink(&sink);
         }
     };

@@ -9,6 +9,7 @@ set(sources
         src/Main.cpp
         src/PapyrusFunctions.cpp
         src/EventListener.cpp
+        src/CustomEventListener.cpp
         src/Utils.cpp
 )
 

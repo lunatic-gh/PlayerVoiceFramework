@@ -1,14 +1,15 @@
 #include "Main.h"
 
+#include "CustomEventListener.h"
 #include "EventListener.h"
 #include "Utils.h"
 
 namespace PVE {
 
     void Main::Init() {
-        Utils::LoadConfig();
+        Utils::LoadData();
         DefaultEventSink::Register();
-        loopManager.Start("cooldownthrd", [] {
+        loopManager.Start("Cooldowns", [] {
             while (cooldownMap.empty()) {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
@@ -21,8 +22,7 @@ namespace PVE {
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
         });
-        loopManager.Stop("filethrd");
-        loopManager.Start("filethrd", [] {
+        loopManager.StartNew("FileDuration", [] {
             const float& voiceTimer = RE::PlayerCharacter::GetSingleton()->GetActorRuntimeData().voiceTimer;
             if (currentSound.has_value()) {
                 Utils::Log("Start File-Timer");
@@ -45,17 +45,17 @@ namespace PVE {
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         });
+        CustomEventListener::Register();
     }
 
     void Main::Load() {
-        loopManager.Stop("sinkthrd");
-        loopManager.Start("sinkthrd", [] {
+        loopManager.StartNew("DynamicSinks", [] {
             while (!RE::PlayerCharacter::GetSingleton()->Is3DLoaded()) {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
             Utils::Log("Registering Dynamic Sink...");
             DynamicEventSink::Register();
-            loopManager.Stop("sinkthrd");
+            loopManager.Stop("DynamicSinks");
         });
     }
 }

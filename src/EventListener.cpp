@@ -24,7 +24,8 @@ namespace PVE {
                         Utils::FormHasKeywordString(source, "MagicRestoreHealth")) {
                         Utils::PlaySound("PVEReceivedFriendlyHeal");
                     } else {
-                        if (cause && (!cause->As<RE::Actor>()->IsInKillMove()) || cause->GetFormType() != RE::FormType::ActorCharacter) {
+                        // if (cause && (!cause->As<RE::Actor>()->IsInKillMove()) || cause->GetFormType() != RE::FormType::ActorCharacter) {
+                        if (!cause || (!cause->Is(RE::FormType::ActorCharacter) || cause->As<RE::Actor>()->IsInKillMove())) {
                             Utils::PlaySound("PVEReceivedHit", event->flags.any(RE::TESHitEvent::Flag::kPowerAttack) ? "PVEReceivedPowerHit" : "");
                         }
                     }
@@ -138,6 +139,30 @@ namespace PVE {
                 default:
                     Utils::PlaySound("PVEPickupItem");
                     break;
+            }
+        }
+        return RE::BSEventNotifyControl::kContinue;
+    }
+    RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESQuestStageEvent *event, RE::BSTEventSource<RE::TESQuestStageEvent> *) {
+        if (event->formID != 0) {
+            auto stage = event->stage;
+            for (auto questData : quests) {
+                auto questRef = std::get<1>(questData);
+                const auto refQuest = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESQuest>(questRef.second, questRef.first);
+                if (refQuest && refQuest->GetFormID() == event->formID) {
+                    std::thread([questData, stage] {
+                        auto delays = std::get<2>(questData);
+                        // Wait for "f" seconds if "f" is greater than 0.0
+                        if (const float f = delays[stage]) {
+                            std::this_thread::sleep_for(std::chrono::duration<float>(f));
+                        }
+                        // If not "loaded", wait until we are
+                        while (RE::UI::GetSingleton()->GameIsPaused() || !RE::PlayerCharacter::GetSingleton()->Is3DLoaded()) {
+                            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                        }
+                        Utils::PlaySound(std::format("PVEQuestStageCompleted{}_{}", std::get<0>(questData), stage));
+                    }).detach();
+                }
             }
         }
         return RE::BSEventNotifyControl::kContinue;
