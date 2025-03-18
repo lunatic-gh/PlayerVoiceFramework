@@ -1,0 +1,9 @@
+{
+  "name": "Karthwasten",
+  "worldspace": "Skyrim",
+  "enabled": true,
+  "locX": -133120.0,
+  "locY": 38912.0,
+  "locDistEnter": 5000.0,
+  "locDistLeave": 5400.0
+}
