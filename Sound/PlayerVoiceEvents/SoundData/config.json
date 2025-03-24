@@ -1,80 +1,87 @@
 {
-    "sounds": {
-        "PVEAttackMelee": {
-            "chance": 100,
-            "cooldown": 0.0,
-            "canBeOverridden": false,
-            "forceOverrideOthers": false,
-            "files": [
-                "Sounds/PVEAttackMelee/00.wav",
-                "Sounds/PVEAttackMelee/01.wav",
-                "Sounds/PVEAttackMelee/02.wav",
-                "Sounds/PVEAttackMelee/03.wav",
-                "Sounds/PVEAttackMelee/04.wav"
-            ]
-        },
-        "PVEPowerAttackMelee": {
-            "chance": 100,
-            "cooldown": 0.0,
-            "canBeOverridden": false,
-            "forceOverrideOthers": false,
-            "files": [
-                "Sounds/PVEPowerAttackMelee/00.wav",
-                "Sounds/PVEPowerAttackMelee/01.wav",
-                "Sounds/PVEPowerAttackMelee/02.wav",
-                "Sounds/PVEPowerAttackMelee/03.wav",
-                "Sounds/PVEPowerAttackMelee/04.wav"
-            ]
-        },
-        "PVEUnsheathe": {
-            "chance": 100,
-            "cooldown": 0.0,
-            "canBeOverridden": false,
-            "forceOverrideOthers": false,
-            "files": [
-                "Sounds/PVEUnsheathe/00.wav",
-                "Sounds/PVEUnsheathe/01.wav",
-                "Sounds/PVEUnsheathe/02.wav",
-                "Sounds/PVEUnsheathe/03.wav",
-                "Sounds/PVEUnsheathe/04.wav"
-            ]
-        },
-        "PVESheathe": {
-            "chance": 100,
-            "cooldown": 0.0,
-            "canBeOverridden": false,
-            "forceOverrideOthers": false,
-            "files": [
-                "Sounds/PVESheathe/00.wav",
-                "Sounds/PVESheathe/01.wav",
-                "Sounds/PVESheathe/02.wav",
-                "Sounds/PVESheathe/03.wav",
-                "Sounds/PVESheathe/04.wav"
-            ]
-        },
-        "PVEDeath": {
-            "chance": 100,
-            "cooldown": 0.0,
-            "canBeOverridden": false,
-            "forceOverrideOthers": false,
-            "files": [
-                "Sounds/PVEDeath/00.wav",
-                "Sounds/PVEDeath/01.wav",
-                "Sounds/PVEDeath/02.wav",
-                "Sounds/PVEDeath/03.wav",
-                "Sounds/PVEDeath/04.wav"
-            ]
-        },
-        "PVEReceivedHit": {
-            "chance": 100,
-            "cooldown": 0.0,
-            "canBeOverridden": false,
-            "forceOverrideOthers": false,
-            "files": [
-                "Sounds/PVEReceivedHit/00.wav",
-                "Sounds/PVEReceivedHit/01.wav",
-                "Sounds/PVEReceivedHit/02.wav"
-            ]
-        }
+  "sounds": {
+    "PVEAttackMelee": {
+      "chance": 100,
+      "cooldown": 0.0,
+      "canBeOverridden": true,
+      "forceOverrideOthers": true,
+      "volume": 1.0,
+      "files": [
+        "Default/Melee Attacks/00.wav",
+        "Default/Melee Attacks/01.wav",
+        "Default/Melee Attacks/02.wav",
+        "Default/Melee Attacks/03.wav",
+        "Default/Melee Attacks/04.wav"
+      ]
+    },
+    "PVEPowerAttackMelee": {
+      "chance": 100,
+      "cooldown": 0.0,
+      "canBeOverridden": true,
+      "forceOverrideOthers": false,
+      "volume": 1.0,
+      "files": [
+        "Default/Melee Power Attacks/00.wav",
+        "Default/Melee Power Attacks/01.wav",
+        "Default/Melee Power Attacks/02.wav",
+        "Default/Melee Power Attacks/03.wav",
+        "Default/Melee Power Attacks/04.wav"
+      ]
+    },
+    "PVEUnsheathe": {
+      "chance": 100,
+      "cooldown": 10.0,
+      "canBeOverridden": false,
+      "forceOverrideOthers": false,
+      "volume": 1.0,
+      "delay": 0.0,
+      "files": [
+        "Default/Unsheathe/00.wav",
+        "Default/Unsheathe/01.wav",
+        "Default/Unsheathe/02.wav",
+        "Default/Unsheathe/03.wav",
+        "Default/Unsheathe/04.wav"
+      ]
+    },
+    "PVESheathe": {
+      "chance": 100,
+      "cooldown": 0.0,
+      "canBeOverridden": false,
+      "forceOverrideOthers": false,
+      "volume": 1.0,
+      "files": [
+        "Default/Sheathe/00.wav",
+        "Default/Sheathe/01.wav",
+        "Default/Sheathe/02.wav",
+        "Default/Sheathe/03.wav",
+        "Default/Sheathe/04.wav"
+      ]
+    },
+    "PVEDeath": {
+      "chance": 100,
+      "cooldown": 0.0,
+      "canBeOverridden": false,
+      "forceOverrideOthers": true,
+      "volume": 1.0,
+      "files": [
+        "Default/Death/00.wav",
+        "Default/Death/01.wav",
+        "Default/Death/02.wav",
+        "Default/Death/03.wav",
+        "Default/Death/04.wav"
+      ]
+    },
+    "PVEReceivedHit": {
+      "chance": 100,
+      "cooldown": 0.0,
+      "canBeOverridden": false,
+      "forceOverrideOthers": false,
+      "volume": 1.0,
+      "files": [
+        "Default/Getting Hit/00.wav",
+        "Default/Getting Hit/01.wav",
+        "Default/Getting Hit/02.wav"
+      ]
     }
+  }
 }

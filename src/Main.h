@@ -2,8 +2,7 @@
 #include "LoopManager.h"
 
 namespace PVE {
-
-    static LoopManager loopManager;
+    inline LoopManager loopManager;
     class Main {
     public:
         static void Init();

@@ -5,12 +5,22 @@ project("PlayerVoiceEvents" VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set(sources
-        src/Plugin.cpp
         src/Main.cpp
+        src/Main.h
         src/PapyrusFunctions.cpp
+        src/PapyrusFunctions.h
         src/EventListener.cpp
+        src/EventListener.h
         src/CustomEventListener.cpp
+        src/CustomEventListener.h
+        src/Plugin.cpp
         src/Utils.cpp
+        src/Utils.h
+        src/SoundEvent.cpp
+        src/SoundEvent.h
+        src/Logger.h
+        src/LoopManager.cpp
+        src/LoopManager.h
 )
 
 find_package(CommonLibSSE CONFIG REQUIRED)

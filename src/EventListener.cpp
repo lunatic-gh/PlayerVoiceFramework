@@ -1,7 +1,7 @@
 #include "EventListener.h"
 
+#include "Main.h"
 #include "Utils.h"
-
 namespace PVE {
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESPlayerBowShotEvent *event, RE::BSTEventSource<RE::TESPlayerBowShotEvent> *) {
         Utils::PlaySound("PVEAttackBow", event->shotPower < 1.0f ? "PVEAttackBowLow" : "");
@@ -108,12 +108,12 @@ namespace PVE {
         return RE::BSEventNotifyControl::kContinue;
     }
 
-    RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESSleepStartEvent *event, RE::BSTEventSource<RE::TESSleepStartEvent> *) {
+    RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESSleepStartEvent *, RE::BSTEventSource<RE::TESSleepStartEvent> *) {
         Utils::PlaySound("PVESleepStart");
         return RE::BSEventNotifyControl::kContinue;
     }
 
-    RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESSleepStopEvent *event, RE::BSTEventSource<RE::TESSleepStopEvent> *) {
+    RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESSleepStopEvent *, RE::BSTEventSource<RE::TESSleepStopEvent> *) {
         Utils::PlaySound("PVESleepEnd");
         return RE::BSEventNotifyControl::kContinue;
     }
@@ -147,19 +147,10 @@ namespace PVE {
         if (event->formID != 0) {
             auto stage = event->stage;
             for (auto questData : quests) {
-                auto questRef = std::get<1>(questData);
-                const auto refQuest = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESQuest>(questRef.second, questRef.first);
+                auto [fst, snd] = std::get<1>(questData);
+                const auto refQuest = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESQuest>(snd, fst);
                 if (refQuest && refQuest->GetFormID() == event->formID) {
                     std::thread([questData, stage] {
-                        auto delays = std::get<2>(questData);
-                        // Wait for "f" seconds if "f" is greater than 0.0
-                        if (const float f = delays[stage]) {
-                            std::this_thread::sleep_for(std::chrono::duration<float>(f));
-                        }
-                        // If not "loaded", wait until we are
-                        while (RE::UI::GetSingleton()->GameIsPaused() || !RE::PlayerCharacter::GetSingleton()->Is3DLoaded()) {
-                            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                        }
                         Utils::PlaySound(std::format("PVEQuestStageCompleted{}_{}", std::get<0>(questData), stage));
                     }).detach();
                 }

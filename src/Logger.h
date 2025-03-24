@@ -1,11 +1,10 @@
 #pragma once
 
-#include <SKSE/SKSE.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-namespace logger = SKSE::log;
-
 namespace PVE {
+
+    namespace logger = SKSE::log;
     class Logger {
     public:
         static void Init() {

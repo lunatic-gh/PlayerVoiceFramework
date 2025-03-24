@@ -25,5 +25,4 @@ BinPackArguments: false
 NamespaceIndentation: All
 IndentPPDirectives: BeforeHash
 FixNamespaceComments: false
-
-...
+AllowShortFunctionsOnASingleLine: "Empty"

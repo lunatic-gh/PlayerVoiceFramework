@@ -1,9 +1,0 @@
-{
-  "name": "MS13",
-  "enabled": true,
-  "questRef": "Skyrim.esm|0x39645",
-  "stageDelays": {
-    "5": 1.0,
-    "10": 3.0
-  }
-}

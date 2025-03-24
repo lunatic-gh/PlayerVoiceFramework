@@ -1,7 +1,6 @@
 #include "Logger.h"
 #include "Main.h"
 #include "PapyrusFunctions.h"
-
 SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     SKSE::Init(skse);
     PVE::Logger::Init();

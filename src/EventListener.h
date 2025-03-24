@@ -1,6 +1,4 @@
 #pragma once
-#include "../build/release/CMakeFiles/PlayerVoiceEvents.dir/cmake_pch.hxx"
-#include "Utils.h"
 
 namespace PVE {
     // Those can be registered once per game start, and they'll stay registered.
