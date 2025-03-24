@@ -3,8 +3,7 @@ name: Build PlayerVoiceEvents
 on:
   push:
     branches:
-      - main
-  pull_request:
+      - test
 
 jobs:
   build:
