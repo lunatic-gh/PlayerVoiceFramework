@@ -53,7 +53,7 @@ add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
 
 add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
         COMMAND echo Compiling Papyrus-Scripts...
-        COMMAND pyro/pyro.exe --input-path skyrimse.ppj --game-path "C:/Game-Dev/Skyrim Special Edition"
+        COMMAND pyro/pyro.exe --input-path skyrimse.ppj --compiler-path "Papyrus Compiler/PapyrusCompiler.exe"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD

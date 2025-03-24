@@ -1,0 +1,42 @@
+name: Build PlayerVoiceEvents
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Setup dependencies
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v2
+        with:
+          vcpkgRoot: ${{ runner.temp }}/vcpkg
+          vcpkgArguments: '--overlay-triplets=${{ github.workspace }}/cmake --overlay-ports=${{ github.workspace }}/cmake/ports'
+
+      # Configure with CMake Preset
+      - name: Configure project
+        run: cmake --preset=release
+
+      # Build the project
+      - name: Build project
+        run: cmake --build --preset=release
+
+      # Run post-build commands
+      - name: Post-build tasks
+        run: |
+          echo Setting up Pyro...
+          setup-pyro.bat
+          echo Compiling Papyrus-Scripts...
+          pyro/pyro.exe --input-path skyrimse.ppj --compiler-path "Papyrus Compiler/PapyrusCompiler.exe"
+          echo Creating Release...
+          create-release.bat
+        working-directory: ${{ github.workspace }}
