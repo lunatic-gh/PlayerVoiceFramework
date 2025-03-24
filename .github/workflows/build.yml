@@ -1,41 +1,78 @@
-name: Build PlayerVoiceEvents
+name: Build
 
 on:
   push:
     branches:
-      - test
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    name: Build SKSE Plugin
+    runs-on: windows-latest
     steps:
-      # Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Setup dependencies
-      - name: Setup vcpkg
-        uses: lukka/run-vcpkg@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
-          vcpkgRoot: ${{ runner.temp }}/vcpkg
-          vcpkgArguments: '--overlay-triplets=${{ github.workspace }}/cmake --overlay-ports=${{ github.workspace }}/cmake/ports'
+          fetch-depth: 0
+          submodules: recursive
 
-      # Configure with CMake Preset
-      - name: Configure project
-        run: cmake --preset=release
-
-      # Build the project
-      - name: Build project
-        run: cmake --build --preset=release
-
-      # Run post-build commands
-      - name: Post-build tasks
+      - name: Fetch main branch
         run: |
-          echo Setting up Pyro...
-          setup-pyro.bat
-          echo Compiling Papyrus-Scripts...
-          pyro/pyro.exe --input-path skyrimse.ppj --compiler-path "Papyrus Compiler/PapyrusCompiler.exe"
-          echo Creating Release...
-          create-release.bat
-        working-directory: ${{ github.workspace }}
+          git fetch origin main:refs/remotes/origin/main
+          git branch --track main origin/main || true
+
+      - name: Setup MSVC Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1.10.0
+
+      - name: Setup vcpkg and Install Dependencies
+        uses: lukka/run-vcpkg@v11.5
+        with:
+          vcpkgJsonGlob: vcpkg.json
+
+      - name: Configure CMake
+        run: cmake -S . -B build --preset=release
+
+      - name: Build Project
+        run: cmake --build build --config Release
+
+      - name: Verify Build Artifacts
+        run: |
+          $dllFile = "build/release/PlayerVoiceEvents.dll"
+          $pdbFile = "build/release/PlayerVoiceEvents.pdb"
+          
+          if (-Not (Test-Path $dllFile)) {
+              Write-Error "Build failed: PlayerVoiceEvents.dll not found!"
+              exit 1
+          }
+          
+          if (-Not (Test-Path $pdbFile)) {
+              Write-Error "Build failed: PlayerVoiceEvents.pdb not found!"
+              exit 1
+          }
+        shell: pwsh
+
+      - name: Create ZIP Archive of Output Folder
+        run: |
+          Compress-Archive -Path build/release/* -DestinationPath PlayerVoiceEvents.zip
+        shell: pwsh
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: "PlayerVoiceEvents ${{ github.ref_name }}"
+          body: "Automatically compiled..."
+          draft: false
+          prerelease: false
+          artifacts: "PlayerVoiceEvents.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Artifact for Debugging
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlayerVoiceEvents-Nightly
+          path: PlayerVoiceEvents.zip
