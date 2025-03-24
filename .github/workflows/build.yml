@@ -1,82 +1,36 @@
-name: Build
+name: Build CommonLibSSE-NG Plugin
 
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: write
-
 jobs:
   build:
-    name: Build SKSE Plugin
     runs-on: windows-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: recursive
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Fetch main branch
+      - name: Setup VCPKG environment
         run: |
-          git fetch origin main:refs/remotes/origin/main
-          git branch --track main origin/main || true
-
-      - name: Setup MSVC Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1.10.0
-
-      - name: Install Ninja
-        run: choco install ninja -y
-        shell: cmd
-
-      - name: Setup vcpkg and Install Dependencies
-        uses: lukka/run-vcpkg@v11.5
-        with:
-          vcpkgJsonGlob: vcpkg.json
-
-      - name: Configure CMake
-        run: cmake -S . -B build --preset=release
-
-      - name: Build Project
-        run: cmake --build build --config Release
-
-      - name: Verify Build Artifacts
-        run: |
-          $dllFile = "build/release/PlayerVoiceEvents.dll"
-          $pdbFile = "build/release/PlayerVoiceEvents.pdb"
-          
-          if (-Not (Test-Path $dllFile)) {
-              Write-Error "Build failed: PlayerVoiceEvents.dll not found!"
-              exit 1
-          }
-          
-          if (-Not (Test-Path $pdbFile)) {
-              Write-Error "Build failed: PlayerVoiceEvents.pdb not found!"
-              exit 1
-          }
-        shell: pwsh
-
-      - name: Create ZIP Archive of Output Folder
-        run: |
-          Compress-Archive -Path build/release/* -DestinationPath PlayerVoiceEvents.zip
-        shell: pwsh
-
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.ref_name }}
-          name: "PlayerVoiceEvents ${{ github.ref_name }}"
-          body: "Automatically compiled..."
-          draft: false
-          prerelease: false
-          artifacts: "PlayerVoiceEvents.zip"
+          mkdir vcpkg && cd vcpkg
+          git clone https://github.com/microsoft/vcpkg.git .
+          ./bootstrap-vcpkg.bat
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
 
-      - name: Upload Artifact for Debugging
-        uses: actions/upload-artifact@v4
+      - name: Configure CMake Presets
+        run: cmake --preset release
+        env:
+          CMAKE_TOOLCHAIN_FILE: ${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
+
+      - name: Build Plugin
+        run: cmake --build build/release --config Release
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: PlayerVoiceEvents-Nightly
-          path: PlayerVoiceEvents.zip
+          name: PlayerVoiceEvents
+          path: build/release
