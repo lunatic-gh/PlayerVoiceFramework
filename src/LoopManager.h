@@ -6,7 +6,9 @@ namespace PVE {
     class LoopManager {
     public:
         LoopManager() = default;
-        ~LoopManager() { StopAll(); }
+        ~LoopManager() {
+            StopAll();
+        }
 
         void Start(const std::string& id, const std::function<void()>& fnct);
 

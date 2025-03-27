@@ -1,12 +1,12 @@
 {
-  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
-  "name": "player-voice-events",
-  "version-string": "0.7",
-  "dependencies": [
-    "commonlibsse-ng",
-    {
-      "name": "nlohmann-json",
-      "version>=": "3.11.3#1"
-    }
-  ]
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "player-voice-events",
+    "version-string": "0.7",
+    "dependencies": [
+        "commonlibsse-ng",
+        {
+            "name": "nlohmann-json",
+            "version>=": "3.11.3#1"
+        }
+    ]
 }

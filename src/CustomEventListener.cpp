@@ -11,7 +11,6 @@ namespace PVE {
         Utils::PlaySound(std::format("PVELocationLeave{}", locationName));
     }
 
-
     void CustomEventListener::Register() {
         loopManager.StartNew("OnPlayerChangeLocation", [] {
             for (auto loc : locations) {

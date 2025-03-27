@@ -1,5 +1,4 @@
 #pragma once
-#include "Main.h"
 
 namespace PVE {
     class CustomEventListener {

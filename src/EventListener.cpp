@@ -1,7 +1,7 @@
 #include "EventListener.h"
 
-#include "Main.h"
 #include "Utils.h"
+
 namespace PVE {
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESPlayerBowShotEvent *event, RE::BSTEventSource<RE::TESPlayerBowShotEvent> *) {
         Utils::PlaySound("PVEAttackBow", event->shotPower < 1.0f ? "PVEAttackBowLow" : "");

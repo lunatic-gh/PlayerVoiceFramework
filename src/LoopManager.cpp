@@ -48,5 +48,7 @@ namespace PVE {
         Utils::Log("Stopped all running loops.");
     }
 
-    bool LoopManager::IsRunning(const std::string& id) const { return loops.contains(id); }
+    bool LoopManager::IsRunning(const std::string& id) const {
+        return loops.contains(id);
+    }
 }
