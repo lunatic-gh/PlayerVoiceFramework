@@ -58,8 +58,19 @@ namespace PVE {
         if (const auto actor = event->actor) {
             if (actor->IsPlayerRef()) {
                 if (type == SKSE::ActionEvent::Type::kWeaponSwing) {
-                    Utils::PlaySound("PVEPowerAttackMelee");
-
+                    bool b = false;
+                    if (const auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
+                        if (const auto high = currentProcess->high) {
+                            if (const auto attackData = high->attackData) {
+                                Utils::PlaySound(attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack) ? "PVEPowerAttackMelee" : "PVEAttackMelee");
+                                b = true;
+                            }
+                        }
+                    }
+                    if (!b) {
+                        // Fallback
+                        Utils::PlaySound("PVEAttackMelee");
+                    }
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
                     Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", Utils::Replace(source->GetName(), " ", "")));
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
