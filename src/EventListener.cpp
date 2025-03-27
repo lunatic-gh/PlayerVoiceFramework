@@ -40,10 +40,7 @@ namespace PVE {
             const RE::TESObjectREFR *holder = event->holder;
             if (strcmp(event->tag.c_str(), "SoundPlay.NPCHumanCombatShieldBash") == 0) {
                 if (holder->IsPlayerRef()) {
-                    RE::Actor *actor = RE::PlayerCharacter::GetSingleton();
-                    const float currentStamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina);
-                    const float maxStamina = actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina);
-                    Utils::PlaySound("PVEBash", (maxStamina != 0.0f && currentStamina / maxStamina < 0.25f) ? "PVEBashStaminaLow" : "");
+                    Utils::PlaySound("PVEBash");
                     return RE::BSEventNotifyControl::kContinue;
                 }
             } else if (strcmp(event->tag.c_str(), "JumpUp") == 0) {
@@ -61,19 +58,8 @@ namespace PVE {
         if (const auto actor = event->actor) {
             if (actor->IsPlayerRef()) {
                 if (type == SKSE::ActionEvent::Type::kWeaponSwing) {
-                    if (const auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
-                        if (const auto high = currentProcess->high) {
-                            if (const auto attackData = high->attackData) {
-                                const float stamina = actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) /
-                                                      actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina);
-                                if (attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack)) {
-                                    Utils::PlaySound("PVEPowerAttackMelee", stamina < 0.25f ? "PVEPowerAttackMeleeStaminaLow" : "");
-                                } else {
-                                    Utils::PlaySound("PVEAttackMelee", stamina == 0 ? "PVEAttackMeleeStaminaOut" : stamina < 0.25f ? "PVEAttackMeleeStaminaLow" : "");
-                                }
-                            }
-                        }
-                    }
+                    Utils::PlaySound("PVEPowerAttackMelee");
+
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
                     Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", Utils::Replace(source->GetName(), " ", "")));
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
@@ -150,9 +136,7 @@ namespace PVE {
                 auto [fst, snd] = std::get<1>(questData);
                 const auto refQuest = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESQuest>(snd, fst);
                 if (refQuest && refQuest->GetFormID() == event->formID) {
-                    std::thread([questData, stage] {
-                        Utils::PlaySound(std::format("PVEQuestStageCompleted{}_{}", std::get<0>(questData), stage));
-                    }).detach();
+                    std::thread([questData, stage] { Utils::PlaySound(std::format("PVEQuestStageCompleted{}_{}", std::get<0>(questData), stage)); }).detach();
                 }
             }
         }

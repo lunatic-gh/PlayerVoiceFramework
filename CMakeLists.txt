@@ -1,30 +1,34 @@
 cmake_minimum_required(VERSION 3.21)
 
-project("PlayerVoiceEvents" VERSION 1.0 LANGUAGES CXX)
+project("PlayerVoiceEvents" VERSION 0.7 LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-set(sources
-        src/Main.cpp
+set(headers
         src/Main.h
-        src/PapyrusFunctions.cpp
         src/PapyrusFunctions.h
-        src/EventListener.cpp
         src/EventListener.h
-        src/CustomEventListener.cpp
         src/CustomEventListener.h
-        src/Plugin.cpp
-        src/Utils.cpp
         src/Utils.h
-        src/SoundEvent.cpp
         src/SoundEvent.h
         src/Logger.h
-        src/LoopManager.cpp
         src/LoopManager.h
+        src/ConditionManager.h
+)
+
+set(sources
+        src/Plugin.cpp
+        src/Main.cpp
+        src/PapyrusFunctions.cpp
+        src/EventListener.cpp
+        src/CustomEventListener.cpp
+        src/Utils.cpp
+        src/SoundEvent.cpp
+        src/LoopManager.cpp
 )
 
 find_package(CommonLibSSE CONFIG REQUIRED)
-add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${sources})
+add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${headers} ${sources})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE PCH.h)
 

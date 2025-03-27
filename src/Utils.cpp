@@ -102,8 +102,25 @@ namespace PVE {
             Log("Error: Could not parse Voice-Pack Configuration - Please make sure it is in proper json-format.");
             return;
         }
-        std::map<std::string, SoundEvent> soundEvents;
-        for (auto &[key, value] : json["sounds"].items()) {
+        for (const auto &[key, value] : json["sounds"].items()) {
+            std::vector<std::pair<std::string, std::vector<std::string>>> audios;
+            if (value.contains("audio") && value.at("audio").is_array()) {
+                for (auto audio : value.at("audio").get<std::vector<nlohmann::basic_json<>>>()) {
+                    std::string condition = "";
+                    std::vector<std::string> files;
+                    if (!audio.contains("files") || !audio["files"].is_array() || audio["files"].empty()) {
+                        continue;
+                    }
+                    files = audio.at("files").get<std::vector<std::string>>();
+                    if (audio.contains("condition") && audio.at("condition").is_string() && !audio.at("condition").get<std::string>().empty()) {
+                        condition = audio.at("condition").get<std::string>();
+                    }
+                    audios.push_back(std::make_pair(condition, files));
+                }
+            }
+            if (audios.empty()) {
+                continue;
+            }
             SoundEvent soundEvent(
                 value.contains("chance") && value.at("chance").is_number_integer() ? value.at("chance").get<int>() : 100,
                 value.contains("cooldown") && value.at("cooldown").is_number_float() ? value.at("cooldown").get<float>() : 0.0f,
@@ -111,7 +128,7 @@ namespace PVE {
                 value.contains("forceOverrideOthers") && value.at("forceOverrideOthers").is_boolean() ? value.at("forceOverrideOthers").get<bool>() : false,
                 value.contains("delay") && value.at("delay").is_number_float() ? value.at("delay").get<float>() : 0.0f,
                 value.contains("volume") && value.at("volume").is_number_float() ? value.at("volume").get<float>() : 1.0f,
-                value.contains("files") && value.at("files").is_array() ? value.at("files").get<std::vector<std::string>>() : std::vector<std::string>());
+                audios);
             registeredSoundEvents[key] = soundEvent;
             cooldownMap[key] = false;
             Log(std::format("Loaded Sound-Data for '{}'", key));
@@ -135,16 +152,15 @@ namespace PVE {
         std::string s = strcmp(subSoundEventName.c_str(), "") == 0 ? soundEventName : subSoundEventName;
         Log(std::format("Received Event '{}'", s));
         SoundEvent event;
-        if (subEventIt != registeredSoundEvents.end() && !subEventIt->second.GetAudioFiles().empty()) {
+        if (subEventIt != registeredSoundEvents.end()) {
             event = subEventIt->second;
-        } else if (eventIt != registeredSoundEvents.end() && !eventIt->second.GetAudioFiles().empty()) {
+        } else if (eventIt != registeredSoundEvents.end()) {
             event = eventIt->second;
         } else {
             return;
         }
         std::thread([event, soundEventName, player]() mutable {
             float delaySeconds = event.GetDelay();
-            // Wait until
             while (delaySeconds > 0.0f) {
                 if (!RE::UI::GetSingleton()->GameIsPaused() && player->Is3DLoaded()) {
                     delaySeconds -= 0.05f;
@@ -157,9 +173,10 @@ namespace PVE {
                         if (currentSound.has_value()) {
                             currentSound->Stop();
                         }
-                        currentSound.emplace(event);
-                        event.Play();
-                        cooldownMap[soundEventName] = event.GetCooldown();
+                        if (event.Play()) {
+                            currentSound.emplace(event);
+                            cooldownMap[soundEventName] = event.GetCooldown();
+                        }
                     }
                 }
             }

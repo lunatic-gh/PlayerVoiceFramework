@@ -6,81 +6,24 @@
       "canBeOverridden": true,
       "forceOverrideOthers": true,
       "volume": 1.0,
-      "files": [
-        "Default/Melee Attacks/00.wav",
-        "Default/Melee Attacks/01.wav",
-        "Default/Melee Attacks/02.wav",
-        "Default/Melee Attacks/03.wav",
-        "Default/Melee Attacks/04.wav"
-      ]
-    },
-    "PVEPowerAttackMelee": {
-      "chance": 100,
-      "cooldown": 0.0,
-      "canBeOverridden": true,
-      "forceOverrideOthers": false,
-      "volume": 1.0,
-      "files": [
-        "Default/Melee Power Attacks/00.wav",
-        "Default/Melee Power Attacks/01.wav",
-        "Default/Melee Power Attacks/02.wav",
-        "Default/Melee Power Attacks/03.wav",
-        "Default/Melee Power Attacks/04.wav"
-      ]
-    },
-    "PVEUnsheathe": {
-      "chance": 100,
-      "cooldown": 10.0,
-      "canBeOverridden": false,
-      "forceOverrideOthers": false,
-      "volume": 1.0,
-      "delay": 0.0,
-      "files": [
-        "Default/Unsheathe/00.wav",
-        "Default/Unsheathe/01.wav",
-        "Default/Unsheathe/02.wav",
-        "Default/Unsheathe/03.wav",
-        "Default/Unsheathe/04.wav"
-      ]
-    },
-    "PVESheathe": {
-      "chance": 100,
-      "cooldown": 0.0,
-      "canBeOverridden": false,
-      "forceOverrideOthers": false,
-      "volume": 1.0,
-      "files": [
-        "Default/Sheathe/00.wav",
-        "Default/Sheathe/01.wav",
-        "Default/Sheathe/02.wav",
-        "Default/Sheathe/03.wav",
-        "Default/Sheathe/04.wav"
-      ]
-    },
-    "PVEDeath": {
-      "chance": 100,
-      "cooldown": 0.0,
-      "canBeOverridden": false,
-      "forceOverrideOthers": true,
-      "volume": 1.0,
-      "files": [
-        "Default/Death/00.wav",
-        "Default/Death/01.wav",
-        "Default/Death/02.wav",
-        "Default/Death/03.wav",
-        "Default/Death/04.wav"
-      ]
-    },
-    "PVEReceivedHit": {
-      "chance": 100,
-      "cooldown": 0.0,
-      "canBeOverridden": false,
-      "forceOverrideOthers": false,
-      "volume": 1.0,
-      "files": [
-        "Default/Getting Hit/00.wav",
-        "Default/Getting Hit/01.wav",
-        "Default/Getting Hit/02.wav"
+      "audio": [
+        {
+          "condition": "GetPlayerStaminaPercentage < 20",
+          "files": [
+            "Default/Melee Attacks/00.wav"
+          ]
+        },
+        {
+          "condition": "GetPlayerStaminaPercentage < 40",
+          "files": [
+            "Default/Melee Attacks/01.wav"
+          ]
+        },
+        {
+          "files": [
+            "Default/Melee Attacks/02.wav"
+          ]
+        }
       ]
     }
   }

@@ -1,0 +1,28 @@
+// This is a list of all conditions that can be used for all the events in the config.
+// They are also documented, so you know how they're used.
+[
+  // Returns: Player Health Percentage (0.0 - 100.0)
+  // Return-Type: Float
+  "GetPlayerHealthPercentage",
+  // Returns: Player Stamina Percentage (0.0 - 100.0)
+  // Return-Type: Float
+  "GetPlayerStaminaPercentage",
+  // Returns: Player Magicka Percentage (0.0 - 100.0)
+  // Return-Type: Float
+  "GetPlayerMagickaPercentage",
+  // Returns: Type of equipped weapon in the left hand
+  // Return-Type: Integer
+  "GetPlayerEquippedWeaponTypeLeft",
+  // Returns: Type of equipped weapon in the right hand
+  // Return-Type: Integer
+  "GetPlayerEquippedWeaponTypeRight",
+  // Returns: Player Race Name
+  // Return-Type: String
+  "GetPlayerRace",
+  // Returns: Player Sex (Gender)
+  // Return-Type: Integer (Male: 0, Female: 1, Unknown: -1)
+  "GetPlayerSex",
+  // Returns: Player Name
+  // Return-Type: String
+  "GetPlayerName"
+]

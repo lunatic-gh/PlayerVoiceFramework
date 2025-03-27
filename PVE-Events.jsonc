@@ -2,16 +2,11 @@
 // - The "KEY" notes the base-category. For instance, "AttackMelee" is the base-category for melee-attacks.
 // - The Values (if present) note separate optional sub-categories. NOTE THAT NOT EVERY CATEGORY HAS SUB-CATEGORIES!
 //   - Those sub-categories (ONLY WHEN USED) will take priority above their base-category in specific situations.
-//   - For example, If "AttackMelee" has a sub-category "AttackMeleeStaminaLow", when used this means that when you're at low stamina, the mod will play the low-stamina voice/sound in place of the default one.
+//   - For example, If "PVEAttackBow" has a sub-category "PVEAttackBowLow", when used this means that when shooting a bow not fully drawn, the mod will play the Low voice/sound in place of the default one.
 //   - If no sub-category is used (or none matches the current situation), the mod will just use the default one.
 {
-  "PVEAttackMelee": [
-    "PVEAttackMeleeStaminaLow",
-    "PVEAttackMeleeStaminaOut"
-  ],
-  "PVEPowerAttackMelee": [
-    "PVEPowerAttackMeleeStaminaLow"
-  ],
+  "PVEAttackMelee": [],
+  "PVEPowerAttackMelee": [],
   "PVEAttackBow": [
     "PVEAttackBowLow"
   ],
@@ -25,9 +20,7 @@
     "PVESheatheSpell",
     "PVESheatheMelee"
   ],
-  "PVEBash": [
-    "PVEBashStaminaLow"
-  ],
+  "PVEBash": [],
   "PVEDeath": [],
   "PVEReceivedHit": [
     "PVEReceivedPowerHit"

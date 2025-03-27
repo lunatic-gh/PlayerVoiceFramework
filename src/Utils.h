@@ -42,6 +42,13 @@ namespace PVE {
 
         static std::vector<std::string> SplitByChar(const std::string &input, const char &delimiter);
 
+        static std::string TrimString(const std::string &s) {
+            auto view = std::string_view(s);
+            view.remove_prefix(std::min(s.find_first_not_of(" \t\r\v\n"), s.size()));
+            view.remove_suffix(std::min(s.size() - s.find_last_not_of(" \t\r\v\n") - 1, s.size()));
+            return std::string(view);
+        }
+
     private:
         static void CompileAndRun(RE::Script *script, RE::TESObjectREFR *targetRef, const RE::COMPILER_NAME name = RE::COMPILER_NAME::kSystemWindowCompiler);
 
