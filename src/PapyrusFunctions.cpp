@@ -2,6 +2,7 @@
 
 #include "PapyrusFunctions.h"
 
+#include "ConditionManager.h"
 #include "SoundEvent.h"
 #include "Utils.h"
 
@@ -23,12 +24,16 @@ namespace PVE {
     std::string PapyrusFunctions::Replace(RE::StaticFunctionTag *, std::string text, std::string oldSeq, std::string newSeq) {
         return Utils::Replace(text, oldSeq, newSeq);
     }
+    void PapyrusFunctions::RegisterCondition(RE::StaticFunctionTag *, std::string name, std::string value) {
+        return ConditionManager::RegisterCondition(name, [value] { return value; });
+    }
 
     bool PapyrusFunctions::Funcs(RE::BSScript::IVirtualMachine *vm) {
         vm->RegisterFunction("PlaySound", "LNTC_PVESKSEFunctions", PlaySound);
         vm->RegisterFunction("StopSound", "LNTC_PVESKSEFunctions", StopSound);
         vm->RegisterFunction("Log", "LNTC_PVESKSEFunctions", Log);
         vm->RegisterFunction("Replace", "LNTC_PVESKSEFunctions", Replace);
+        vm->RegisterFunction("RegisterCondition", "LNTC_PVESKSEFunctions", RegisterCondition);
         return true;
     }
 

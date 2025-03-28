@@ -8,7 +8,7 @@ namespace PVE {
         /**
          * Internal Function for registering built-in functions.
          */
-        static void Register() {
+        static void Init() {
             RegisterCondition("GetPlayerHealthPercentage", [] {
                 const auto actorValueOwner = RE::PlayerCharacter::GetSingleton()->AsActorValueOwner();
                 const float f1 = actorValueOwner->GetActorValue(RE::ActorValue::kHealth);

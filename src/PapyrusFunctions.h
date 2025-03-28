@@ -13,5 +13,7 @@ namespace PVE {
         static void Log(RE::StaticFunctionTag *, std::string msg);
 
         static std::string Replace(RE::StaticFunctionTag *, std::string text, std::string oldSeq, std::string newSeq);
+
+        static void RegisterCondition(RE::StaticFunctionTag *, std::string name, std::string value);
     };
 }
