@@ -233,14 +233,14 @@ namespace PVE {
         const float y = player->GetPositionY();
 
         auto [locName, worldspaceName, locX, locY, locRadiusEnter, locRadiusLeave] = locData;
-        if (player->GetWorldspace() != nullptr && player->GetWorldspace()->GetFullName() == worldspaceName) {
+        if (player->GetWorldspace() && player->GetWorldspace()->GetFullName() == worldspaceName) {
             const float dist = CalculateDistance(x, y, locX, locY);
-            if (dist < locRadiusEnter && locName != currentLocation) {
-                currentLocation = locName;
+            if (!currentLocation.has_value() || dist < locRadiusEnter && locName != currentLocation.value()) {
+                currentLocation.emplace(locName);
                 return 2;
             }
-            if (dist > (locRadiusLeave) && locName == currentLocation) {
-                currentLocation = "";
+            if (currentLocation.has_value() && dist > (locRadiusLeave) && locName == currentLocation.value()) {
+                currentLocation.emplace("");
                 return 1;
             }
         }

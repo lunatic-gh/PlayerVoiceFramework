@@ -10,7 +10,7 @@ namespace PVE {
     inline std::vector<std::tuple<std::string, std::string, float, float, float, float>> locations;
     inline std::vector<std::tuple<std::string, std::pair<std::string, int>>> quests;
     inline std::optional<RE::TESWorldSpace *> currentWorldspace;
-    inline std::string currentLocation;
+    inline std::optional<std::string> currentLocation;
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
     inline std::optional<SoundEvent> currentSound;
     inline std::map<std::string, float> cooldownMap;
