@@ -14,6 +14,12 @@ namespace PVE {
 
         static std::string Replace(RE::StaticFunctionTag *, std::string text, std::string oldSeq, std::string newSeq);
 
-        static void RegisterCondition(RE::StaticFunctionTag *, std::string name, std::string value);
+        static void RegisterFloatCondition(RE::StaticFunctionTag *, std::string name, float value);
+
+        static void RegisterIntCondition(RE::StaticFunctionTag *, std::string name, int value);
+
+        static void RegisterBoolCondition(RE::StaticFunctionTag *, std::string name, bool value);
+
+        static void RegisterStringCondition(RE::StaticFunctionTag *, std::string name, std::string value);
     };
 }

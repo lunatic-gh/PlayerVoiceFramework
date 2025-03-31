@@ -13,7 +13,7 @@ set(headers
         src/SoundEvent.h
         src/Logger.h
         src/LoopManager.h
-        src/ConditionManager.h
+        src/ConditionParser.h
 )
 
 set(sources

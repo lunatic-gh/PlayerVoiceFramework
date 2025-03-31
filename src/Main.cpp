@@ -1,6 +1,6 @@
 #include "Main.h"
 
-#include "ConditionManager.h"
+#include "ConditionParser.h"
 #include "CustomEventListener.h"
 #include "EventListener.h"
 
@@ -12,7 +12,7 @@ namespace PVE {
         Utils::Log("Registering Misc Event-Sink...");
         CustomEventListener::Register();
         Utils::Log("Registering Event-Conditions...");
-        ConditionManager::Init();
+        ConditionParser::Init();
         loopManager.StartNew("Cooldowns", [] {
             while (cooldownMap.empty()) {
                 std::this_thread::sleep_for(std::chrono::seconds(1));

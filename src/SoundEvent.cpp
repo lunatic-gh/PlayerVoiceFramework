@@ -1,6 +1,6 @@
 #include "SoundEvent.h"
 
-#include "ConditionManager.h"
+#include "ConditionParser.h"
 #include "Utils.h"
 
 namespace PVE {
@@ -18,7 +18,7 @@ namespace PVE {
 
     bool SoundEvent::Play() {
         for (auto [condition, files] : this->audios) {
-            if (!ConditionManager::EvaluateConditions(condition)) {
+            if (!ConditionParser::EvaluateCondition(condition)) {
                 continue;
             }
             std::random_device randomDev;
