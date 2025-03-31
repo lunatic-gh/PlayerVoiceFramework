@@ -254,6 +254,12 @@ namespace PVE {
         while (std::getline(ss, s, delimiter)) result.push_back(s);
         return result;
     }
+    std::string Utils::TrimString(const std::string &s) {
+        auto view = std::string_view(s);
+        view.remove_prefix(std::min(s.find_first_not_of(" \t\r\v\n"), s.size()));
+        view.remove_suffix(std::min(s.size() - s.find_last_not_of(" \t\r\v\n") - 1, s.size()));
+        return std::string(view);
+    }
 
     void Utils::CompileAndRun(RE::Script *script, RE::TESObjectREFR *targetRef, const RE::COMPILER_NAME name) {
         RE::ScriptCompiler compiler;
