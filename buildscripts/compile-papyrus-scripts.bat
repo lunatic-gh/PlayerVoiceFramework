@@ -26,7 +26,7 @@ IF EXIST "nl_online" (
 )
 
 :: Compile Scripts
-".\pyro\pyro" -i skyrimse.ppj --compiler-path tools/PapyrusCompiler.exe
+"./pyro/pyro.exe" --compiler-path "./papyrus-compiler/PapyrusCompiler.exe" -i skyrimse.ppj
 
 :: Cleanup
 IF EXIST "papyrus-include" (
