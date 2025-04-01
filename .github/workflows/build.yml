@@ -1,7 +1,6 @@
 name: Build Mod
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -39,7 +38,7 @@ jobs:
           body: |
             This has been automatically built by GitHub Actions.
           draft: false
-          prerelease: false
+          prerelease: true
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
