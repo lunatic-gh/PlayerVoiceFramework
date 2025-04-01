@@ -10,6 +10,8 @@ vcpkg_configure_cmake(
         SOURCE_PATH "${SOURCE_PATH}"
         PREFER_NINJA
         OPTIONS -DBUILD_TESTS=off -DSKSE_SUPPORT_XBYAK=on
+        MAYBE_UNUSED_VARIABLES
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 )
 
 vcpkg_install_cmake()
