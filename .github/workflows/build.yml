@@ -16,4 +16,5 @@ jobs:
         shell: cmd
         run: |
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          dir
+          cmake -DCMAKE_BUILD_TYPE=Release --preset release -S . -B build/release
+          cmake --build build/release --target all -j 14
