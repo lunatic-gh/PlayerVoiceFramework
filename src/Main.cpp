@@ -14,10 +14,10 @@ namespace PVE {
         Utils::Log("Registering Event-Conditions...");
         ConditionParser::Init();
         loopManager.StartNew("Cooldowns", [] {
-            while (cooldownMap.empty()) {
+            while (eventCooldowns.empty()) {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
-            for (auto& cd : cooldownMap | std::views::values) {
+            for (auto& cd : eventCooldowns | std::views::values) {
                 if (cd == 0.0f || RE::UI::GetSingleton()->GameIsPaused() || !RE::PlayerCharacter::GetSingleton()->Is3DLoaded()) {
                     continue;
                 }

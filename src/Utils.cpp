@@ -130,7 +130,7 @@ namespace PVE {
                 value.contains("volume") && value.at("volume").is_number_float() ? value.at("volume").get<float>() : 1.0f,
                 audios);
             registeredSoundEvents[key] = soundEvent;
-            cooldownMap[key] = false;
+            eventCooldowns[key] = false;
             Log(std::format("Loaded Sound-Data for '{}'", key));
         }
         Log("Done Loading...");
@@ -168,14 +168,14 @@ namespace PVE {
                 }
             }
             if (!currentSound.has_value() || !currentSound->IsPlaying() || (currentSound->CanBeOverridden() || event.IsForceOverrideOthers())) {
-                if (cooldownMap[soundEventName] == 0.0f) {
+                if (eventCooldowns[soundEventName] == 0.0f) {
                     if (GenerateRandomInt(0, 99) < event.GetChance()) {
                         if (currentSound.has_value()) {
                             currentSound->Stop();
                         }
                         if (event.Play()) {
                             currentSound.emplace(event);
-                            cooldownMap[soundEventName] = event.GetCooldown();
+                            eventCooldowns[soundEventName] = event.GetCooldown();
                         }
                     }
                 }

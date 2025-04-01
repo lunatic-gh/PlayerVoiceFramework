@@ -17,14 +17,13 @@ namespace PVE {
         }
         if (target && target->IsPlayerRef()) {
             if (!target->IsDead()) {
-                if (event->flags.any(RE::TESHitEvent::Flag::kHitBlocked)) {
+                if (target->As<RE::Actor>()->IsBlocking()) {
                     Utils::PlaySound("PVEBlockReceivedHit", event->flags.any(RE::TESHitEvent::Flag::kPowerAttack) ? "PVEBlockReceivedPowerHit" : "");
                 } else {
                     if (cause && cause->As<RE::Actor>() && cause->As<RE::Actor>()->IsPlayerTeammate() && source && source->Is(RE::FormType::Spell) &&
                         Utils::FormHasKeywordString(source, "MagicRestoreHealth")) {
                         Utils::PlaySound("PVEReceivedFriendlyHeal");
                     } else {
-                        // if (cause && (!cause->As<RE::Actor>()->IsInKillMove()) || cause->GetFormType() != RE::FormType::ActorCharacter) {
                         if (!cause || (!cause->Is(RE::FormType::ActorCharacter) || cause->As<RE::Actor>()->IsInKillMove())) {
                             Utils::PlaySound("PVEReceivedHit", event->flags.any(RE::TESHitEvent::Flag::kPowerAttack) ? "PVEReceivedPowerHit" : "");
                         }
@@ -140,14 +139,22 @@ namespace PVE {
         }
         return RE::BSEventNotifyControl::kContinue;
     }
+
     RE::BSEventNotifyControl DefaultEventSink::ProcessEvent(const RE::TESQuestStageEvent *event, RE::BSTEventSource<RE::TESQuestStageEvent> *) {
         if (event->formID != 0) {
-            auto stage = event->stage;
+            const auto stage = event->stage;
             for (auto questData : quests) {
                 auto [fst, snd] = std::get<1>(questData);
                 const auto refQuest = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESQuest>(snd, fst);
                 if (refQuest && refQuest->GetFormID() == event->formID) {
-                    std::thread([questData, stage] { Utils::PlaySound(std::format("PVEQuestStageCompleted{}_{}", std::get<0>(questData), stage)); }).detach();
+                    if (std::ranges::find(questStageCooldowns, stage) == questStageCooldowns.end()) {
+                        questStageCooldowns.push_back(stage);
+                        Utils::PlaySound(std::format("PVEQuestStageCompleted{}_{}", std::get<0>(questData), stage));
+                        std::thread([stage] {
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                            std::erase(questStageCooldowns, stage);
+                        }).detach();
+                    }
                 }
             }
         }

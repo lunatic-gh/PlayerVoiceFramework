@@ -21,10 +21,7 @@ namespace PVE {
             if (!ConditionParser::EvaluateCondition(condition)) {
                 continue;
             }
-            std::random_device randomDev;
-            std::mt19937 randomGen(randomDev());
-            std::uniform_int_distribution<> randomRange(0, static_cast<int>(files.size() - 1));
-            const std::string file = files.at(randomRange(randomGen));
+            const auto file = files.at(Utils::GenerateRandomInt(0, static_cast<int>(files.size() - 1)));
             RE::BSResource::ID id;
             id.GenerateFromPath(std::format("Sound/PlayerVoiceEvents/SoundData/{}", file).c_str());
             RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);

@@ -13,7 +13,8 @@ namespace PVE {
     inline std::optional<std::string> currentLocation;
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
     inline std::optional<SoundEvent> currentSound;
-    inline std::map<std::string, float> cooldownMap;
+    inline std::map<std::string, float> eventCooldowns;
+    inline std::vector<int> questStageCooldowns;
 
     class Utils {
     public:
@@ -25,13 +26,13 @@ namespace PVE {
 
         static std::string Replace(const std::string &text, const std::string &oldSeq, const std::string &newSeq);
 
-        static int GenerateRandomInt(const int minInclusive, const int maxInclusive);
+        static int GenerateRandomInt(int minInclusive, int maxInclusive);
 
         static void RunConsoleCommand(const std::string &command);
 
         static bool FormHasKeywordString(RE::TESForm *form, const std::string &keyword);
 
-        static float CalculateDistance(const float x1, const float y1, const float x2, const float y2);
+        static float CalculateDistance(float x1, float y1, float x2, float y2);
 
         /**
          * This queries if the player-location has changed for the location from locData.
@@ -45,7 +46,7 @@ namespace PVE {
         static std::string TrimString(const std::string &s);
 
     private:
-        static void CompileAndRun(RE::Script *script, RE::TESObjectREFR *targetRef, const RE::COMPILER_NAME name = RE::COMPILER_NAME::kSystemWindowCompiler);
+        static void CompileAndRun(RE::Script *script, RE::TESObjectREFR *targetRef, RE::COMPILER_NAME name = RE::COMPILER_NAME::kSystemWindowCompiler);
 
         static void CompileAndRunImpl(RE::Script *script, RE::ScriptCompiler *compiler, RE::COMPILER_NAME name, RE::TESObjectREFR *targetRef);
 
