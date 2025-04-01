@@ -1,13 +1,10 @@
+// ReSharper disable CppPassValueParameterByConstReference
 #include "PapyrusFunctions.h"
 
 #include "ConditionParser.h"
 #include "SoundEvent.h"
 #include "Utils.h"
 
-/**
- * Every IDE-Warning related to "const references" should be ignored for this class.
- * Even if your IDE tells you that params can be a const, THEY CAN NOT.
- */
 namespace PVE {
     void PapyrusFunctions::PlaySound(RE::StaticFunctionTag *, std::string category, std::string subCategory) {
         Utils::PlaySound(category, subCategory);

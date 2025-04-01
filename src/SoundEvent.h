@@ -30,8 +30,6 @@ namespace PVE {
 
         [[nodiscard]] float GetVolume();
 
-        // std::string GetCondition();
-
     private:
         static inline RE::BSSoundHandle handle;
         int chance = 100;

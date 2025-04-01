@@ -1,3 +1,4 @@
+// ReSharper disable CppMemberFunctionMayBeStatic
 #include "SoundEvent.h"
 
 #include "ConditionParser.h"

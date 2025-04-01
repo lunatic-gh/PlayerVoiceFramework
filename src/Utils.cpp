@@ -39,7 +39,7 @@ namespace PVE {
                         float locY = json.at("locY").get<float>();
                         float locDistEnter = json.at("locDistEnter").get<float>();
                         float locDistLeave = json.at("locDistLeave").get<float>();
-                        locations.push_back(std::make_tuple(name, worldspace, locX, locY, locDistEnter, locDistLeave));
+                        locations.emplace_back(name, worldspace, locX, locY, locDistEnter, locDistLeave);
                         Log(std::format("Loaded Location-Data for '{}'", name));
                     } else {
                         Log(std::format("Warning: Ignoring Data File '{}', because it has missing or corrupted data. Please check it for errors.",
@@ -77,7 +77,7 @@ namespace PVE {
                         auto name = json.at("name").get<std::string>();
                         auto split = SplitByChar(json.at("questRef").get<std::string>(), '|');
                         auto questRef = std::make_pair(split[0], std::stoi(split[1], nullptr, 16));
-                        quests.push_back(std::make_tuple(name, questRef));
+                        quests.emplace_back(name, questRef);
                         Log(std::format("Loaded Quest-Data for '{}'", name));
                     } else {
                         Log(std::format("Warning: Ignoring Data File '{}', because it has missing or corrupted data. Please check it for errors.",
@@ -106,7 +106,7 @@ namespace PVE {
             std::vector<std::pair<std::string, std::vector<std::string>>> audios;
             if (value.contains("audio") && value.at("audio").is_array()) {
                 for (auto audio : value.at("audio").get<std::vector<nlohmann::basic_json<>>>()) {
-                    std::string condition = "";
+                    std::string condition;
                     std::vector<std::string> files;
                     if (!audio.contains("files") || !audio["files"].is_array() || audio["files"].empty()) {
                         continue;
@@ -115,7 +115,7 @@ namespace PVE {
                     if (audio.contains("condition") && audio.at("condition").is_string() && !audio.at("condition").get<std::string>().empty()) {
                         condition = audio.at("condition").get<std::string>();
                     }
-                    audios.push_back(std::make_pair(condition, files));
+                    audios.emplace_back(condition, files);
                 }
             }
             if (audios.empty()) {
@@ -261,6 +261,7 @@ namespace PVE {
         return std::string(view);
     }
 
+    // ReSharper disable once CppDFAConstantParameter
     void Utils::CompileAndRun(RE::Script *script, RE::TESObjectREFR *targetRef, const RE::COMPILER_NAME name) {
         RE::ScriptCompiler compiler;
         CompileAndRunImpl(script, &compiler, name, targetRef);
