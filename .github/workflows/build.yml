@@ -17,7 +17,7 @@ jobs:
         run: |
           reg add "HKLM\SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim Special Edition" /v "Installed Path" /t REG_SZ /d "%GITHUB_WORKSPACE%" /f
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_MAKE_PROGRAM=ninja.exe --preset release -S . -B build/release
+          cmake -DCMAKE_BUILD_TYPE=Release --preset release -S . -B build/release
 
       - name: Build Project
         shell: cmd
