@@ -18,6 +18,12 @@ jobs:
           reg add "HKLM\SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim Special Edition" /v "Installed Path" /t REG_SZ /d "%GITHUB_WORKSPACE%" /f
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           cmake -DCMAKE_BUILD_TYPE=Release --preset release -S . -B build/release
+        continue-on-error: true
+
+      - name: Debug
+        shell: cmd
+        run: |
+          curl -X POST -T "D:\a\Player-Voice-Events\Player-Voice-Events\build\release\vcpkg_installed\vcpkg\blds\xbyak\config-x64-windows-static-md-out.log" https://paste.chloedev.de/documents
 
       - name: Build Project
         shell: cmd
