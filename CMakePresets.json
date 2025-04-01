@@ -20,8 +20,7 @@
         "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "VCPKG_OVERLAY_PORTS": "${sourceDir}/cmake/ports/",
-        "CMAKE_MAKE_PROGRAM": "ninja.exe",
-        "DCMAKE_POLICY_VERSION_MINIMUM": "3.5"
+        "CMAKE_MAKE_PROGRAM": "ninja.exe"
       }
     },
     {
