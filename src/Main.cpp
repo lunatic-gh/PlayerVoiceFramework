@@ -25,6 +25,18 @@ namespace PVE {
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
         });
+        loopManager.StartNew("LipHandler", [] {
+            if (currentSound && currentSound.has_value()) {
+                auto sound = currentSound.value();
+                if (sound.GetHandle().GetDuration() >= 450) {
+                    Utils::Log("Playing Lip Dummy...");
+                    Utils::RunConsoleCommand("player.speaksound \"PlayerVoiceEvents/SoundData/PVE/lip_dummy.lip\"");
+                    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+                    return;
+                }
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        });
     }
 
     void Main::Load() {
