@@ -41,6 +41,6 @@ namespace PVE {
         float delay = 0.0f;
         float volume = 1.0f;
         std::vector<std::pair<std::string, std::vector<std::string>>> audios = std::vector<std::pair<std::string, std::vector<std::string>>>();
-        bool isLipped = false;
+        bool isLipped = true;
     };
 }
