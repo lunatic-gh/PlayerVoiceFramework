@@ -13,3 +13,6 @@ call "%~dp0\compile-papyrus-scripts.bat"
 
 :: Create Release
 call "%~dp0\create-release.bat"
+
+:: Create MO2 Mod
+call "%~dp0\create-mod.bat"
