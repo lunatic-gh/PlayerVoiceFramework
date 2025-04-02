@@ -6,7 +6,7 @@ namespace PVE {
         explicit SoundEvent() = default;
 
         explicit SoundEvent(int chance, float cooldown, bool canBeOverridden, bool forceOverrideOthers, float delay, float volume,
-                            const std::vector<std::pair<std::string, std::vector<std::string>>> &files);
+                            const std::vector<std::pair<std::string, std::vector<std::string>>> &files, const bool isLipped);
 
         bool Play();
 
@@ -30,6 +30,8 @@ namespace PVE {
 
         [[nodiscard]] float GetVolume();
 
+        [[nodiscard]] bool IsLipped();
+
     private:
         static inline RE::BSSoundHandle handle;
         int chance = 100;
@@ -39,5 +41,6 @@ namespace PVE {
         float delay = 0.0f;
         float volume = 1.0f;
         std::vector<std::pair<std::string, std::vector<std::string>>> audios = std::vector<std::pair<std::string, std::vector<std::string>>>();
+        bool isLipped = false;
     };
 }

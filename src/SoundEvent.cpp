@@ -7,7 +7,7 @@
 namespace PVE {
 
     SoundEvent::SoundEvent(const int chance, const float cooldown, const bool canBeOverridden, const bool forceOverrideOthers, const float delay, const float volume,
-                           const std::vector<std::pair<std::string, std::vector<std::string>>>& files) {
+                           const std::vector<std::pair<std::string, std::vector<std::string>>>& files, const bool isLipped) {
         this->chance = chance;
         this->cooldown = cooldown;
         this->canBeOverridden = canBeOverridden;
@@ -15,6 +15,7 @@ namespace PVE {
         this->delay = delay;
         this->volume = volume;
         this->audios = files;
+        this->isLipped = isLipped;
     }
 
     bool SoundEvent::Play() {
@@ -77,7 +78,7 @@ namespace PVE {
         return this->volume;
     }
 
-    // std::string SoundEvent::GetCondition() {
-    //     return this->condition;
-    // }
+    bool SoundEvent::IsLipped() {
+        return this->isLipped;
+    }
 }

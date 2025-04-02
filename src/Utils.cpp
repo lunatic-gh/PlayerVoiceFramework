@@ -128,7 +128,8 @@ namespace PVE {
                 value.contains("forceOverrideOthers") && value.at("forceOverrideOthers").is_boolean() ? value.at("forceOverrideOthers").get<bool>() : false,
                 value.contains("delay") && value.at("delay").is_number_float() ? value.at("delay").get<float>() : 0.0f,
                 value.contains("volume") && value.at("volume").is_number_float() ? value.at("volume").get<float>() : 1.0f,
-                audios);
+                audios,
+                value.contains("lipped") && value.at("lipped").is_boolean() ? value.at("lipped").get<bool>() : true);
             registeredSoundEvents[key] = soundEvent;
             eventCooldowns[key] = false;
             Log(std::format("Loaded Sound-Data for '{}'", key));
