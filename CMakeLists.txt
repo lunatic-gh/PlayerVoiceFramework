@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project("PlayerVoiceEvents" VERSION 0.7 LANGUAGES CXX)
+project("PlayerVoiceEvents" VERSION 0.8 LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
