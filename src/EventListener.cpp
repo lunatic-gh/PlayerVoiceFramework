@@ -62,13 +62,11 @@ namespace PVE {
                     if (const auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
                         if (const auto high = currentProcess->high) {
                             if (const auto attackData = high->attackData) {
-                                ConditionParser::RegisterDynamicCondition("PVEAttackMelee", "GetTest", [] { return "Foo"; });
                                 Utils::PlaySound(attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack) ? "PVEPowerAttackMelee" : "PVEAttackMelee");
                                 return RE::BSEventNotifyControl::kContinue;
                             }
                         }
                     }
-                    ConditionParser::RegisterDynamicCondition("PVEAttackMelee", "GetTest", [] { return "Foo"; });
                     Utils::PlaySound("PVEAttackMelee");
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
                     Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", Utils::Replace(source->GetName(), " ", "")));
