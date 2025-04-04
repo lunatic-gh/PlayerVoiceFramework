@@ -4,9 +4,6 @@
   "version-string": "0.8",
   "dependencies": [
     "commonlibsse-ng",
-    {
-      "name": "nlohmann-json",
-      "version>=": "3.11.3#1"
-    }
+    "nlohmann-json"
   ]
 }

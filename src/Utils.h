@@ -8,7 +8,6 @@
 namespace PVE {
 
     inline std::vector<std::tuple<std::string, std::pair<std::string, int>>> quests;
-    inline std::map<std::string, std::tuple<std::string, float, float, float>> mapMarkers;
     inline std::optional<RE::TESWorldSpace *> currentWorldspace;
     inline std::optional<std::string> currentLocation;
     inline std::map<std::string, SoundEvent> registeredSoundEvents;

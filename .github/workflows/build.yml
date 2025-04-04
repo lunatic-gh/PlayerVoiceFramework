@@ -12,6 +12,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          # Cmake 4.0.0 broke support for building <3.5 projects, which seem to be A LOT.
+          cmake-version: '3.31.6'
+      - name: Use cmake
+        run: cmake --version
+
       - name: Setup Environment
         shell: cmd
         run: |
