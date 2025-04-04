@@ -16,3 +16,11 @@ Function RegisterIntCondition(String _name, Int _value) Global Native
 Function RegisterBoolCondition(String _name, Bool _value) Global Native
 
 Function RegisterStringCondition(String _name, String _value) Global Native
+
+Function RegisterDynamicFloatCondition(String _name, Float _value) Global Native
+
+Function RegisterDynamicIntCondition(String _name, Int _value) Global Native
+
+Function RegisterDynamicBoolCondition(String _name, Bool _value) Global Native
+
+Function RegisterDynamicStringCondition(String _name, String _value) Global Native

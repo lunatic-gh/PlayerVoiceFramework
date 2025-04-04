@@ -18,20 +18,32 @@ namespace PVE {
         this->isLipped = isLipped;
     }
 
-    bool SoundEvent::Play() {
-        for (auto [condition, files] : this->audios) {
-            if (!ConditionParser::EvaluateCondition(condition)) {
-                continue;
+    bool SoundEvent::Play(const std::string& eventName) {
+        if (!currentSound.has_value() || !currentSound->IsPlaying() || (currentSound->CanBeOverridden() || forceOverrideOthers)) {
+            if (eventCooldowns[eventName] == 0.0f) {
+                if (Utils::GenerateRandomInt(0, 99) < chance) {
+                    for (auto [condition, files] : this->audios) {
+                        if (ConditionParser::EvaluateCondition(eventName, condition)) {
+                            // we can safely remove the dynamic conditions for this event, since they have been evaluated to true already
+                            ConditionParser::ResetDynamicConditions(eventName);
+                            if (currentSound.has_value()) {
+                                currentSound->Stop();
+                            }
+                            const auto file = files.at(Utils::GenerateRandomInt(0, static_cast<int>(files.size() - 1)));
+                            RE::BSResource::ID id;
+                            id.GenerateFromPath(std::format("Sound/PlayerVoiceEvents/SoundData/{}", file).c_str());
+                            RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
+                            handle.SetVolume(this->volume);
+                            handle.SetObjectToFollow(RE::PlayerCharacter::GetSingleton()->GetCurrent3D());
+                            handle.Play();
+                            Utils::Log(std::format("Played sound '{}'", file));
+                            currentSound.emplace(*this);
+                            eventCooldowns[eventName] = this->cooldown;
+                            return true;
+                        }
+                    }
+                }
             }
-            const auto file = files.at(Utils::GenerateRandomInt(0, static_cast<int>(files.size() - 1)));
-            RE::BSResource::ID id;
-            id.GenerateFromPath(std::format("Sound/PlayerVoiceEvents/SoundData/{}", file).c_str());
-            RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
-            handle.SetVolume(this->volume);
-            handle.SetObjectToFollow(RE::PlayerCharacter::GetSingleton()->GetCurrent3D());
-            handle.Play();
-            Utils::Log(std::format("Played sound '{}'", file));
-            return true;
         }
         return false;
     }

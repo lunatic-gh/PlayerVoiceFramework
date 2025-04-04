@@ -7,8 +7,8 @@
 
 namespace PVE {
 
-    inline std::vector<std::tuple<std::string, std::string, float, float, float, float>> locations;
     inline std::vector<std::tuple<std::string, std::pair<std::string, int>>> quests;
+    inline std::map<std::string, std::tuple<std::string, float, float, float>> mapMarkers;
     inline std::optional<RE::TESWorldSpace *> currentWorldspace;
     inline std::optional<std::string> currentLocation;
     inline std::map<std::string, SoundEvent> registeredSoundEvents;
@@ -39,11 +39,28 @@ namespace PVE {
          * @param locData the location data to query for.
          * @return 1 If the given location was left, 2 if it was entered, 0 if nothing changed.
          */
-        static int QueryLocationChange(const std::tuple<std::string, std::string, float, float, float, float> &locData);
+        static int QueryLocationChange(const std::pair<std::string, std::tuple<std::string, float, float, float>> &locData);
 
         static std::vector<std::string> SplitByChar(const std::string &input, const char &delimiter);
 
         static std::string TrimString(const std::string &s);
+
+        template <class T>
+        static RE::TESObjectREFR *GetMapMarkerFromObject(RE::TESObjectREFR *a_refr) {
+            if (const auto marker = a_refr ? a_refr->extraList.GetByType<RE::ExtraMapMarker>() : nullptr) {
+                if (const auto mapData = marker->mapData) {
+                    Utils::Log(
+                        std::format("Found candidate map marker {} {}", mapData->locationName.GetFullName(), mapData->flags.any(RE::MapMarkerData::Flag::kCanTravelTo)));
+                    Utils::Log(std::format("Found mapmarker match for {} target {} {} ({:X})",
+                                           typeid(T).name(),
+                                           mapData->locationName.GetFullName(),
+                                           mapData->flags.any(RE::MapMarkerData::Flag::kCanTravelTo),
+                                           a_refr->GetFormID()));
+                    return a_refr;
+                }
+            }
+            return nullptr;
+        }
 
     private:
         static void CompileAndRun(RE::Script *script, RE::TESObjectREFR *targetRef, RE::COMPILER_NAME name = RE::COMPILER_NAME::kSystemWindowCompiler);

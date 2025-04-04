@@ -1,10 +1,11 @@
 /Tools
 /Scripts/*.pex
-/SKSE/
-/.vscode/
-/build/
-/pyro/
-/.idea/
+/SKSE
+/.vscode
+/build
+/pyro
+/.idea
 /release
-/.run/
+/.run
 /Start-Game.bat
+/Dev-Pack

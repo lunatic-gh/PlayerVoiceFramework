@@ -69,11 +69,6 @@
     "PVELocationEnterCityWindhelm",
     "PVELocationEnterCityRiften"
   ],
-  // This will only get called for locations that have been registered in "Sound/PlayerVoiceEvents/LocationData", in order to provide compatibility with location-mods.
-  // See that folder for examples
-  "PVELocationEnter<Name>": [],
-  // See above
-  "PVELocationLeave<Name>": [],
   // This will only get called for quests that have been registered in "Sound/PlayerVoiceEvents/QuestData", in order to avoid the mod having to check for thousands of quests
   // See that folder for examples
   "PVEQuestStageCompleted<Name>_<Stage>": []

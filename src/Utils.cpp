@@ -7,49 +7,6 @@
 
 namespace PVE {
     void Utils::LoadData() {
-        // Load Location Data
-        const std::string locDataDirPath = "Data/Sound/PlayerVoiceEvents/LocationData";
-        for (const auto &entry : std::filesystem::directory_iterator(locDataDirPath)) {
-            if (entry.is_regular_file()) {
-                std::string ext = entry.path().extension().string();
-                if (ext == ".json") {
-                    std::ifstream locDataFile(entry.path());
-                    if (!locDataFile.is_open()) {
-                        Log(std::format("Warning: Could not open File '{}'", entry.path().string()));
-                        continue;
-                    }
-                    nlohmann::json json;
-                    try {
-                        locDataFile >> json;
-                    } catch (const nlohmann::json::parse_error &) {
-                        Log(std::format("Warning: Could not open File '{}' - Please make sure it is in proper json-format.", entry.path().string()));
-                        continue;
-                    }
-
-                    if (!(json.contains("enabled") && json.at("enabled").is_boolean() ? json.at("enabled").get<bool>() : true)) {
-                        continue;
-                    }
-                    if (json.contains("name") && json.at("name").is_string() && json.contains("worldspace") && json.at("worldspace").is_string() &&
-                        json.contains("locX") && json.at("locX").is_number_float() && json.contains("locY") && json.at("locY").is_number_float() &&
-                        json.contains("locDistEnter") && json.at("locDistEnter").is_number_float() && json.contains("locDistLeave") &&
-                        json.at("locDistLeave").is_number_float()) {
-                        auto name = json.at("name").get<std::string>();
-                        auto worldspace = json.at("worldspace").get<std::string>();
-                        float locX = json.at("locX").get<float>();
-                        float locY = json.at("locY").get<float>();
-                        float locDistEnter = json.at("locDistEnter").get<float>();
-                        float locDistLeave = json.at("locDistLeave").get<float>();
-                        locations.emplace_back(name, worldspace, locX, locY, locDistEnter, locDistLeave);
-                        Log(std::format("Loaded Location-Data for '{}'", name));
-                    } else {
-                        Log(std::format("Warning: Ignoring Data File '{}', because it has missing or corrupted data. Please check it for errors.",
-                                        entry.path().string()));
-                    }
-                    locDataFile.close();
-                }
-            }
-        }
-
         // Load Quest Data
         const std::string questDataDirPath = "Data/Sound/PlayerVoiceEvents/QuestData";
         for (const auto &entry : std::filesystem::directory_iterator(questDataDirPath)) {
@@ -73,6 +30,7 @@ namespace PVE {
                     if (!(json.contains("enabled") && json.at("enabled").is_boolean() ? json.at("enabled").get<bool>() : true)) {
                         continue;
                     }
+
                     if (json.contains("name") && json.at("name").is_string() && json.contains("questRef") && json.at("questRef").is_string()) {
                         auto name = json.at("name").get<std::string>();
                         auto split = SplitByChar(json.at("questRef").get<std::string>(), '|');
@@ -168,19 +126,7 @@ namespace PVE {
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 }
             }
-            if (!currentSound.has_value() || !currentSound->IsPlaying() || (currentSound->CanBeOverridden() || event.IsForceOverrideOthers())) {
-                if (eventCooldowns[soundEventName] == 0.0f) {
-                    if (GenerateRandomInt(0, 99) < event.GetChance()) {
-                        if (currentSound.has_value()) {
-                            currentSound->Stop();
-                        }
-                        if (event.Play()) {
-                            currentSound.emplace(event);
-                            eventCooldowns[soundEventName] = event.GetCooldown();
-                        }
-                    }
-                }
-            }
+            event.Play(soundEventName);
         }).detach();
     }
 
@@ -227,23 +173,25 @@ namespace PVE {
         return std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
-    int Utils::QueryLocationChange(const std::tuple<std::string, std::string, float, float, float, float> &locData) {
+    int Utils::QueryLocationChange(const std::pair<std::string, std::tuple<std::string, float, float, float>> &locData) {
         const auto player = RE::PlayerCharacter::GetSingleton();
 
         const float x = player->GetPositionX();
         const float y = player->GetPositionY();
 
-        auto [locName, worldspaceName, locX, locY, locRadiusEnter, locRadiusLeave] = locData;
-        if (player->GetWorldspace() && player->GetWorldspace()->GetFullName() == worldspaceName) {
+        auto locName = locData.first;
+        if (auto [locWorldSpace, locX, locY, locRadius] = locData.second; player->GetWorldspace() && player->GetWorldspace()->GetFullName() == locWorldSpace) {
             const float dist = CalculateDistance(x, y, locX, locY);
-            if (!currentLocation.has_value() || dist < locRadiusEnter && locName != currentLocation.value()) {
+            if ((!currentLocation.has_value() || currentLocation.value() != locName) && dist < locRadius) {
+                Log(std::format("Enter '{}'", locName));
                 currentLocation.emplace(locName);
                 return 2;
             }
-            if (currentLocation.has_value() && dist > (locRadiusLeave) && locName == currentLocation.value()) {
-                currentLocation.emplace("");
-                return 1;
-            }
+            // if (currentLocation.has_value() && locName == currentLocation.value() && dist > (locRadius * 1.15)) {
+            //     Log(std::format("Leave '{}'", currentLocation.value()));
+            //     currentLocation.emplace("");
+            //     return 1;
+            // }
         }
         return 0;
     }

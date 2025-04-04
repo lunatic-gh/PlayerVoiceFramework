@@ -1,9 +1,0 @@
-{
-  "name": "Helgen",
-  "worldspace": "Skyrim",
-  "enabled": true,
-  "locX": 18352.0,
-  "locY": -79532.0,
-  "locDistEnter": 5000.0,
-  "locDistLeave": 5400.0
-}

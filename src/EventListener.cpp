@@ -1,5 +1,6 @@
 #include "EventListener.h"
 
+#include "ConditionParser.h"
 #include "Utils.h"
 
 namespace PVE {
@@ -61,15 +62,14 @@ namespace PVE {
                     if (const auto currentProcess = actor->GetActorRuntimeData().currentProcess) {
                         if (const auto high = currentProcess->high) {
                             if (const auto attackData = high->attackData) {
+                                ConditionParser::RegisterDynamicCondition("PVEAttackMelee", "GetTest", [] { return "Foo"; });
                                 Utils::PlaySound(attackData->data.flags.any(RE::AttackData::AttackFlag::kPowerAttack) ? "PVEPowerAttackMelee" : "PVEAttackMelee");
-                                b = true;
+                                return RE::BSEventNotifyControl::kContinue;
                             }
                         }
                     }
-                    if (!b) {
-                        // Fallback
-                        Utils::PlaySound("PVEAttackMelee");
-                    }
+                    ConditionParser::RegisterDynamicCondition("PVEAttackMelee", "GetTest", [] { return "Foo"; });
+                    Utils::PlaySound("PVEAttackMelee");
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellCast) {
                     Utils::PlaySound("PVESpellCast", std::format("PVESpellCast{}", Utils::Replace(source->GetName(), " ", "")));
                 } else if (source && type == SKSE::ActionEvent::Type::kSpellFire) {
@@ -203,16 +203,8 @@ namespace PVE {
                 }
                 currentWorldspace.emplace(worldspace);
                 const std::string s = actor->GetWorldspace()->GetName();
-                if (s == "Whiterun") {
-                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityWhiterun");
-                } else if (s == "Solitude") {
-                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCitySolitude");
-                } else if (s == "Markarth") {
-                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityMarkarth");
-                } else if (s == "Windhelm") {
-                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityWindhelm");
-                } else if (s == "Riften") {
-                    Utils::PlaySound("PVELocationEnterCity", "PVELocationEnterCityRiften");
+                if (s == "Whiterun" || s == "Solitude" || s == "Markarth" || s == "Windhelm" || s == "Riften") {
+                    Utils::PlaySound("PVELocationEnterCity", std::format("PVELocationEnterCity{}", s));
                 }
             }).detach();
         }

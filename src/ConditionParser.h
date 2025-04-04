@@ -7,6 +7,8 @@
 #include <variant>
 #include <vector>
 
+#include "Utils.h"
+
 namespace PVE {
 
     class ConditionParser {
@@ -14,67 +16,114 @@ namespace PVE {
 
     public:
         static void Init() {
-            RegisterCondition("GetPlayerHealthPercentage", [] {
+            RegisterCondition("PlayerHealthPercentage", [] {
                 const auto actorValueOwner = RE::PlayerCharacter::GetSingleton()->AsActorValueOwner();
                 const float f1 = actorValueOwner->GetActorValue(RE::ActorValue::kHealth);
                 const float f2 = actorValueOwner->GetPermanentActorValue(RE::ActorValue::kHealth);
                 return (f1 / f2) * 100.0f;
             });
-            RegisterCondition("GetPlayerStaminaPercentage", [] {
+            RegisterCondition("PlayerStaminaPercentage", [] {
                 const auto actorValueOwner = RE::PlayerCharacter::GetSingleton()->AsActorValueOwner();
                 const float f1 = actorValueOwner->GetActorValue(RE::ActorValue::kStamina);
                 const float f2 = actorValueOwner->GetPermanentActorValue(RE::ActorValue::kStamina);
                 return (f1 / f2) * 100.0f;
             });
-            RegisterCondition("GetPlayerMagickaPercentage", [] {
+            RegisterCondition("PlayerMagickaPercentage", [] {
                 const auto actorValueOwner = RE::PlayerCharacter::GetSingleton()->AsActorValueOwner();
                 const float f1 = actorValueOwner->GetActorValue(RE::ActorValue::kMagicka);
                 const float f2 = actorValueOwner->GetPermanentActorValue(RE::ActorValue::kMagicka);
                 return (f1 / f2) * 100.0f;
             });
-            RegisterCondition("GetPlayerEquippedWeaponTypeLeft", [] {
+            RegisterCondition("PlayerEquippedWeaponTypeLeft", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
                 if (actor->GetEquippedObject(true)->Is(RE::FormType::Weapon)) {
                     return static_cast<int>(actor->GetEquippedObject(true)->As<RE::TESObjectWEAP>()->GetWeaponType());
                 }
                 return -1;
             });
-            RegisterCondition("GetPlayerEquippedWeaponTypeRight", [] {
+            RegisterCondition("PlayerEquippedWeaponTypeRight", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
                 if (actor->GetEquippedObject(false)->Is(RE::FormType::Weapon)) {
                     return static_cast<int>(actor->GetEquippedObject(false)->As<RE::TESObjectWEAP>()->GetWeaponType());
                 }
                 return -1;
             });
-            RegisterCondition("GetPlayerRace", [] {
+            RegisterCondition("PlayerRace", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
                 if (actor->GetRace()) {
                     return actor->GetRace()->GetName();
                 }
                 return "";
             });
-            RegisterCondition("GetPlayerSex", [] {
+            RegisterCondition("PlayerSex", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
                 if (actor->GetActorBase()) {
                     return static_cast<int>(actor->GetActorBase()->GetSex());
                 }
                 return -1;
             });
-            RegisterCondition("GetPlayerName", [] {
+            RegisterCondition("PlayerName", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
                 return actor->GetName();
             });
+            RegisterCondition("PlayerPosX", [] {
+                const auto actor = RE::PlayerCharacter::GetSingleton();
+                return actor->GetPositionX();
+            });
+            RegisterCondition("PlayerPosY", [] {
+                const auto actor = RE::PlayerCharacter::GetSingleton();
+                return actor->GetPositionY();
+            });
+            RegisterCondition("PlayerPosZ", [] {
+                const auto actor = RE::PlayerCharacter::GetSingleton();
+                return actor->GetPositionZ();
+            });
+            RegisterCondition("PlayerLocationName", [] {
+                const auto actor = RE::PlayerCharacter::GetSingleton();
+                if (actor->GetCurrentLocation()) {
+                    return actor->GetCurrentLocation()->GetFullName();
+                }
+                return "";
+            });
+            RegisterCondition("PlayerLocationKeywords", [] {
+                auto actor = RE::PlayerCharacter::GetSingleton();
+                if (actor->GetCurrentLocation()) {
+                    std::string s;
+                    auto keywords = actor->GetCurrentLocation()->GetKeywords();
+                    for (int i = 0; i < keywords.size(); ++i) {
+                        s += keywords[i]->GetFormEditorID();
+                        if (i != keywords.size() - 1) {
+                            s += "|";
+                        }
+                    }
+                    return s;
+                }
+                return std::string("");
+            });
+            RegisterCondition("PlayerCellName", [] {
+                const auto actor = RE::PlayerCharacter::GetSingleton();
+                if (actor->GetParentCell()) {
+                    return actor->GetParentCell()->GetFormEditorID();
+                }
+                return "";
+            });
         }
 
-        static void RegisterCondition(const std::string &name, const std::function<Value()> &fnct) {
-            conditions[name] = fnct;
+        static void RegisterCondition(const std::string &conditionName, const std::function<Value()> &conditionFunction) {
+            conditions[conditionName] = conditionFunction;
         }
 
-        static void UnregisterCondition(const std::string &name) {
-            conditions.erase(name);
+        static void RegisterDynamicCondition(const std::string &eventName, const std::string &conditionName, const std::function<Value()> &conditionFunction) {
+            Utils::Log("Register");
+            dynamicConditions[eventName][conditionName] = conditionFunction;
         }
 
-        static bool EvaluateCondition(const std::string &condition) {
+        static void ResetDynamicConditions(const std::string &eventName) {
+            Utils::Log("Reset");
+            dynamicConditions.erase(eventName);
+        }
+
+        static bool EvaluateCondition(const std::string &eventName, const std::string &condition) {
             if (condition.empty()) {
                 return true;
             }
@@ -85,7 +134,7 @@ namespace PVE {
                 std::cerr << "Parse error in condition.\n";
                 return false;
             }
-            return expr->eval();
+            return expr->eval(eventName);
         }
 
     private:
@@ -187,7 +236,7 @@ namespace PVE {
         public:
             virtual ~Expr() = default;
 
-            [[nodiscard]] virtual bool eval() const = 0;
+            [[nodiscard]] virtual bool eval(const std::string &eventName) const = 0;
         };
 
         class LogicalExpr : public Expr {
@@ -200,11 +249,11 @@ namespace PVE {
 
             LogicalExpr(std::unique_ptr<Expr> l, std::unique_ptr<Expr> r, Op o) : left(std::move(l)), right(std::move(r)), op(o) {}
 
-            bool eval() const override {
+            bool eval(const std::string &eventName) const override {
                 if (op == Op::And)
-                    return left->eval() && right->eval();
+                    return left->eval(eventName) && right->eval(eventName);
                 else
-                    return left->eval() || right->eval();
+                    return left->eval(eventName) || right->eval(eventName);
             }
         };
 
@@ -216,11 +265,24 @@ namespace PVE {
 
             CondExpr(const std::string &v, const std::string &o, const Value &lit) : var(v), op(o), literal(lit) {}
 
-            bool eval() const override {
-                auto it = conditions.find(var);
-                if (it == conditions.end()) return false;
+            bool eval(const std::string &eventName) const override {
+                std::map<std::string, std::function<Value()>> map = conditions;
+                if (dynamicConditions.contains(eventName)) {
+                    // Overlay dynamic conditions on top of global ones
+                    for (auto [k, v] : dynamicConditions[eventName]) {
+                        map[k] = v;
+                    }
+                }
+
+                auto it = map.find(var);
+                if (it == map.end()) {
+                    return false;
+                }
                 const auto &val = it->second();
-                if (val.index() != literal.index()) return false;
+
+                if (val.index() != literal.index()) {
+                    return false;
+                }
                 if (std::holds_alternative<float>(val)) {
                     float lhs = std::get<float>(val);
                     float rhs = std::get<float>(literal);
@@ -239,11 +301,13 @@ namespace PVE {
                     if (op == "<=") return lhs <= rhs;
                     if (op == ">") return lhs > rhs;
                     if (op == ">=") return lhs >= rhs;
+                    return false;
                 } else if (std::holds_alternative<bool>(val)) {
                     bool lhs = std::get<bool>(val);
                     bool rhs = std::get<bool>(literal);
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
+                    return false;
                 } else if (std::holds_alternative<std::string>(val)) {
                     const std::string &lhs = std::get<std::string>(val);
                     const std::string &rhs = std::get<std::string>(literal);
@@ -254,6 +318,7 @@ namespace PVE {
                     if (op == ">") return lhs > rhs;
                     if (op == ">=") return lhs >= rhs;
                     if (op == "*=") return lhs.contains(rhs);
+                    return false;
                 }
                 return false;
             }
@@ -338,5 +403,6 @@ namespace PVE {
             }
         };
         inline static std::map<std::string, std::function<Value()>> conditions;
+        inline static std::map<std::string, std::map<std::string, std::function<Value()>>> dynamicConditions;
     };
 }

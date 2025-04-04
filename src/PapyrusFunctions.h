@@ -21,5 +21,13 @@ namespace PVE {
         static void RegisterBoolCondition(RE::StaticFunctionTag *, std::string name, bool value);
 
         static void RegisterStringCondition(RE::StaticFunctionTag *, std::string name, std::string value);
+
+        static void RegisterDynamicFloatCondition(RE::StaticFunctionTag *, std::string eventName, std::string name, float value);
+
+        static void RegisterDynamicIntCondition(RE::StaticFunctionTag *, std::string eventName, std::string name, int value);
+
+        static void RegisterDynamicBoolCondition(RE::StaticFunctionTag *, std::string eventName, std::string name, bool value);
+
+        static void RegisterDynamicStringCondition(RE::StaticFunctionTag *, std::string eventName, std::string name, std::string value);
     };
 }

@@ -8,7 +8,7 @@ namespace PVE {
         explicit SoundEvent(int chance, float cooldown, bool canBeOverridden, bool forceOverrideOthers, float delay, float volume,
                             const std::vector<std::pair<std::string, std::vector<std::string>>> &files, const bool isLipped);
 
-        bool Play();
+        bool Play(const std::string &eventName);
 
         void Stop();
 
