@@ -1,0 +1,144 @@
+// DONT MODIFY THIS!!!
+// DONT MODIFY THIS!!!
+// DONT MODIFY THIS!!!
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PlayerVoiceEvents Main Pack-Config JSON Schema",
+  "description": "JSON-Schema for the main Pack-File.",
+  "type": "object",
+  "properties": {
+    "sounds": {
+      "type": "object",
+      "description": "The Events to register",
+      "properties": {
+        "PVEAttackMelee": {
+          "type": "object",
+          "properties": {
+            "chance": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "The probability of the event playing a sound."
+            },
+            "cooldown": {
+              "type": "number",
+              "minimum": 0,
+              "description": "The cooldown of the event after playing a file"
+            },
+            "canBeOverridden": {
+              "type": "boolean",
+              "description": "If true, other sounds can override this if playing at the same time"
+            },
+            "forceOverrideOthers": {
+              "type": "boolean",
+              "description": "If true, will ignore \"canBeOverridden\" on any playing sounds, and force-play"
+            },
+            "volume": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "The volume modifier of the event - It is recommended to configure volume in the files themselves instead of here"
+            },
+            "audio": {
+              "type": "array",
+              "description": "A list of audio packs to evaluate in order",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "condition": {
+                    "type": "string",
+                    "description": "The condition that specifies whether to play this pack should play",
+                    "examples": [
+                      "PlayerHealthPercentage >= 50 && PlayerName == 'MyPlayerName'"
+                    ]
+                  },
+                  "files": {
+                    "type": "array",
+                    "description": "The file paths to audio files, relative from this config's directory",
+                    "items": {
+                      "type": "string"
+                    },
+                    minItems: 1
+                  }
+                },
+                "required": [
+                  "files"
+                ],
+              }
+            }
+          },
+          "required": [
+            "audio"
+          ],
+        },
+        "PVEAttackBow": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEUnsheathe": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVESheathe": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEBash": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEDeath": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEReceivedHit": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEFinisher": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVECastSpell": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEFireSpell": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVESit": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEGetUp": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVESleep": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEJump": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEMount": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEDismount": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVESprintIdle": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEPickupItem": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEShout": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEQuestStageCompleted": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEChangeCell": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVEEnterMarker": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "sounds"
+  ]
+}
