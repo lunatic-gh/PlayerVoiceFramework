@@ -74,10 +74,16 @@
         "PVEAttackBow": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
-        "PVEUnsheathe": {
+        "PVEUnsheatheMelee": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
-        "PVESheathe": {
+        "PVEUnsheatheSpell": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVESheatheMelee": {
+          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
+        },
+        "PVESheatheSpell": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
         "PVEBash": {
