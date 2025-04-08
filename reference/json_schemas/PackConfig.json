@@ -13,6 +13,7 @@
       "properties": {
         "PVEAttackMelee": {
           "type": "object",
+          "title": "Event",
           "properties": {
             "chance": {
               "type": "integer",
@@ -35,8 +36,7 @@
             },
             "volume": {
               "type": "number",
-              "minimum": 0,
-              "maximum": 1,
+              "default": 1.0,
               "description": "The volume modifier of the event - It is recommended to configure volume in the files themselves instead of here"
             },
             "audio": {
@@ -47,6 +47,7 @@
                 "properties": {
                   "condition": {
                     "type": "string",
+                    "title": "Expression",
                     "description": "The condition that specifies whether to play this pack should play",
                     "examples": [
                       "PlayerHealthPercentage >= 50 && PlayerName == 'MyPlayerName'"
@@ -56,7 +57,8 @@
                     "type": "array",
                     "description": "The file paths to audio files, relative from this config's directory",
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "title": "File Path"
                     },
                     minItems: 1
                   }
@@ -74,13 +76,13 @@
         "PVEAttackBow": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
-        "PVEUnsheatheMelee": {
+        "PVEUnsheatheWeapon": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
         "PVEUnsheatheSpell": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
-        "PVESheatheMelee": {
+        "PVESheatheWeapon": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
         "PVESheatheSpell": {
@@ -99,9 +101,6 @@
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
         "PVECastSpell": {
-          "$ref": "#/properties/sounds/properties/PVEAttackMelee"
-        },
-        "PVEFireSpell": {
           "$ref": "#/properties/sounds/properties/PVEAttackMelee"
         },
         "PVESit": {
