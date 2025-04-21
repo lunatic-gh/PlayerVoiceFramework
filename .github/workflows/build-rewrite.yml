@@ -22,11 +22,12 @@ jobs:
           key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
           restore-keys: ${{ runner.os }}-vcpkg-
 
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          # Cmake 4 broke support for building <3.5 projects, which seem to be A LOT.
-          cmake-version: '3.31.6'
+      # GitHub reverted CMake to v3, so for now this isn't needed
+      #- name: Setup cmake
+      #  uses: jwlawson/actions-setup-cmake@v2
+      #  with:
+      #    # Cmake 4 broke support for building <3.5 projects, which seem to be A LOT.
+      #    cmake-version: '3.31.6'
 
       - name: Setup Environment
         shell: cmd
