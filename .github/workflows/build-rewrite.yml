@@ -19,9 +19,9 @@ jobs:
           path: |
             %GITHUB_WORKSPACE%\build
             C:\Users\runneradmin\AppData\Local\vcpkg\archives
-          key: ${{ runner.os }}-vcpkg-and-build-${{ hashFiles('**/vcpkg.json') }}
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-and-build-
+            ${{ runner.os }}-vcpkg-
 
 
             - name: Setup cmake
