@@ -2,16 +2,16 @@
 <PapyrusProject xmlns="PapyrusProject.xsd" 
     Flags="TESV_Papyrus_Flags.flg" 
     Game="sse" 
-    Output="Scripts" 
+    Output="run\Scripts"
     Optimize="false" 
     Release="false" 
     Final="false"
     Anonymize="false">
-    <Imports>
-        <Import>.\Scripts\Source</Import>
-        <Import>.\papyrus-include</Import>
-    </Imports>
     <Folders>
-        <Folder>.\Scripts\Source</Folder>
+        <Folder>.\Data\Scripts\Source</Folder>
     </Folders>
+    <Imports>
+        <Import>.\Data\Scripts\Source</Import>
+        <Import>.\tools\papyrus-include</Import>
+    </Imports>
 </PapyrusProject>

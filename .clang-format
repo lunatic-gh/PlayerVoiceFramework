@@ -1,28 +1,29 @@
----
-# This file is optional but helps me ensure the same
-# code style is used in all templates.
-#
-# You can find out more about these configuration files at:
-# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
-#
-# To use this file, configure your IDE to use "clang-format".
-# This will be different for each IDE.
-#
-# You can download "clang-format" by installing LLVM from here:
-# https://github.com/llvm/llvm-project/releases
-#
-# ^ look for the latest release which has a win64.exe installer
-#   and be sure to choose the option to add LLVM to your PATH
-#   when installing
-#
-UseTab: Never
-TabWidth: '4'
-IndentWidth: '4'
+# Base
 BasedOnStyle: Google
-AccessModifierOffset: -4
-ColumnLimit: 170
-BinPackArguments: false
+# Don't use tab characters
+UseTab: Never
+# 4 Spaces between "groups"
+TabWidth: 4
+IndentWidth: 4
+# Allow me to fucking write my code will ya?
+ColumnLimit: 300
+# Indent everything in headers
 NamespaceIndentation: All
-IndentPPDirectives: BeforeHash
+# The fuck
+AccessModifierOffset: -4
+# Breaks Functionality
+SortIncludes: Never
+# Why?
 FixNamespaceComments: false
-AllowShortFunctionsOnASingleLine: "Empty"
+SpacesBeforeTrailingComments: 1
+# I dont like single line functions
+BinPackArguments: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortLambdasOnASingleLine: None
+AllowShortBlocksOnASingleLine: Never
+AllowShortEnumsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseExpressionOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortCompoundRequirementOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
