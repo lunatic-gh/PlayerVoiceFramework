@@ -1,4 +1,4 @@
-#include "../include/PVE.h"
+#include "PVE.h"
 
 namespace PVE {
     RE::BSEventNotifyControl PublicEventSink::ProcessEvent(const SKSE::ActionEvent* a_event, RE::BSTEventSource<SKSE::ActionEvent>*) {

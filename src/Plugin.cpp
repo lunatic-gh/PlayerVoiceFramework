@@ -1,6 +1,6 @@
 // ReSharper disable CppParameterMayBeConstPtrOrRef
 
-#include "../include/PVE.h"
+#include "PVE.h"
 
 SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     // Initialize Plugin

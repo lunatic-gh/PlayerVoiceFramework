@@ -1,9 +1,9 @@
 #pragma once
 
 #ifdef PVE_EXPORTS
-#define PVE_API __declspec(dllexport)
+#define PVE_EXPORT __declspec(dllexport)
 #else
-#define PVE_API __declspec(dllimport)
+#define PVE_EXPORT __declspec(dllimport)
 #endif
 
 namespace PVE {
@@ -19,7 +19,7 @@ namespace PVE {
          * @param keyword the keyword-string to check for
          * @return
          */
-        PVE_API static bool HasKeyword(RE::TESForm* form, const std::string& keyword);
+        PVE_EXPORT static bool HasKeyword(RE::TESForm* form, const std::string& keyword);
 
         /**
          * Retrieves a form from the given Plugin-Name and FormID
@@ -27,27 +27,27 @@ namespace PVE {
          * @param formId the local form id (without the load order)
          * @return The retrieved form, or nullptr if none found
          */
-        PVE_API static RE::TESForm* FromID(const std::string& pluginName, const RE::FormID& formId);
+        PVE_EXPORT static RE::TESForm* FromID(const std::string& pluginName, const RE::FormID& formId);
 
         /**
          * Converts the given form to a string
          * @param form The Form
          * @return a stringified version of the form in the format <PluginFile>|<LocalFormID>
          */
-        PVE_API static std::string ToString(const RE::TESForm* form);
+        PVE_EXPORT static std::string ToString(const RE::TESForm* form);
 
         /**
          * Retrieves a form from the given string
          * @param formString the Plugin and Local FormID of the form, in the format <PluginFile>|<LocalFormID>
          * @return The form if found, or nullptr if none found
          */
-        PVE_API static RE::TESForm* FromString(const std::string& formString);
+        PVE_EXPORT static RE::TESForm* FromString(const std::string& formString);
 
-        PVE_API static bool CompareForms(const std::string& first, const std::string& second);
+        PVE_EXPORT static bool CompareForms(const std::string& first, const std::string& second);
 
-        PVE_API static bool CompareForms(const RE::TESForm* first, const std::string& second);
+        PVE_EXPORT static bool CompareForms(const RE::TESForm* first, const std::string& second);
 
-        PVE_API static std::string ToKeywordString(RE::TESForm* form);
+        PVE_EXPORT static std::string ToKeywordString(RE::TESForm* form);
     };
 
     /**
@@ -62,14 +62,14 @@ namespace PVE {
          * @param newSeq the new sequence to replace the old sequence with
          * @return the modified string
          */
-        PVE_API static std::string ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq);
+        PVE_EXPORT static std::string ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq);
 
         /**
          * Removes all trailing and leading whitespaces from the given string
          * @param text the string to trim
          * @return the trimmed string
          */
-        PVE_API static std::string TrimString(const std::string& text);
+        PVE_EXPORT static std::string TrimString(const std::string& text);
 
         /**
          * Splits a text by the given delimiter.
@@ -77,7 +77,7 @@ namespace PVE {
          * @param delimiter the character to split the text with
          * @return a vector containing the split parts
          */
-        PVE_API static std::vector<std::string> Split(const std::string& text, const char& delimiter);
+        PVE_EXPORT static std::vector<std::string> Split(const std::string& text, const char& delimiter);
     };
 
     /**
@@ -85,7 +85,7 @@ namespace PVE {
      */
     class Util {
     public:
-        PVE_API static void LoadData();
+        PVE_EXPORT static void LoadData();
 
         /**
          * Generates a random int between minInclusive and maxInclusive
@@ -93,7 +93,7 @@ namespace PVE {
          * @param maxInclusive Maximum value (inclusive)
          * @return Random int between min and max
          */
-        PVE_API static int RandomInt(int minInclusive, int maxInclusive);
+        PVE_EXPORT static int RandomInt(int minInclusive, int maxInclusive);
 
         /**
          * Generates a random float between minInclusive and maxInclusive
@@ -101,7 +101,7 @@ namespace PVE {
          * @param maxInclusive Maximum value (inclusive)
          * @return Random float between min and max
          */
-        PVE_API static float RandomFloat(float minInclusive, float maxInclusive);
+        PVE_EXPORT static float RandomFloat(float minInclusive, float maxInclusive);
 
         /**
          * Checks whether a container contains the given value or not.
@@ -110,7 +110,7 @@ namespace PVE {
          * @return true if the container contains the value, false otherwise
          */
         template <typename T>
-        PVE_API static bool Contains(std::vector<T> container, T value) {
+        static bool Contains(std::vector<T> container, T value) {
             return std::ranges::find(container, value) != container.end();
         }
 
@@ -118,38 +118,38 @@ namespace PVE {
          * Various logging functions
          */
         template <class... Args>
-        PVE_API static void LogInfo(spdlog::format_string_t<Args...> fmt, Args&&... args) {
+        static void LogInfo(spdlog::format_string_t<Args...> fmt, Args&&... args) {
             logger::info(fmt, std::forward<Args>(args)...);
         }
-        PVE_API static void LogInfo(const std::string& s) {
+        static void LogInfo(const std::string& s) {
             LogInfo("{}", s);
         }
         template <class... Args>
-        PVE_API static void LogWarning(spdlog::format_string_t<Args...> fmt, Args&&... args) {
+        static void LogWarning(spdlog::format_string_t<Args...> fmt, Args&&... args) {
             logger::warn(fmt, std::forward<Args>(args)...);
         }
-        PVE_API static void LogWarning(const std::string& s) {
+        static void LogWarning(const std::string& s) {
             LogWarning("{}", s);
         }
         template <class... Args>
-        PVE_API static void LogError(spdlog::format_string_t<Args...> fmt, Args&&... args) {
+        static void LogError(spdlog::format_string_t<Args...> fmt, Args&&... args) {
             logger::error(fmt, std::forward<Args>(args)...);
         }
-        PVE_API static void LogError(const std::string& s) {
+        static void LogError(const std::string& s) {
             LogError("{}", s);
         }
         template <class... Args>
-        PVE_API static void LogCritical(spdlog::format_string_t<Args...> fmt, Args&&... args) {
+        static void LogCritical(spdlog::format_string_t<Args...> fmt, Args&&... args) {
             logger::critical(fmt, std::forward<Args>(args)...);
         }
-        PVE_API static void LogCritical(const std::string& s) {
+        static void LogCritical(const std::string& s) {
             LogCritical("{}", s);
         }
         template <class... Args>
-        PVE_API static void LogDebug(spdlog::format_string_t<Args...> fmt, Args&&... args) {
+        static void LogDebug(spdlog::format_string_t<Args...> fmt, Args&&... args) {
             logger::debug(fmt, std::forward<Args>(args)...);
         }
-        PVE_API static void LogDebug(const std::string& s) {
+        static void LogDebug(const std::string& s) {
             LogDebug("{}", s);
         }
     };

@@ -1,4 +1,4 @@
-#include "../include/PVE.h"
+#include "PVE.h"
 
 namespace PVE {
     SoundManager& SoundManager::GetSingleton() {
