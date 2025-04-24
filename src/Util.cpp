@@ -21,7 +21,7 @@ namespace PVE {
     RE::TESForm* FormUtil::FromString(const std::string& formString) {
         if (!formString.empty()) {
             if (const auto dataHandler = RE::TESDataHandler::GetSingleton()) {
-                if (const auto s = StringUtil::Split(formString, '|'); s.size() >= 2) {
+                if (const auto s = StringUtil::SplitString(formString, '|'); s.size() >= 2) {
                     try {
                         return dataHandler->LookupForm(std::stoi(s[1]), s[0]);
                     } catch (...) {
@@ -32,8 +32,8 @@ namespace PVE {
         return nullptr;
     }
     bool FormUtil::CompareForms(const std::string& first, const std::string& second) {
-        const auto firstSplit = StringUtil::Split(first, '|');
-        const auto secondSplit = StringUtil::Split(second, '|');
+        const auto firstSplit = StringUtil::SplitString(first, '|');
+        const auto secondSplit = StringUtil::SplitString(second, '|');
         if (firstSplit.size() == 2 && secondSplit.size() == 2) {
             if (const auto dataHandler = RE::TESDataHandler::GetSingleton()) {
                 if (const auto firstForm = dataHandler->LookupForm(std::stoi(firstSplit[1], nullptr, 16), firstSplit[0])) {
@@ -86,7 +86,7 @@ namespace PVE {
         return std::string(view);
     }
 
-    std::vector<std::string> StringUtil::Split(const std::string& text, const char& delimiter) {
+    std::vector<std::string> StringUtil::SplitString(const std::string& text, const char& delimiter) {
         std::vector<std::string> result;
         std::stringstream ss(text);
         std::string s;

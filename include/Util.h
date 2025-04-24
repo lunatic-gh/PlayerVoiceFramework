@@ -1,10 +1,5 @@
 #pragma once
-
-#ifdef PVE_EXPORTS
-#define PVE_EXPORT __declspec(dllexport)
-#else
-#define PVE_EXPORT __declspec(dllimport)
-#endif
+#include <API.h>
 
 namespace PVE {
 
@@ -19,7 +14,7 @@ namespace PVE {
          * @param keyword the keyword-string to check for
          * @return
          */
-        PVE_EXPORT static bool HasKeyword(RE::TESForm* form, const std::string& keyword);
+        static bool HasKeyword(RE::TESForm* form, const std::string& keyword);
 
         /**
          * Retrieves a form from the given Plugin-Name and FormID
@@ -27,27 +22,27 @@ namespace PVE {
          * @param formId the local form id (without the load order)
          * @return The retrieved form, or nullptr if none found
          */
-        PVE_EXPORT static RE::TESForm* FromID(const std::string& pluginName, const RE::FormID& formId);
+        static RE::TESForm* FromID(const std::string& pluginName, const RE::FormID& formId);
 
         /**
          * Converts the given form to a string
          * @param form The Form
          * @return a stringified version of the form in the format <PluginFile>|<LocalFormID>
          */
-        PVE_EXPORT static std::string ToString(const RE::TESForm* form);
+        static std::string ToString(const RE::TESForm* form);
 
         /**
          * Retrieves a form from the given string
          * @param formString the Plugin and Local FormID of the form, in the format <PluginFile>|<LocalFormID>
          * @return The form if found, or nullptr if none found
          */
-        PVE_EXPORT static RE::TESForm* FromString(const std::string& formString);
+        static RE::TESForm* FromString(const std::string& formString);
 
-        PVE_EXPORT static bool CompareForms(const std::string& first, const std::string& second);
+        static bool CompareForms(const std::string& first, const std::string& second);
 
-        PVE_EXPORT static bool CompareForms(const RE::TESForm* first, const std::string& second);
+        static bool CompareForms(const RE::TESForm* first, const std::string& second);
 
-        PVE_EXPORT static std::string ToKeywordString(RE::TESForm* form);
+        static std::string ToKeywordString(RE::TESForm* form);
     };
 
     /**
@@ -62,14 +57,14 @@ namespace PVE {
          * @param newSeq the new sequence to replace the old sequence with
          * @return the modified string
          */
-        PVE_EXPORT static std::string ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq);
+        static std::string ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq);
 
         /**
          * Removes all trailing and leading whitespaces from the given string
          * @param text the string to trim
          * @return the trimmed string
          */
-        PVE_EXPORT static std::string TrimString(const std::string& text);
+        static std::string TrimString(const std::string& text);
 
         /**
          * Splits a text by the given delimiter.
@@ -77,7 +72,7 @@ namespace PVE {
          * @param delimiter the character to split the text with
          * @return a vector containing the split parts
          */
-        PVE_EXPORT static std::vector<std::string> Split(const std::string& text, const char& delimiter);
+        static std::vector<std::string> SplitString(const std::string& text, const char& delimiter);
     };
 
     /**
@@ -85,7 +80,7 @@ namespace PVE {
      */
     class Util {
     public:
-        PVE_EXPORT static void LoadData();
+        static void LoadData();
 
         /**
          * Generates a random int between minInclusive and maxInclusive
@@ -93,7 +88,7 @@ namespace PVE {
          * @param maxInclusive Maximum value (inclusive)
          * @return Random int between min and max
          */
-        PVE_EXPORT static int RandomInt(int minInclusive, int maxInclusive);
+        static int RandomInt(int minInclusive, int maxInclusive);
 
         /**
          * Generates a random float between minInclusive and maxInclusive
@@ -101,7 +96,7 @@ namespace PVE {
          * @param maxInclusive Maximum value (inclusive)
          * @return Random float between min and max
          */
-        PVE_EXPORT static float RandomFloat(float minInclusive, float maxInclusive);
+        static float RandomFloat(float minInclusive, float maxInclusive);
 
         /**
          * Checks whether a container contains the given value or not.

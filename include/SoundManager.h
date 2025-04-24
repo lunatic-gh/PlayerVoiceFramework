@@ -1,4 +1,5 @@
 #pragma once
+#include <API.h>
 
 namespace PVE {
     struct SoundEvent {
@@ -18,9 +19,9 @@ namespace PVE {
 
         void RegisterSoundEvent(const std::string& name, int chance, float cooldown, const std::vector<std::string>& overrideBlacklist, const std::vector<std::pair<std::string, std::vector<std::string>>>& audios);
 
-        bool PlaySoundEvent(const SoundEvent& event);
+        bool SendSoundEvent(const SoundEvent& event);
 
-        bool PlaySoundEvent(const std::string& name);
+        bool SendSoundEvent(const std::string& name);
 
         void StopCurrentSoundEvent();
 

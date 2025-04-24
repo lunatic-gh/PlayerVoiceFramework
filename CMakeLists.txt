@@ -12,6 +12,7 @@ set(headers
         include/MemoryDataStorage.h
         include/SaveDataStorage.h
         include/SoundManager.h
+        include/API.h
 )
 
 set(sources
@@ -19,6 +20,7 @@ set(sources
         src/EventHandler.cpp
         src/SoundManager.cpp
         src/Util.cpp
+        src/API.cpp
 )
 
 find_package(CommonLibSSE CONFIG REQUIRED)
@@ -58,4 +60,4 @@ install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-targets)
 install(EXPORT ${PROJECT_NAME}-targets NAMESPACE ${PROJECT_NAME}:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 configure_file(cmake/config.cmake.in "${PROJECT_NAME}Config.cmake" @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-install(FILES ${headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+install(FILES "include/API.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")

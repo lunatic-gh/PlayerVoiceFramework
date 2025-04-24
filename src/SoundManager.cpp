@@ -10,7 +10,7 @@ namespace PVE {
         this->registeredSoundEvents[name] = SoundEvent{name, chance, cooldown, overrideBlacklist, audios};
     }
 
-    bool SoundManager::PlaySoundEvent(const SoundEvent& event) {
+    bool SoundManager::SendSoundEvent(const SoundEvent& event) {
         static std::thread cleanupThread;
         static std::atomic cancelCleanup(false);
         if (cleanupThread.joinable()) {
@@ -58,9 +58,9 @@ namespace PVE {
         return false;
     }
 
-    bool SoundManager::PlaySoundEvent(const std::string& name) {
+    bool SoundManager::SendSoundEvent(const std::string& name) {
         if (const auto it = this->registeredSoundEvents.find(name); it != this->registeredSoundEvents.end()) {
-            return PlaySoundEvent(it->second);
+            return SendSoundEvent(it->second);
         }
         return false;
     }
