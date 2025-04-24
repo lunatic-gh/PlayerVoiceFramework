@@ -1,25 +1,25 @@
 #include "../include/PVE.h"
 
 namespace PVE {
-    bool FormUtil::HasKeyword(RE::TESForm* form, const std::string& keyword) {
+    PVE_API bool FormUtil::HasKeyword(RE::TESForm* form, const std::string& keyword) {
         return form && form->HasKeywordByEditorID(keyword);
     }
 
-    RE::TESForm* FormUtil::FromID(const std::string& pluginName, const RE::FormID& formId) {
+    PVE_API RE::TESForm* FormUtil::FromID(const std::string& pluginName, const RE::FormID& formId) {
         if (const auto dataHandler = RE::TESDataHandler::GetSingleton()) {
             return dataHandler->LookupForm(formId, pluginName);
         }
         return nullptr;
     }
 
-    std::string FormUtil::ToString(const RE::TESForm* form) {
+    PVE_API std::string FormUtil::ToString(const RE::TESForm* form) {
         if (form && form->GetFile()) {
             return std::format("{}|{}", form->GetFile()->GetFilename(), form->GetLocalFormID());
         }
         return "";
     }
 
-    RE::TESForm* FormUtil::FromString(const std::string& formString) {
+    PVE_API RE::TESForm* FormUtil::FromString(const std::string& formString) {
         if (!formString.empty()) {
             if (const auto dataHandler = RE::TESDataHandler::GetSingleton()) {
                 if (const auto s = StringUtil::Split(formString, '|'); s.size() >= 2) {
@@ -32,7 +32,7 @@ namespace PVE {
         }
         return nullptr;
     }
-    bool FormUtil::CompareForms(const std::string& first, const std::string& second) {
+    PVE_API bool FormUtil::CompareForms(const std::string& first, const std::string& second) {
         const auto firstSplit = StringUtil::Split(first, '|');
         const auto secondSplit = StringUtil::Split(second, '|');
         if (firstSplit.size() == 2 && secondSplit.size() == 2) {
@@ -46,13 +46,13 @@ namespace PVE {
         }
         return false;
     }
-    bool FormUtil::CompareForms(const RE::TESForm* first, const std::string& second) {
+    PVE_API bool FormUtil::CompareForms(const RE::TESForm* first, const std::string& second) {
         if (first) {
             return first == FromString(second);
         }
         return false;
     }
-    std::string FormUtil::ToKeywordString(RE::TESForm* form) {
+    PVE_API std::string FormUtil::ToKeywordString(RE::TESForm* form) {
         std::string s = "";
         if (form) {
             if (const auto keywordForm = form->As<RE::BGSKeywordForm>()) {
@@ -68,7 +68,7 @@ namespace PVE {
         return s;
     }
 
-    std::string StringUtil::ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq) {
+    PVE_API std::string StringUtil::ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq) {
         if (oldSeq.empty())
             return text;
         std::string result = text;
@@ -80,14 +80,14 @@ namespace PVE {
         return result;
     }
 
-    std::string StringUtil::TrimString(const std::string& text) {
+    PVE_API std::string StringUtil::TrimString(const std::string& text) {
         auto view = std::string_view(text);
         view.remove_prefix(std::min(text.find_first_not_of(" \t\r\v\n"), text.size()));
         view.remove_suffix(std::min(text.size() - text.find_last_not_of(" \t\r\v\n") - 1, text.size()));
         return std::string(view);
     }
 
-    std::vector<std::string> StringUtil::Split(const std::string& text, const char& delimiter) {
+    PVE_API std::vector<std::string> StringUtil::Split(const std::string& text, const char& delimiter) {
         std::vector<std::string> result;
         std::stringstream ss(text);
         std::string s;
@@ -96,7 +96,7 @@ namespace PVE {
         return result;
     }
 
-    void Util::LoadData() {
+    PVE_API void Util::LoadData() {
         if (const std::filesystem::path configPath{"Data/Sound/PlayerVoiceEvents/SoundData/config.yml"}; exists(configPath) && is_regular_file(configPath)) {
             try {
                 if (YAML::Node config = YAML::LoadFile(configPath.string())) {
@@ -141,14 +141,14 @@ namespace PVE {
         }
     }
 
-    int Util::RandomInt(const int minInclusive, const int maxInclusive) {
+    PVE_API int Util::RandomInt(const int minInclusive, const int maxInclusive) {
         std::random_device dev;
         std::mt19937 gen(dev());
         std::uniform_int_distribution range(minInclusive, maxInclusive);
         return range(gen);
     }
 
-    float Util::RandomFloat(const float minInclusive, const float maxInclusive) {
+    PVE_API float Util::RandomFloat(const float minInclusive, const float maxInclusive) {
         std::random_device dev;
         std::mt19937 gen(dev());
         std::uniform_real_distribution range(minInclusive, maxInclusive);
