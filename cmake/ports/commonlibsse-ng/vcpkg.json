@@ -11,10 +11,21 @@
     {
       "name": "vcpkg-cmake-config",
       "host": true
-    },
-    "fmt",
-    "rapidcsv",
-    "spdlog",
-    "xbyak"
+    }
+  ],
+  "features": {
+    "plugin": {
+      "description": "Build the SKSE plugin.",
+      "dependencies": [
+        "fmt",
+        "rapidcsv",
+        "spdlog",
+        "xbyak",
+        "directxtk"
+      ]
+    }
+  },
+  "default-features": [
+    "plugin"
   ]
 }
