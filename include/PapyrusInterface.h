@@ -1,4 +1,5 @@
 #pragma once
+#include "SoundManager.h"
 
 namespace PVE {
     class PapyrusInterface {

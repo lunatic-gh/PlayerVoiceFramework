@@ -1,4 +1,4 @@
-#include "../include/Util.h"
+#include "../include/PVE.h"
 
 namespace PVE {
     bool FormUtil::HasKeyword(RE::TESForm* form, const std::string& keyword) {
@@ -101,7 +101,7 @@ namespace PVE {
             try {
                 if (YAML::Node config = YAML::LoadFile(configPath.string())) {
                     if (config["sounds"]) {
-                        for (const auto& soundNode : config["sounds"]) {
+                        for (const YAML::Node soundNode : config["sounds"]) {
                             if (soundNode["name"]) {
                                 const std::string name = soundNode["name"].as<std::string>();
                                 const int chance = soundNode["chance"] ? soundNode["chance"].as<int>() : 100;
@@ -116,7 +116,7 @@ namespace PVE {
                                 }
                                 if (soundNode["audios"]) {
                                     std::vector<std::pair<std::string, std::vector<std::string>>> audios;
-                                    for (const auto& audio : soundNode["audios"]) {
+                                    for (const auto audio : soundNode["audios"]) {
                                         auto condition = audio["condition"] ? audio["condition"].as<std::string>() : "";
                                         if (audio["files"]) {
                                             std::vector<std::string> files;

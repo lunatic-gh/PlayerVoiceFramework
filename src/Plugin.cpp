@@ -1,5 +1,7 @@
 // ReSharper disable CppParameterMayBeConstPtrOrRef
 
+#include "../include/PVE.h"
+
 SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     // Initialize Plugin
     SKSE::Init(skse);
@@ -8,6 +10,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* message) {
         switch (message->type) {
             case SKSE::MessagingInterface::kDataLoaded:
+                PVE::PapyrusInterface::Register();
                 SKSE::GetSerializationInterface()->SetUniqueID(0x455650);
                 SKSE::GetSerializationInterface()->SetLoadCallback([](SKSE::SerializationInterface* a_intfc) {
                     if (const auto saveDataStorage = PVE::SaveDataStorage::GetSingleton()) {
