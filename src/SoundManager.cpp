@@ -18,8 +18,8 @@ namespace PVE {
             cleanupThread.join();
         }
         if (!this->IsSoundEventPlaying() || !Util::Contains(currentSoundEvent->overrideBlacklist, event.name)) {
-            for (auto files : event.audios | std::views::values) {
-                if (true) { // TODO: Evaluate condition properly
+            for (auto [expr, files] : event.audios) {
+                if (ConditionManager::GetSingleton()->EvaluateExpression(event.name, expr)) {
                     const auto filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", files.at(Util::RandomInt(0, static_cast<int>(files.size()) - 1)));
                     RE::BSSoundHandle handle;
                     RE::BSResource::ID id;
@@ -48,9 +48,11 @@ namespace PVE {
                             sleepTime = (sleepTime > interval) ? sleepTime - interval : 0;
                         }
                         this->StopCurrentSoundEvent();
+                        Util::LogDebug("Done.");
                     });
                     return true;
                 }
+                Util::LogDebug("Condition '{}' is false", expr);
             }
         }
         return false;

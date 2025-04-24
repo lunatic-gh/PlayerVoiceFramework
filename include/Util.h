@@ -36,6 +36,12 @@ namespace PVE {
          * @return The form if found, or nullptr if none found
          */
         static RE::TESForm* FromString(const std::string& formString);
+
+        static bool CompareForms(const std::string& first, const std::string& second);
+
+        static bool CompareForms(const RE::TESForm* first, const std::string& second);
+
+        static std::string ToKeywordString(RE::TESForm* form);
     };
 
     /**

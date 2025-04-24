@@ -32,6 +32,41 @@ namespace PVE {
         }
         return nullptr;
     }
+    bool FormUtil::CompareForms(const std::string& first, const std::string& second) {
+        const auto firstSplit = StringUtil::Split(first, '|');
+        const auto secondSplit = StringUtil::Split(second, '|');
+        if (firstSplit.size() == 2 && secondSplit.size() == 2) {
+            if (const auto dataHandler = RE::TESDataHandler::GetSingleton()) {
+                if (const auto firstForm = dataHandler->LookupForm(std::stoi(firstSplit[1], nullptr, 16), firstSplit[0])) {
+                    if (const auto secondForm = dataHandler->LookupForm(std::stoi(secondSplit[1], nullptr, 16), secondSplit[0])) {
+                        return firstForm == secondForm;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    bool FormUtil::CompareForms(const RE::TESForm* first, const std::string& second) {
+        if (first) {
+            return first == FromString(second);
+        }
+        return false;
+    }
+    std::string FormUtil::ToKeywordString(RE::TESForm* form) {
+        std::string s = "";
+        if (form) {
+            if (const auto keywordForm = form->As<RE::BGSKeywordForm>()) {
+                const auto keywords = keywordForm->GetKeywords();
+                for (int i = 0; i < keywords.size(); ++i) {
+                    s += keywords[i]->GetFormEditorID();
+                    if (i != keywords.size() - 1) {
+                        s += "|";
+                    }
+                }
+            }
+        }
+        return s;
+    }
 
     std::string StringUtil::ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq) {
         if (oldSeq.empty())
@@ -63,37 +98,43 @@ namespace PVE {
 
     void Util::LoadData() {
         if (const std::filesystem::path configPath{"Data/Sound/PlayerVoiceEvents/SoundData/config.yml"}; exists(configPath) && is_regular_file(configPath)) {
-            if (YAML::Node config = YAML::LoadFile(configPath.string()); config["sounds"]) {
-                for (const auto& soundNode : config["sounds"]) {
-                    if (soundNode["name"]) {
-                        const std::string name = soundNode["name"].as<std::string>();
-                        const int chance = soundNode["chance"] ? soundNode["chance"].as<int>() : 100;
-                        const float cooldown = soundNode["cooldown"] ? soundNode["cooldown"].as<float>() : 0.0f;
-                        std::vector<std::string> overrideBlacklist;
-                        if (soundNode["overrideBlacklist"]) {
-                            if (soundNode["overrideBlacklist"].IsSequence()) {
-                                for (const auto& entry : soundNode["overrideBlacklist"]) {
-                                    overrideBlacklist.push_back(entry.as<std::string>());
-                                }
-                            }
-                        }
-                        if (soundNode["audios"]) {
-                            std::vector<std::pair<std::string, std::vector<std::string>>> audios;
-                            for (const auto& audio : soundNode["audios"]) {
-                                auto condition = audio["condition"] ? audio["condition"].as<std::string>() : "";
-                                if (audio["files"]) {
-                                    std::vector<std::string> files;
-                                    for (const auto& fileNode : audio["files"]) {
-                                        files.push_back(fileNode.as<std::string>());
+            try {
+                if (YAML::Node config = YAML::LoadFile(configPath.string())) {
+                    if (config["sounds"]) {
+                        for (const auto& soundNode : config["sounds"]) {
+                            if (soundNode["name"]) {
+                                const std::string name = soundNode["name"].as<std::string>();
+                                const int chance = soundNode["chance"] ? soundNode["chance"].as<int>() : 100;
+                                const float cooldown = soundNode["cooldown"] ? soundNode["cooldown"].as<float>() : 0.0f;
+                                std::vector<std::string> overrideBlacklist;
+                                if (soundNode["overrideBlacklist"]) {
+                                    if (soundNode["overrideBlacklist"].IsSequence()) {
+                                        for (const auto& entry : soundNode["overrideBlacklist"]) {
+                                            overrideBlacklist.push_back(entry.as<std::string>());
+                                        }
                                     }
-                                    audios.emplace_back(condition, files);
+                                }
+                                if (soundNode["audios"]) {
+                                    std::vector<std::pair<std::string, std::vector<std::string>>> audios;
+                                    for (const auto& audio : soundNode["audios"]) {
+                                        auto condition = audio["condition"] ? audio["condition"].as<std::string>() : "";
+                                        if (audio["files"]) {
+                                            std::vector<std::string> files;
+                                            for (const auto& fileNode : audio["files"]) {
+                                                files.push_back(fileNode.as<std::string>());
+                                            }
+                                            audios.emplace_back(condition, files);
+                                        }
+                                    }
+                                    SoundManager::GetSingleton().RegisterSoundEvent(name, chance, cooldown, overrideBlacklist, audios);
+                                    LogDebug("Loaded Event {}", name);
                                 }
                             }
-                            SoundManager::GetSingleton().RegisterSoundEvent(name, chance, cooldown, overrideBlacklist, audios);
-                            LogDebug("Loaded Event {}", name);
                         }
                     }
                 }
+            } catch (const YAML::Exception&) {
+                Util::LogError("Could not parse Yaml Config...");
             }
         } else {
             LogInfo("Config file not found: {}", configPath.string());

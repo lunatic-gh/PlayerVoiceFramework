@@ -14,6 +14,7 @@
 #include "include/SaveDataStorage.h"
 #include "include/EventHandler.h"
 #include "include/SoundManager.h"
+#include "include/ConditionManager.h"
 #include "include/PapyrusInterface.h"
 
 using namespace std::literals;

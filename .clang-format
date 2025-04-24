@@ -17,9 +17,10 @@ SortIncludes: Never
 FixNamespaceComments: false
 SpacesBeforeTrailingComments: 1
 # I dont like single line functions
-BinPackArguments: false
+BinPackArguments: true
+BinPackParameters: true
 AllowShortFunctionsOnASingleLine: None
-AllowShortLambdasOnASingleLine: None
+AllowShortLambdasOnASingleLine: All
 AllowShortBlocksOnASingleLine: Never
 AllowShortEnumsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
@@ -27,3 +28,8 @@ AllowShortCaseExpressionOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortCompoundRequirementOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
+AllowAllArgumentsOnNextLine: false
+# Align Pointers next to the object type, rather than before the key name
+# E.g. "const auto& someKey" instead of "const auto &someKey"
+DerivePointerAlignment: false
+PointerAlignment: Left

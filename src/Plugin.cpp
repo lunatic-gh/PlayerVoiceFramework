@@ -20,6 +20,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
                     }
                 });
                 PVE::Util::LoadData();
+                PVE::ConditionManager::GetSingleton()->RegisterInternalConditions();
                 PVE::PublicEventSink::Register();
                 break;
             default:

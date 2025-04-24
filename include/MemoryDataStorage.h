@@ -23,7 +23,8 @@ namespace PVE {
 
         std::variant<std::string, int, float, RE::TESForm*> Get(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) const {
             std::lock_guard lock(_mutex);
-            if (const auto it = storage.find(key); it != storage.end()) return it->second;
+            if (const auto it = storage.find(key); it != storage.end())
+                return it->second;
             return def;
         }
 
