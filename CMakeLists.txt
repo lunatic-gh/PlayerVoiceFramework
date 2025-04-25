@@ -37,7 +37,9 @@ set(sources
 
 # Dependencies
 find_package(CommonLibSSE CONFIG REQUIRED)
-find_package(yaml-cpp CONFIG REQUIRED)
+include(FetchContent)
+FetchContent_Declare(yaml-cpp GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git GIT_TAG origin/master)
+FetchContent_MakeAvailable(yaml-cpp)
 
 # Create CLib Plugin
 add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${headers} ${sources})
