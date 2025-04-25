@@ -1,6 +1,6 @@
 {
   "name": "player-voice-events",
-  "version-string": "0.8",
+  "version-string": "1.0.2",
   "dependencies": [
     "commonlibsse-ng"
   ]
