@@ -1,16 +1,17 @@
 # Minimum CMake Version
 cmake_minimum_required(VERSION 3.10)
 
-# Set Version
-set(VERSION 1.0.3)
-configure_file("${CMAKE_SOURCE_DIR}/vcpkg.json.in" "${CMAKE_SOURCE_DIR}/vcpkg.json" @ONLY)
-
-
 # Ignore some Warnings
 set(ignoreMe "${CMAKE_TOOLCHAIN_FILE}")
 
+# Set Version
+set(VERSION 1.0.3)
+
 # Define Project Data
 project("PlayerVoiceEvents" VERSION ${VERSION} LANGUAGES CXX)
+
+# Make dynamic vcpkg.json
+configure_file("${PROJECT_SOURCE_DIR}/vcpkg.json.in" "${PROJECT_SOURCE_DIR}/vcpkg.json" @ONLY)
 
 # Define Header Files (.h)
 set(headers
