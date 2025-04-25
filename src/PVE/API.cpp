@@ -1,4 +1,7 @@
-#include <PVE.h>
+#include "../include/PVE/API.h"
+
+#include "../../include/PVE/SoundManager.h"
+#include "../../include/PVE/Util.h"
 
 /**
  * NOTE TO MYSELF: DON'T CHANGE EXISTING DEFINITIONS UNLESS ABSOLUTELY NECESSARY!

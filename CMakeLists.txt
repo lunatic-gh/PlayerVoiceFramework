@@ -1,63 +1,54 @@
+# Minimum CMake Version
 cmake_minimum_required(VERSION 3.10)
 
-project("PlayerVoiceEvents" VERSION 1.0.2 LANGUAGES CXX)
+# Set Version
+set(VERSION 1.0.3)
+configure_file("${CMAKE_SOURCE_DIR}/vcpkg.json.in" "${CMAKE_SOURCE_DIR}/vcpkg.json" @ONLY)
 
+
+# Ignore some Warnings
+set(ignoreMe "${CMAKE_TOOLCHAIN_FILE}")
+
+# Define Project Data
+project("PlayerVoiceEvents" VERSION ${VERSION} LANGUAGES CXX)
+
+# Define Header Files (.h)
 set(headers
-        include/PVE.h
-        include/Logger.h
-        include/PapyrusInterface.h
-        include/Util.h
-        include/EventHandler.h
-        include/ConditionManager.h
-        include/MemoryDataStorage.h
-        include/SaveDataStorage.h
-        include/SoundManager.h
-        include/API.h
+        include/PVE/Logger.h
+        include/PVE/PapyrusInterface.h
+        include/PVE/Util.h
+        include/PVE/EventHandler.h
+        include/PVE/ConditionManager.h
+        include/PVE/MemoryDataStorage.h
+        include/PVE/SaveDataStorage.h
+        include/PVE/SoundManager.h
+        include/PVE/API.h
 )
 
+# Define Source Files (.cpp)
 set(sources
-        src/Plugin.cpp
-        src/EventHandler.cpp
-        src/SoundManager.cpp
-        src/Util.cpp
-        src/API.cpp
+        src/PVE/Plugin.cpp
+        src/PVE/EventHandler.cpp
+        src/PVE/SoundManager.cpp
+        src/PVE/Util.cpp
+        src/PVE/API.cpp
 )
 
+# Dependencies
 find_package(CommonLibSSE CONFIG REQUIRED)
+find_package(yaml-cpp CONFIG REQUIRED)
 
-include(FetchContent)
-FetchContent_Declare(
-        yaml-cpp
-        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-        GIT_TAG origin/master
-)
-FetchContent_MakeAvailable(yaml-cpp)
+# Create CLib Plugin
+add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${headers} ${sources})
 
-add_commonlibsse_plugin(${PROJECT_NAME} SOURCES
-        ${headers}
-        ${sources}
-)
-
+# Define C++ Version as 23
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 
+# Precompile Header
 target_precompile_headers(${PROJECT_NAME} PRIVATE PCH.h)
-target_compile_definitions(${PROJECT_NAME} PRIVATE PVE_EXPORTS)
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-)
-
+# Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
 
-get_target_property(INC_DIRS ${PROJECT_NAME} INTERFACE_INCLUDE_DIRECTORIES)
-if (INC_DIRS)
-    list(FILTER INC_DIRS EXCLUDE REGEX "^${CMAKE_SOURCE_DIR}")
-    set_target_properties(${PROJECT_NAME} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${INC_DIRS}")
-endif ()
-
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-targets)
-install(EXPORT ${PROJECT_NAME}-targets NAMESPACE ${PROJECT_NAME}:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-configure_file(cmake/config.cmake.in "${PROJECT_NAME}Config.cmake" @ONLY)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-install(FILES "include/API.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+# Add export definitions, so the API-Functions get exported.
+target_compile_definitions(${PROJECT_NAME} PRIVATE PVE_EXPORTS)

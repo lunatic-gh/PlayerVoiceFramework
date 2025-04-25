@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Util.h"
+
 namespace PVE {
 
     class ConditionManager {
@@ -168,7 +170,7 @@ namespace PVE {
             conditions.erase(eventName);
         }
 
-        bool EvaluateExpression(const std::string& eventName, const std::string& condition) {
+        bool EvaluateExpression(const std::string& eventName, const std::string& condition) const {
             if (condition.empty()) {
                 return true;
             }
@@ -205,7 +207,7 @@ namespace PVE {
             std::function<Value()> function;
         };
 
-        std::vector<Token> tokenize(const std::string& str) {
+        std::vector<Token> tokenize(const std::string& str) const {
             std::vector<Token> tokens;
             size_t i = 0;
             while (i < str.size()) {
@@ -242,8 +244,7 @@ namespace PVE {
                     while (j < str.size() && (std::isalnum(str[j]) || str[j] == '_')) {
                         j++;
                     }
-                    std::string tokenStr = str.substr(i, j - i);
-                    if (tokenStr == "true" || tokenStr == "false") {
+                    if (std::string tokenStr = str.substr(i, j - i); tokenStr == "true" || tokenStr == "false") {
                         tokens.push_back({TokenType::Bool, tokenStr});
                     } else {
                         tokens.push_back({TokenType::Identifier, tokenStr});
@@ -252,7 +253,7 @@ namespace PVE {
                     continue;
                 }
                 if (str[i] == '\'' || str[i] == '"') {
-                    char quote = str[i];
+                    const char quote = str[i];
                     i++;
                     std::string literal;
                     while (i < str.size()) {
@@ -291,8 +292,7 @@ namespace PVE {
                     continue;
                 }
                 if (i + 1 < str.size()) {
-                    std::string two = str.substr(i, 2);
-                    if (two == "&&" || two == "||" || two == "==" || two == "!=" || two == "<=" || two == ">=" || two == "*=") {
+                    if (std::string two = str.substr(i, 2); two == "&&" || two == "||" || two == "==" || two == "!=" || two == "<=" || two == ">=" || two == "*=") {
                         tokens.push_back({TokenType::Operator, two});
                         i += 2;
                         continue;
@@ -316,7 +316,7 @@ namespace PVE {
             [[nodiscard]] virtual bool eval(const std::string& eventName) const = 0;
         };
 
-        class LogicalExpr : public Expr {
+        class LogicalExpr final : public Expr {
         public:
             enum class Op {
                 And,
@@ -327,7 +327,7 @@ namespace PVE {
             std::unique_ptr<Expr> right;
             Op op;
 
-            LogicalExpr(std::unique_ptr<Expr> l, std::unique_ptr<Expr> r, Op o) : left(std::move(l)), right(std::move(r)), op(o) {
+            LogicalExpr(std::unique_ptr<Expr> l, std::unique_ptr<Expr> r, const Op o) : left(std::move(l)), right(std::move(r)), op(o) {
             }
 
             bool eval(const std::string& eventName) const override {
@@ -338,7 +338,7 @@ namespace PVE {
             }
         };
 
-        class CondExpr : public Expr {
+        class CondExpr final : public Expr {
         public:
             std::string var;
             std::string op;
@@ -352,8 +352,7 @@ namespace PVE {
                 auto searchConditions = [&](const std::string& key) -> std::optional<Value> {
                     if (GetSingleton()->conditions.contains(key)) {
                         auto eventConditions = GetSingleton()->conditions[key];
-                        const auto it = std::ranges::find_if(eventConditions, [&](const auto& cond) { return cond.name == var; });
-                        if (it != eventConditions.end()) {
+                        if (const auto it = std::ranges::find_if(eventConditions, [&](const auto& cond) { return cond.name == var; }); it != eventConditions.end()) {
                             return it->function();
                         }
                     }
@@ -437,7 +436,7 @@ namespace PVE {
 
         class Parser {
         public:
-            Parser(const std::vector<Token>& tokens) : tokens(tokens), pos(0) {
+            explicit Parser(const std::vector<Token>& tokens) : tokens(tokens), pos(0) {
             }
 
             std::unique_ptr<Expr> parseExpression() {
@@ -456,7 +455,7 @@ namespace PVE {
                 ++pos;
             }
 
-            bool match(TokenType type, const std::string& val = "") {
+            bool match(const TokenType type, const std::string& val = "") {
                 if (current().type == type && (val.empty() || current().value == val)) {
                     consume();
                     return true;

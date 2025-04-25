@@ -1,4 +1,5 @@
 #pragma once
+
 #include "SoundManager.h"
 
 namespace PVE {
@@ -9,8 +10,7 @@ namespace PVE {
         }
 
     private:
-        // ReSharper disable CppPassValueParameterByConstReference
-        // ReSharper disable CppParameterMayBeConstPtrOrRef
+        // ReSharper disable CppPassValueParameterByConstReference CppParameterMayBeConst CppParameterMayBeConstPtrOrRef
         static bool FormHasKeyword(RE::StaticFunctionTag*, RE::TESForm* form, std::string keyword) {
             return FormUtil::HasKeyword(form, keyword);
         }
@@ -46,6 +46,7 @@ namespace PVE {
         static float RandomFloat(RE::StaticFunctionTag*, float minInclusive, float maxInclusive) {
             return Util::RandomFloat(minInclusive, maxInclusive);
         }
+        // ReSharper restore CppPassValueParameterByConstReference CppParameterMayBeConst CppParameterMayBeConstPtrOrRef
 
         static bool PapyrusFunctions(RE::BSScript::IVirtualMachine* vm) {
             vm->RegisterFunction("FormHasKeyword", "PVEPapyrusUtil", FormHasKeyword);

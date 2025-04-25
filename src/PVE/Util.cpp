@@ -1,4 +1,8 @@
-#include "PVE.h"
+#include "../../include/PVE/Util.h"
+#include "../../include/PVE/SoundManager.h"
+
+#include <yaml-cpp/yaml.h>
+
 namespace PVE {
     bool FormUtil::HasKeyword(RE::TESForm* form, const std::string& keyword) {
         return form && form->HasKeywordByEditorID(keyword);

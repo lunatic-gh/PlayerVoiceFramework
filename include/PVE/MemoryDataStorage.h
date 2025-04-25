@@ -1,5 +1,10 @@
 #pragma once
 
+#include <mutex>
+#include <unordered_map>
+#include <variant>
+#include <RE/T/TESForm.h>
+
 namespace PVE {
     class MemoryDataStorage {
     public:

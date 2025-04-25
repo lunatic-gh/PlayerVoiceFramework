@@ -1,6 +1,10 @@
 // ReSharper disable CppParameterMayBeConstPtrOrRef
 
-#include "PVE.h"
+#include "../../include/PVE/ConditionManager.h"
+#include "../../include/PVE/EventHandler.h"
+#include "../../include/PVE/Logger.h"
+#include "../../include/PVE/PapyrusInterface.h"
+#include "../../include/PVE/SaveDataStorage.h"
 
 SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     // Initialize Plugin

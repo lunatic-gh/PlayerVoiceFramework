@@ -1,4 +1,7 @@
-#include "PVE.h"
+#include "../../include/PVE/SoundManager.h"
+
+#include "../../include/PVE/ConditionManager.h"
+#include "../../include/PVE/Util.h"
 
 namespace PVE {
     SoundManager& SoundManager::GetSingleton() {
