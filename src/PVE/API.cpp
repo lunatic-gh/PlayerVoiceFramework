@@ -1,7 +1,10 @@
 #include "../include/PVE/API.h"
 
+#include "../../include/PVE/ConditionManager.h"
 #include "../../include/PVE/SoundManager.h"
 #include "../../include/PVE/Util.h"
+#include "../../include/PVE/MemoryDataStorage.h"
+#include "../../include/PVE/SaveDataStorage.h"
 
 /**
  * NOTE TO MYSELF: DON'T CHANGE EXISTING DEFINITIONS UNLESS ABSOLUTELY NECESSARY!
@@ -11,6 +14,38 @@ namespace PVE {
     // 1.0.3: Added
     bool API::SendSoundEvent(const std::string& name) {
         return SoundManager::GetSingleton().SendSoundEvent(name);
+    }
+
+    // 1.0.3: Added
+    void API::RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<std::variant<float, int, bool, std::string, RE::TESForm*>()>& conditionFunction) {
+        if (const auto conditionManager = ConditionManager::GetSingleton()) {
+            conditionManager->RegisterCondition(eventName, conditionName, conditionFunction);
+        }
+    }
+
+    // 1.0.3: Added
+    void API::SetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
+        MemoryDataStorage::GetSingleton().Set(key, value);
+    }
+
+    // 1.0.3: Added
+    std::variant<std::string, int, float, RE::TESForm*> API::GetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
+        return MemoryDataStorage::GetSingleton().Get(key, def);
+    }
+
+    // 1.0.3: Added
+    void API::SetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
+        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
+            saveDataStorage->Set(key, value);
+        }
+    }
+
+    // 1.0.3: Added
+    std::variant<std::string, int, float, RE::TESForm*> API::GetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
+        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
+            return saveDataStorage->Get(key, def);
+        }
+        return def;
     }
 
     // 1.0.3: Added

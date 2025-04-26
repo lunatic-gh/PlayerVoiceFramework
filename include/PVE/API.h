@@ -13,6 +13,21 @@ namespace PVE {
         PVE_EXPORT static bool SendSoundEvent(const std::string& name);
 
         // 1.0.3: Added
+        PVE_EXPORT static void RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<std::variant<float, int, bool, std::string, RE::TESForm*>()>& conditionFunction);
+
+        // 1.0.3: Added
+        PVE_EXPORT static void SetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value);
+
+        // 1.0.3: Added
+        PVE_EXPORT static std::variant<std::string, int, float, RE::TESForm*> GetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def);
+
+        // 1.0.3: Added
+        PVE_EXPORT static void SetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value);
+
+        // 1.0.3: Added
+        PVE_EXPORT static std::variant<std::string, int, float, RE::TESForm*> GetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def);
+
+        // 1.0.3: Added
         PVE_EXPORT static bool FormHasKeyword(RE::TESForm* form, const std::string& keyword);
 
         // 1.0.3: Added
