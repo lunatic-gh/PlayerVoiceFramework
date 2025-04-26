@@ -11,10 +11,13 @@ namespace PVE {
 
     class SoundManager {
     public:
+        static SoundManager* GetSingleton() {
+            static SoundManager instance;
+            return &instance;
+        }
+
         SoundManager(const SoundManager&) = delete;
         SoundManager& operator=(const SoundManager&) = delete;
-
-        static SoundManager& GetSingleton();
 
         void RegisterSoundEvent(const std::string& name, int chance, float cooldown, const std::vector<std::string>& overrideBlacklist, const std::vector<std::pair<std::string, std::vector<std::string>>>& audios);
 
@@ -26,14 +29,21 @@ namespace PVE {
 
         bool IsSoundEventPlaying() const;
 
+        [[nodiscard]] std::optional<SoundEvent> GetCurrentSoundEvent() const {
+            return currentSoundEvent;
+        }
+        [[nodiscard]] std::optional<RE::BSSoundHandle> GetCurrentSoundHandle() const {
+            return currentHandle;
+        }
+
         [[nodiscard]] std::unordered_map<std::string, SoundEvent> GetRegisteredSoundEvents() const {
             return registeredSoundEvents;
         }
 
     private:
-        SoundManager() = default;
+        SoundManager();
         std::unordered_map<std::string, SoundEvent> registeredSoundEvents;
-        std::optional<SoundEvent> currentSoundEvent;
-        std::optional<RE::BSSoundHandle> currentHandle;
+        std::optional<SoundEvent> currentSoundEvent = std::nullopt;
+        std::optional<RE::BSSoundHandle> currentHandle = std::nullopt;
     };
 }

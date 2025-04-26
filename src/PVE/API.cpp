@@ -13,7 +13,7 @@
 namespace PVE {
     // 1.0.3: Added
     bool API::SendSoundEvent(const std::string& name) {
-        return SoundManager::GetSingleton().SendSoundEvent(name);
+        return SoundManager::GetSingleton()->SendSoundEvent(name);
     }
 
     // 1.0.3: Added
@@ -25,12 +25,27 @@ namespace PVE {
 
     // 1.0.3: Added
     void API::SetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
-        MemoryDataStorage::GetSingleton().Set(key, value);
+        if (const auto memoryDataStorage = MemoryDataStorage::GetSingleton())
+            memoryDataStorage->Set(key, value);
     }
 
     // 1.0.3: Added
     std::variant<std::string, int, float, RE::TESForm*> API::GetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
-        return MemoryDataStorage::GetSingleton().Get(key, def);
+        if (const auto memoryDataStorage = MemoryDataStorage::GetSingleton()) {
+            if (std::holds_alternative<std::string>(def)) {
+                return memoryDataStorage->Get<std::string>(key, std::get<std::string>(def));
+            }
+            if (std::holds_alternative<int>(def)) {
+                return memoryDataStorage->Get<int>(key, std::get<int>(def));
+            }
+            if (std::holds_alternative<float>(def)) {
+                return memoryDataStorage->Get<float>(key, std::get<float>(def));
+            }
+            if (std::holds_alternative<RE::TESForm*>(def)) {
+                return memoryDataStorage->Get<RE::TESForm*>(key, std::get<RE::TESForm*>(def));
+            }
+        }
+        return def;
     }
 
     // 1.0.3: Added
@@ -43,7 +58,18 @@ namespace PVE {
     // 1.0.3: Added
     std::variant<std::string, int, float, RE::TESForm*> API::GetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
         if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
-            return saveDataStorage->Get(key, def);
+            if (std::holds_alternative<std::string>(def)) {
+                return saveDataStorage->Get<std::string>(key, std::get<std::string>(def));
+            }
+            if (std::holds_alternative<int>(def)) {
+                return saveDataStorage->Get<int>(key, std::get<int>(def));
+            }
+            if (std::holds_alternative<float>(def)) {
+                return saveDataStorage->Get<float>(key, std::get<float>(def));
+            }
+            if (std::holds_alternative<RE::TESForm*>(def)) {
+                return saveDataStorage->Get<RE::TESForm*>(key, std::get<RE::TESForm*>(def));
+            }
         }
         return def;
     }

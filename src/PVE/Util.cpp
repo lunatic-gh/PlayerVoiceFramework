@@ -1,4 +1,6 @@
 #include "../../include/PVE/Util.h"
+
+#include "../../include/PVE/MemoryDataStorage.h"
 #include "../../include/PVE/SoundManager.h"
 
 #include <yaml-cpp/yaml.h>
@@ -17,7 +19,7 @@ namespace PVE {
 
     std::string FormUtil::ToString(const RE::TESForm* form) {
         if (form && form->GetFile()) {
-            return std::format("{}|{}", form->GetFile()->GetFilename(), form->GetLocalFormID());
+            return std::format("{}|{:x}", form->GetFile()->GetFilename(), form->GetLocalFormID());
         }
         return "";
     }
@@ -27,7 +29,7 @@ namespace PVE {
             if (const auto dataHandler = RE::TESDataHandler::GetSingleton()) {
                 if (const auto s = StringUtil::SplitString(formString, '|'); s.size() >= 2) {
                     try {
-                        return dataHandler->LookupForm(std::stoi(s[1]), s[0]);
+                        return dataHandler->LookupForm(std::stoi(s[1], nullptr, 16), s[0]);
                     } catch (...) {
                     }
                 }
@@ -129,10 +131,15 @@ namespace PVE {
                                             audios.emplace_back(condition, files);
                                         }
                                     }
-                                    SoundManager::GetSingleton().RegisterSoundEvent(name, chance, cooldown, overrideBlacklist, audios);
-                                    LogDebug("Loaded Event {}", name);
+                                    SoundManager::GetSingleton()->RegisterSoundEvent(name, chance, cooldown, overrideBlacklist, audios);
+                                    LogInfo("Loaded Event {}", name);
                                 }
                             }
+                        }
+                    }
+                    if (config["settings"]) {
+                        if (auto settingsNode = config["settings"]; settingsNode.IsMap()) {
+                            LoadSetting(settingsNode, "rngMode", "default", "string");
                         }
                     }
                 }
@@ -156,5 +163,39 @@ namespace PVE {
         std::mt19937 gen(dev());
         std::uniform_real_distribution range(minInclusive, maxInclusive);
         return range(gen);
+    }
+
+    void Util::LoadSetting(const YAML::Node& node, const std::string& key, const std::variant<std::string, int, float>& def, const std::string& type) {
+        if (const auto keyNode = node[key]) {
+            switch (keyNode.Type()) {
+                case YAML::NodeType::Scalar: {
+                    if (type == "string") {
+                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<std::string>());
+                        LogDebug("Loaded Setting '{}' with value '{}'", key, keyNode.as<std::string>());
+                    } else if (type == "int") {
+                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<int>());
+                        LogDebug("Loaded Setting '{}' with value '{}'", key, keyNode.as<int>());
+                    } else if (type == "float") {
+                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<float>());
+                        LogDebug("Loaded Setting '{}' with value '{}'", key, keyNode.as<float>());
+                    }
+                    return;
+                }
+                default:
+                    LogWarning("Setting '{}' is of invalid type, expected '{}'", key, type);
+                    break;
+            }
+            // Defaults
+            if (std::holds_alternative<std::string>(def)) {
+                MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<std::string>(def));
+                LogDebug("Loaded Setting '{}' with default value '{}'", key, std::get<std::string>(def));
+            } else if (std::holds_alternative<int>(def)) {
+                MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<int>(def));
+                LogDebug("Loaded Setting '{}' with default value '{}'", key, std::get<int>(def));
+            } else if (std::holds_alternative<float>(def)) {
+                MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<float>(def));
+                LogDebug("Loaded Setting '{}' with default value '{}'", key, std::get<float>(def));
+            }
+        }
     }
 }

@@ -17,25 +17,29 @@ namespace PVE {
         SaveDataStorage& operator=(const SaveDataStorage&) = delete;
 
         void Set(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
-            std::lock_guard lock(_mutex);
+            std::lock_guard lock(mutex);
             storage[key] = value;
         }
 
-        std::variant<std::string, int, float, RE::TESForm*> Get(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) const {
-            std::lock_guard lock(_mutex);
-            if (const auto it = storage.find(key); it != storage.end())
-                return it->second;
+        template <typename T>
+        T Get(const std::string& key, const T& def) const {
+            std::lock_guard lock(mutex);
+            try {
+                if (const auto it = storage.find(key); it != storage.end())
+                    return std::get<T>(it->second);
+            } catch (...) {
+            }
             return def;
         }
 
         bool Has(const std::string& key) const {
-            std::lock_guard lock(_mutex);
+            std::lock_guard lock(mutex);
             return storage.contains(key);
         }
 
         void Save(const SKSE::SerializationInterface* a_intfc) {
             // ReSharper disable CppExpressionWithoutSideEffects
-            std::lock_guard lock(_mutex);
+            std::lock_guard lock(mutex);
             if (a_intfc->OpenRecord(0x524f5453, 0)) {
                 constexpr std::uint32_t version = 1;
                 a_intfc->WriteRecordData(&version, sizeof(version));
@@ -78,7 +82,7 @@ namespace PVE {
         }
 
         void Load(const SKSE::SerializationInterface* a_intfc) {
-            std::lock_guard lock(_mutex);
+            std::lock_guard lock(mutex);
             std::uint32_t recType = 0, version = 0, length = 0;
             while (a_intfc->GetNextRecordInfo(recType, version, length)) {
                 if (recType == 0x524f5453) {
@@ -161,7 +165,7 @@ namespace PVE {
 
     private:
         SaveDataStorage() = default;
-        mutable std::mutex _mutex;
+        mutable std::mutex mutex;
         enum VariantType : int {
             kString = 0,
             kInt = 1,

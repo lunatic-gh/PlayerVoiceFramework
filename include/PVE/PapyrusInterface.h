@@ -36,7 +36,7 @@ namespace PVE {
         }
 
         static bool PlaySoundEvent(RE::StaticFunctionTag*, std::string name) {
-            return SoundManager::GetSingleton().SendSoundEvent(name);
+            return SoundManager::GetSingleton()->SendSoundEvent(name);
         }
 
         static int RandomInt(RE::StaticFunctionTag*, int minInclusive, int maxInclusive) {

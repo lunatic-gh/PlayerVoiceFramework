@@ -2,6 +2,8 @@
 
 #include "Logger.h"
 
+#include <yaml-cpp/node/node.h>
+
 namespace PVE {
 
     /**
@@ -148,5 +150,15 @@ namespace PVE {
         static void LogDebug(const std::string& s) {
             LogDebug("{}", s);
         }
+
+    private:
+        /**
+         * Loads a setting from the "settings" key in the pack config. Used when initially loading the data on game-start
+         * @param node  the "settings" node
+         * @param key   the key of the setting
+         * @param def   the default value to load if the key isn't present
+         * @param type  the expected type of the setting. Can be one of "string", "int", "float"
+         */
+        static void LoadSetting(const YAML::Node& node, const std::string& key, const std::variant<std::string, int, float>& def, const std::string& type);
     };
 }

@@ -1,14 +1,12 @@
 #include "../../include/PVE/SoundManager.h"
 
 #include "../../include/PVE/ConditionManager.h"
+#include "../../include/PVE/MemoryDataStorage.h"
+#include "../../include/PVE/SaveDataStorage.h"
 #include "../../include/PVE/Util.h"
+#include <ranges>
 
 namespace PVE {
-    SoundManager& SoundManager::GetSingleton() {
-        static SoundManager instance;
-        return instance;
-    }
-
     void SoundManager::RegisterSoundEvent(const std::string& name, const int chance, const float cooldown, const std::vector<std::string>& overrideBlacklist, const std::vector<std::pair<std::string, std::vector<std::string>>>& audios) {
         this->registeredSoundEvents[name] = SoundEvent{name, chance, cooldown, overrideBlacklist, audios};
     }
@@ -16,48 +14,72 @@ namespace PVE {
     bool SoundManager::SendSoundEvent(const SoundEvent& event) {
         static std::thread cleanupThread;
         static std::atomic cancelCleanup(false);
-        if (cleanupThread.joinable()) {
-            cancelCleanup.store(true);
-            cleanupThread.join();
-        }
-        if (!this->IsSoundEventPlaying() || !Util::Contains(currentSoundEvent->overrideBlacklist, event.name)) {
-            for (auto [expr, files] : event.audios) {
-                if (ConditionManager::GetSingleton()->EvaluateExpression(event.name, expr)) {
-                    const auto filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", files.at(Util::RandomInt(0, static_cast<int>(files.size()) - 1)));
-                    RE::BSSoundHandle handle;
-                    RE::BSResource::ID id;
-                    id.GenerateFromPath(filePath.c_str());
-                    RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
-                    this->currentHandle.emplace(handle);
-                    this->currentSoundEvent.emplace(event);
-                    this->currentHandle->Play();
-                    Util::LogDebug("Played file {}", filePath);
-                    cancelCleanup.store(false);
-                    cleanupThread = std::thread([this]() {
-                        uint64_t elapsed = 0;
-                        while (!cancelCleanup.load() && !this->currentHandle->IsPlaying()) {
-                            std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                            elapsed += 5;
-                            if (elapsed >= 1000) {
-                                Util::LogWarning("Last sound could not be detected as 'playing' - This is a known issue within the Skyrim Engine.");
-                                break;
-                            }
-                        }
-                        const uint64_t duration = this->currentHandle->GetDuration();
-                        uint64_t sleepTime = duration > elapsed ? duration - elapsed : 0;
-                        while (sleepTime > 0 && !cancelCleanup.load()) {
-                            constexpr uint64_t interval = 10;
-                            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
-                            sleepTime = (sleepTime > interval) ? sleepTime - interval : 0;
-                        }
-                        this->StopCurrentSoundEvent();
-                        Util::LogDebug("Done.");
-                    });
-                    return true;
+        const std::string cooldownKey = std::format("pve_{}Cooldown", event.name);
+        if (const auto storage = SaveDataStorage::GetSingleton(); !(storage ? storage->Get<int>(cooldownKey, 0) : 0) && (!this->IsSoundEventPlaying() || !Util::Contains(currentSoundEvent->overrideBlacklist, event.name))) {
+            if (Util::RandomInt(0, 99) >= event.chance)
+                return false;
+            for (const auto& [expr, files] : event.audios) {
+                if (files.empty() || !ConditionManager::GetSingleton()->EvaluateExpression(event.name, expr))
+                    continue;
+                if (cleanupThread.joinable()) {
+                    cancelCleanup.store(true);
+                    cleanupThread.join();
                 }
-                Util::LogDebug("Condition '{}' is false", expr);
+                std::string filePath;
+                if (const std::string rngMode = MemoryDataStorage::GetSingleton()->Get<std::string>("pve_rngMode", "default"); rngMode == "default") {
+                    filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", files.at(Util::RandomInt(0, static_cast<int>(files.size()) - 1)));
+                } else if (rngMode == "biased") {
+                    static std::map<std::string, std::vector<std::string>> availableFiles;
+                    auto& fileList = availableFiles[event.name];
+                    if (fileList.empty()) {
+                        fileList = files;
+                        std::ranges::shuffle(fileList, std::mt19937{std::random_device{}()});
+                    }
+                    const std::string s = fileList.front();
+                    filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", s);
+                    if (fileList.size() == 1) {
+                        fileList = files;
+                        int i = 0;
+                        do {
+                            std::ranges::shuffle(fileList, std::mt19937{std::random_device{}()});
+                            i++;
+                        } while (i < 10 && fileList.size() > 1 && fileList.front() == s);
+                    } else {
+                        fileList.erase(fileList.begin());
+                    }
+                }
+                RE::BSSoundHandle handle;
+                RE::BSResource::ID id;
+                id.GenerateFromPath(filePath.c_str());
+                RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
+                this->currentHandle.emplace(handle);
+                this->currentSoundEvent.emplace(event);
+                this->currentHandle->Play();
+                Util::LogDebug("Played file {}", filePath);
+                if (storage) {
+                    storage->Set(cooldownKey, static_cast<int>(event.cooldown));
+                }
+                cancelCleanup.store(false);
+                cleanupThread = std::thread([this] {
+                    uint64_t elapsed = 0;
+                    while (!cancelCleanup.load() && !this->GetCurrentSoundHandle()->IsPlaying()) {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                        elapsed += 5;
+                        if (elapsed >= 1000) {
+                            Util::LogWarning("Last sound could not be detected as 'playing' - This is a known issue within the Skyrim Engine.");
+                            break;
+                        }
+                    }
+                    while (this->GetCurrentSoundHandle()->GetDuration() > 0) {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                    }
+                    this->StopCurrentSoundEvent();
+                    Util::LogInfo("Stopped playing");
+                });
+                return true;
             }
         }
+
         return false;
     }
 
@@ -77,6 +99,23 @@ namespace PVE {
     }
 
     bool SoundManager::IsSoundEventPlaying() const {
-        return this->currentSoundEvent.has_value();
+        return this->currentHandle.has_value() && this->currentHandle->IsPlaying();
+    }
+
+    // ReSharper disable once CppDFAEndlessLoop, CppDFAUnreachableCode
+    SoundManager::SoundManager() {
+        std::thread([this] {
+            while (true) {
+                if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
+                    for (auto name : this->registeredSoundEvents | std::views::keys) {
+                        const std::string s = std::format("pve_{}Cooldown", name);
+                        if (const auto i = saveDataStorage->Get<int>(s, 0); i > 0) {
+                            saveDataStorage->Set(s, i - 1);
+                        }
+                    }
+                }
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+        }).detach();
     }
 }
