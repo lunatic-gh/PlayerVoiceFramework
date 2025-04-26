@@ -5,7 +5,8 @@
     Output="run\Scripts" 
     Optimize="false" 
     Release="false" 
-    Final="false">
+    Final="false"
+    Anonymize="true">
     <Imports>
         <Import>.\Data\Scripts\Source</Import>
         <Import>.\tools\papyrus-include</Import>

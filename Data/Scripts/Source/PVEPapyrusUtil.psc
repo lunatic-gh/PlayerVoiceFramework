@@ -1,6 +1,8 @@
 Scriptname PVEPapyrusUtil Hidden
 { Some Helpful Papyrus Functions relayed from the plugin. }
 
+Bool Function FormHasKeyword(Form _form, String _keyword) Global Native
+
 Form Function FormFromID(String _pluginName, Int _formId) Global Native
 
 String Function FormToString(Form _form) Global Native
