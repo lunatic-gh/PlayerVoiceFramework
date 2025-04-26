@@ -13,7 +13,7 @@ String Function ReplaceInString(String _text, String _oldSeq, String _newSeq) Gl
 
 String Function TrimString(String _text) Global Native
 
-Bool Function PlaySoundEvent(String _name) Global Native
+Function SendSoundEvent(String _name) Global Native
 
 Int Function RandomInt(Int _minInclusive, Int _maxInclusive) Global Native
 

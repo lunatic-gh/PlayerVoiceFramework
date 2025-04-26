@@ -12,7 +12,7 @@ namespace PVE {
         // 1.0.3: Added
         // Sends a sound-event with the given name.
         // If a sound with that name isn't registered in a user's voice-pack, it'll be ignored.
-        PVE_EXPORT static bool SendSoundEvent(const std::string& name);
+        PVE_EXPORT static void SendSoundEvent(const std::string& name);
 
         // 1.0.3: Added
         // Registers a custom condition

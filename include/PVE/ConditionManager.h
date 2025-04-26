@@ -163,7 +163,7 @@ namespace PVE {
             RegisterCondition("GLOBAL", conditionName, conditionFunction);
         }
 
-        void ResetConditions(const std::string& eventName) {
+        void UnregisterConditions(const std::string& eventName) {
             if (eventName == "GLOBAL") {
                 return;
             }

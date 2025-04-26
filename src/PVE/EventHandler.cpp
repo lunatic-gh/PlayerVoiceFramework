@@ -16,7 +16,6 @@ namespace PVE {
 
     RE::BSEventNotifyControl PublicEventSink::ProcessEvent(const RE::MenuOpenCloseEvent* e, RE::BSTEventSource<RE::MenuOpenCloseEvent>*) {
         static bool paused = false;
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
         if (e->opening && !paused) {
             Util::LogDebug("Pausing...");
             paused = true;

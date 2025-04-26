@@ -12,8 +12,8 @@
  */
 namespace PVE {
     // 1.0.3: Added
-    bool API::SendSoundEvent(const std::string& name) {
-        return SoundManager::GetSingleton()->SendSoundEvent(name);
+    void API::SendSoundEvent(const std::string& name) {
+        SoundManager::GetSingleton()->SendSoundEvent(name);
     }
 
     // 1.0.3: Added

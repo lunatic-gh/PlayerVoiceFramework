@@ -35,8 +35,8 @@ namespace PVE {
             return StringUtil::TrimString(text);
         }
 
-        static bool PlaySoundEvent(RE::StaticFunctionTag*, std::string name) {
-            return SoundManager::GetSingleton()->SendSoundEvent(name);
+        static void SendSoundEvent(RE::StaticFunctionTag*, std::string name) {
+            SoundManager::GetSingleton()->SendSoundEvent(name);
         }
 
         static int RandomInt(RE::StaticFunctionTag*, int minInclusive, int maxInclusive) {
@@ -55,7 +55,7 @@ namespace PVE {
             vm->RegisterFunction("FormFromString", "PVEPapyrusUtil", FormFromString);
             vm->RegisterFunction("ReplaceInString", "PVEPapyrusUtil", ReplaceInString);
             vm->RegisterFunction("TrimString", "PVEPapyrusUtil", TrimString);
-            vm->RegisterFunction("PlaySoundEvent", "PVEPapyrusUtil", PlaySoundEvent);
+            vm->RegisterFunction("SendSoundEvent", "PVEPapyrusUtil", SendSoundEvent);
             vm->RegisterFunction("RandomInt", "PVEPapyrusUtil", RandomInt);
             vm->RegisterFunction("RandomFloat", "PVEPapyrusUtil", RandomFloat);
             return true;
