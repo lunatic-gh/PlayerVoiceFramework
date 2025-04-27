@@ -16,3 +16,4 @@ customization, with way less issues.
 ### Requirements:
 
 - SKSE - This mod is like 99% Based on SKSE. Requirement should be obvious...
+- Address Library - Required for providing cross-version compatibility.
