@@ -14,28 +14,31 @@ namespace PVE {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kHealth); f2 != 0.0f) {
-                        return (f1 / f2) * 100.0f;
+                        const float f = (f1 / f2) * 100.0f;
+                        return f;
                     }
                 }
-                return std::numeric_limits<float>::lowest();
+                return 0.0f;
             });
             this->RegisterCondition("PlayerStaminaPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina); f2 != 0.0f) {
-                        return (f1 / f2) * 100.0f;
+                        const float f = (f1 / f2) * 100.0f;
+                        return f;
                     }
                 }
-                return std::numeric_limits<float>::lowest();
+                return 0.0f;
             });
             this->RegisterCondition("PlayerMagickaPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka); f2 != 0.0f) {
-                        return (f1 / f2) * 100.0f;
+                        const float f = (f1 / f2) * 100.0f;
+                        return f;
                     }
                 }
-                return std::numeric_limits<float>::lowest();
+                return 0.0f;
             });
             this->RegisterCondition("PlayerEquippedWeaponTypeLeft", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
@@ -229,8 +232,7 @@ namespace PVE {
                     bool dotEncountered = false;
                     while (j < str.size() && (std::isdigit(str[j]) || str[j] == '.')) {
                         if (str[j] == '.') {
-                            if (dotEncountered)
-                                break;
+                            if (dotEncountered) break;
                             dotEncountered = true;
                         }
                         j++;
@@ -331,8 +333,7 @@ namespace PVE {
             }
 
             bool eval(const std::string& eventName) const override {
-                if (op == Op::And)
-                    return left->eval(eventName) && right->eval(eventName);
+                if (op == Op::And) return left->eval(eventName) && right->eval(eventName);
                 else
                     return left->eval(eventName) || right->eval(eventName);
             }
@@ -358,7 +359,6 @@ namespace PVE {
                     }
                     return std::nullopt;
                 };
-
                 if (const auto eventVal = searchConditions(eventName); eventVal.has_value()) {
                     val = eventVal.value();
                 } else if (auto globalVal = searchConditions("GLOBAL"); globalVal.has_value()) {
@@ -366,68 +366,78 @@ namespace PVE {
                 } else {
                     return false;
                 }
+
                 if (std::holds_alternative<RE::TESForm*>(val) && (op == "==" || op == "!=")) {
-                    const auto* lhs = std::get<RE::TESForm*>(val);
-                    const auto& rhs = std::get<std::string>(literal);
+                    const auto lhs = std::get<RE::TESForm*>(val);
+                    std::string rhs = "";
+                    if (std::holds_alternative<std::string>(literal)) {
+                        rhs = std::get<std::string>(literal);
+                    } else {
+                        return false;
+                    }
                     const bool result = FormUtil::CompareForms(lhs, rhs);
                     return op == "==" ? result : !result;
                 }
                 if (std::holds_alternative<float>(val)) {
                     const float lhs = std::get<float>(val);
-                    const float rhs = std::get<float>(literal);
-                    if (op == "==")
-                        return lhs == rhs;
-                    if (op == "!=")
-                        return lhs != rhs;
-                    if (op == "<")
-                        return lhs < rhs;
-                    if (op == "<=")
-                        return lhs <= rhs;
-                    if (op == ">")
-                        return lhs > rhs;
-                    if (op == ">=")
-                        return lhs >= rhs;
+                    float rhs = 0.0f;
+                    if (std::holds_alternative<float>(literal)) {
+                        rhs = std::get<float>(literal);
+                    } else if (std::holds_alternative<int>(literal)) {
+                        rhs = static_cast<float>(std::get<int>(literal));
+                    } else {
+                        return false;
+                    }
+                    Util::LogDebug("{} | {}", lhs, rhs);
+                    if (op == "==") return lhs == rhs;
+                    if (op == "!=") return lhs != rhs;
+                    if (op == "<") return lhs < rhs;
+                    if (op == "<=") return lhs <= rhs;
+                    if (op == ">") return lhs > rhs;
+                    if (op == ">=") return lhs >= rhs;
                 } else if (std::holds_alternative<int>(val)) {
                     const int lhs = std::get<int>(val);
-                    const int rhs = std::get<int>(literal);
-                    if (op == "==")
-                        return lhs == rhs;
-                    if (op == "!=")
-                        return lhs != rhs;
-                    if (op == "<")
-                        return lhs < rhs;
-                    if (op == "<=")
-                        return lhs <= rhs;
-                    if (op == ">")
-                        return lhs > rhs;
-                    if (op == ">=")
-                        return lhs >= rhs;
+                    int rhs = 0;
+                    if (std::holds_alternative<int>(literal)) {
+                        rhs = std::get<int>(literal);
+                    } else if (std::holds_alternative<float>(literal)) {
+                        rhs = static_cast<int>(std::get<float>(literal));
+                    } else {
+                        return false;
+                    }
+                    if (op == "==") return lhs == rhs;
+                    if (op == "!=") return lhs != rhs;
+                    if (op == "<") return lhs < rhs;
+                    if (op == "<=") return lhs <= rhs;
+                    if (op == ">") return lhs > rhs;
+                    if (op == ">=") return lhs >= rhs;
                     return false;
                 } else if (std::holds_alternative<bool>(val)) {
                     const bool lhs = std::get<bool>(val);
-                    const bool rhs = std::get<bool>(literal);
-                    if (op == "==")
-                        return lhs == rhs;
-                    if (op == "!=")
-                        return lhs != rhs;
+                    bool rhs = false;
+                    if (std::holds_alternative<bool>(literal)) {
+                        rhs = std::get<bool>(literal);
+                    } else {
+                        return false;
+                    };
+                    if (op == "==") return lhs == rhs;
+                    if (op == "!=") return lhs != rhs;
                     return false;
                 } else if (std::holds_alternative<std::string>(val)) {
                     const std::string& lhs = std::get<std::string>(val);
-                    const std::string& rhs = std::get<std::string>(literal);
-                    if (op == "==")
-                        return lhs == rhs;
-                    if (op == "!=")
-                        return lhs != rhs;
-                    if (op == "<")
-                        return lhs < rhs;
-                    if (op == "<=")
-                        return lhs <= rhs;
-                    if (op == ">")
-                        return lhs > rhs;
-                    if (op == ">=")
-                        return lhs >= rhs;
-                    if (op == "*=")
-                        return lhs.contains(rhs);
+                    std::string rhs = "";
+                    if (std::holds_alternative<std::string>(literal)) {
+                        rhs = std::get<std::string>(literal);
+                    } else {
+                        return false;
+                    }
+                    if (op == "==") return lhs == rhs;
+                    if (op == "!=") return lhs != rhs;
+                    if (op == "<") return lhs < rhs;
+                    if (op == "<=") return lhs <= rhs;
+                    if (op == ">") return lhs > rhs;
+                    if (op == ">=") return lhs >= rhs;
+                    if (op == "*=") return lhs.contains(rhs);
                     return false;
                 }
                 return false;

@@ -13,92 +13,91 @@ namespace PVE {
 
     void SoundManager::SendSoundEvent(const SoundEvent& event) {
         static std::atomic cancelFlag(false);
-        std::thread([this, event]() mutable {
+        std::thread([this, event]() {
             const std::string cooldownKey = std::format("pve_{}Cooldown", event.name);
             if (const auto storage = SaveDataStorage::GetSingleton(); !(storage ? storage->Get<int>(cooldownKey, 0) : 0)) {
                 if (this->currentSoundEvent.has_value() && Util::Contains(currentSoundEvent->overrideBlacklist, event.name)) {
+                    ConditionManager::GetSingleton()->UnregisterConditions(event.name);
                     return;
                 }
-
                 if (Util::RandomInt(0, 99) >= event.chance) {
+                    ConditionManager::GetSingleton()->UnregisterConditions(event.name);
                     return;
                 }
-
-                for (const auto& [expr, files] : event.audios) {
-                    if (files.empty() || !ConditionManager::GetSingleton()->EvaluateExpression(event.name, expr)) {
-                        continue;
-                    }
-
-                    cancelFlag.store(true);
-                    while (this->currentHandle.has_value() || this->currentSoundEvent.has_value()) {
-                        std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                    }
-                    std::string filePath;
-                    if (const std::string rngMode = MemoryDataStorage::GetSingleton()->Get<std::string>("pve_rngMode", "default"); rngMode == "default") {
-                        filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", files.at(Util::RandomInt(0, static_cast<int>(files.size()) - 1)));
-                    } else if (rngMode == "biased") {
-                        static std::map<std::string, std::vector<std::string>> availableFiles;
-                        auto& fileList = availableFiles[event.name];
-                        if (fileList.empty()) {
-                            fileList = files;
-                            std::ranges::shuffle(fileList, std::mt19937{std::random_device{}()});
+                for (int i = 0; i < event.audios.size(); ++i) {
+                    const auto expr = event.audios[i].first;
+                    const auto files = event.audios[i].second;
+                    if (!files.empty() && ConditionManager::GetSingleton()->EvaluateExpression(event.name, expr)) {
+                        ConditionManager::GetSingleton()->UnregisterConditions(event.name);
+                        cancelFlag.store(true);
+                        while (this->currentHandle.has_value() || this->currentSoundEvent.has_value()) {
+                            std::this_thread::sleep_for(std::chrono::milliseconds(5));
                         }
-                        const std::string s = fileList.front();
-                        filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", s);
-                        if (fileList.size() == 1) {
-                            fileList = files;
-                            int i = 0;
-                            do {
+                        std::string filePath;
+                        if (const std::string rngMode = MemoryDataStorage::GetSingleton()->Get<std::string>("pve_rngMode", "default"); rngMode == "default") {
+                            filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", files.at(Util::RandomInt(0, static_cast<int>(files.size()) - 1)));
+                        } else if (rngMode == "biased") {
+                            static std::map<std::string, std::vector<std::string>> availableFiles;
+                            auto& fileList = availableFiles[std::format("{}|{}", event.name, i)];
+                            if (fileList.empty()) {
+                                fileList = files;
                                 std::ranges::shuffle(fileList, std::mt19937{std::random_device{}()});
-                                i++;
-                            } while (i < 10 && fileList.size() > 1 && fileList.front() == s);
-                        } else {
-                            fileList.erase(fileList.begin());
+                            }
+                            const std::string s = fileList.front();
+                            filePath = std::format("Sound/PlayerVoiceEvents/SoundData/{}", s);
+                            if (fileList.size() == 1) {
+                                fileList = files;
+                                int i1 = 0;
+                                do {
+                                    std::ranges::shuffle(fileList, std::mt19937{std::random_device{}()});
+                                    i1++;
+                                } while (i1 < 10 && fileList.size() > 1 && fileList.front() == s);
+                            } else {
+                                fileList.erase(fileList.begin());
+                            }
                         }
-                    }
 
-                    RE::BSSoundHandle handle;
-                    RE::BSResource::ID id;
-                    id.GenerateFromPath(filePath.c_str());
-                    RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
+                        RE::BSSoundHandle handle;
+                        RE::BSResource::ID id;
+                        id.GenerateFromPath(filePath.c_str());
+                        RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
 
-                    this->currentHandle.emplace(handle);
-                    this->currentSoundEvent.emplace(event);
-                    this->currentHandle->Play();
-                    Util::LogDebug("Played file {}", filePath);
-
-                    if (storage) {
-                        storage->Set(cooldownKey, static_cast<int>(event.cooldown));
-                    }
-
-                    cancelFlag.store(false);
-
-                    uint64_t delay = 0;
-                    while (this->currentHandle && this->GetCurrentSoundHandle()->GetDuration() <= 0) {
-                        if (cancelFlag.load()) {
-                            this->StopCurrentSoundEvent();
-                            Util::LogInfo("Stopped playing");
-                            return;
+                        this->currentHandle.emplace(handle);
+                        this->currentSoundEvent.emplace(event);
+                        this->currentHandle->Play();
+                        Util::LogDebug("Playing '{}'", filePath);
+                        if (storage) {
+                            storage->Set(cooldownKey, static_cast<int>(event.cooldown));
                         }
-                        std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                        delay += 5;
-                        if (delay >= 2000) {
-                            Util::LogWarning("Last sound could not be detected as 'playing' - This is a known issue within the Skyrim Engine.");
-                            this->StopCurrentSoundEvent();
-                            Util::LogInfo("Stopped playing");
-                            return;
+
+                        cancelFlag.store(false);
+
+                        uint64_t delay = 0;
+                        while (this->currentHandle && this->GetCurrentSoundHandle()->GetDuration() <= 0) {
+                            if (cancelFlag.load()) {
+                                this->StopCurrentSoundEvent();
+                                return;
+                            }
+                            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                            delay += 5;
+                            if (delay >= 2000) {
+                                // For some reason, on occasion the game does not seem to populate the 'Duration' field of a sound that gets played. This is especially an issue on short sounds.
+                                // This is the exact same issue as with the 'voiceTimer' field for dialogue.
+                                Util::LogWarning("Last sound could not be detected as 'playing'. THIS IS AN ISSUE WITH THE GAME'S CODE ITSELF, DO NOT REPORT IT TO ME, I CANT FIX IT!!!");
+                                this->StopCurrentSoundEvent();
+                                return;
+                            }
                         }
-                    }
-                    while (this->currentHandle && this->GetCurrentSoundHandle()->GetDuration() > 0) {
-                        if (cancelFlag.load()) {
-                            this->StopCurrentSoundEvent();
-                            Util::LogInfo("Stopped playing");
-                            return;
+                        while (this->currentHandle && this->GetCurrentSoundHandle()->GetDuration() > 0) {
+                            if (cancelFlag.load()) {
+                                this->StopCurrentSoundEvent();
+                                return;
+                            }
+                            std::this_thread::sleep_for(std::chrono::milliseconds(5));
                         }
-                        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                        this->StopCurrentSoundEvent();
+                        break;
                     }
-                    this->StopCurrentSoundEvent();
-                    Util::LogInfo("Stopped playing");
                 }
             }
         }).detach();

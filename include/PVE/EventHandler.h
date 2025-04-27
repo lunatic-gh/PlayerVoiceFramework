@@ -1,7 +1,8 @@
 #pragma once
 
 namespace PVE {
-    class PublicEventSink final : public RE::BSTEventSink<SKSE::ActionEvent>, public RE::BSTEventSink<RE::MenuOpenCloseEvent> {
+    class PublicEventSink final : public RE::BSTEventSink<SKSE::ActionEvent>,
+                                  public RE::BSTEventSink<RE::MenuOpenCloseEvent> {
     public:
         RE::BSEventNotifyControl ProcessEvent(const SKSE::ActionEvent* e, RE::BSTEventSource<SKSE::ActionEvent>*) override;
 

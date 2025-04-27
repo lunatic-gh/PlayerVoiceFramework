@@ -147,7 +147,7 @@ namespace PVE {
                 Util::LogError("Could not parse Yaml Config...");
             }
         } else {
-            LogInfo("Config file not found: {}", configPath.string());
+            LogInfo("Config file not found at '{}'", configPath.string());
         }
     }
 
@@ -171,30 +171,30 @@ namespace PVE {
                 case YAML::NodeType::Scalar: {
                     if (type == "string") {
                         MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<std::string>());
-                        LogDebug("Loaded Setting '{}' with value '{}'", key, keyNode.as<std::string>());
+                        LogInfo("Loaded Setting '{}' with value '{}'", key, keyNode.as<std::string>());
                     } else if (type == "int") {
                         MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<int>());
-                        LogDebug("Loaded Setting '{}' with value '{}'", key, keyNode.as<int>());
+                        LogInfo("Loaded Setting '{}' with value '{}'", key, keyNode.as<int>());
                     } else if (type == "float") {
                         MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<float>());
-                        LogDebug("Loaded Setting '{}' with value '{}'", key, keyNode.as<float>());
+                        LogInfo("Loaded Setting '{}' with value '{}'", key, keyNode.as<float>());
                     }
                     return;
                 }
                 default:
-                    LogWarning("Setting '{}' is of invalid type, expected '{}'", key, type);
+                    LogError("Setting '{}' is of invalid type, expected '{}'", key, type);
                     break;
             }
             // Defaults
             if (std::holds_alternative<std::string>(def)) {
                 MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<std::string>(def));
-                LogDebug("Loaded Setting '{}' with default value '{}'", key, std::get<std::string>(def));
+                LogInfo("Loaded Setting '{}' with default value '{}'", key, std::get<std::string>(def));
             } else if (std::holds_alternative<int>(def)) {
                 MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<int>(def));
-                LogDebug("Loaded Setting '{}' with default value '{}'", key, std::get<int>(def));
+                LogInfo("Loaded Setting '{}' with default value '{}'", key, std::get<int>(def));
             } else if (std::holds_alternative<float>(def)) {
                 MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<float>(def));
-                LogDebug("Loaded Setting '{}' with default value '{}'", key, std::get<float>(def));
+                LogInfo("Loaded Setting '{}' with default value '{}'", key, std::get<float>(def));
             }
         }
     }

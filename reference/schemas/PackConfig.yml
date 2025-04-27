@@ -1,0 +1,73 @@
+$schema: https://json-schema.org/draft-07/schema#
+title: PlayerVoiceEvents Pack-Config Schema
+description: Schema for the Pack-File
+type: object
+properties:
+  settings:
+    type: object
+    description: General Settings
+    properties:
+      rngMode:
+        type: string
+        description: Mode of the Random number generator used for event file-selections.
+          Default is entirely random, biased won't repeat files unless all files were
+          played at least once
+        enum:
+          - default
+          - biased
+  sounds:
+    type: array
+    description: Sound Events to register
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the event
+          $ref: "#/definitions/eventNames"
+        chance:
+          type: integer
+          description: Chance for the event to play
+          minimum: 1
+          maximum: 100
+        cooldown:
+          type: integer
+          description: Cooldown of this event, in seconds
+          minimum: 0
+        overrideBlacklist:
+          type: array
+          description: A list of event names that when playing cannot get replaced
+            by this event
+          items:
+            type: string
+            $ref: "#/definitions/eventNames"
+          uniqueItems: true
+        audios:
+          type: array
+          description: A list of audio packs. The first pack that has a matching condition
+            will be played.
+          items:
+            type: object
+            properties:
+              condition:
+                type: string
+                description: 'Code-Like Condition-Expression. Example: PlayerRace
+                  == ''Nord'' && PlayerName == ''Luna'''
+              files:
+                type: array
+                description: List of relative (from this config) paths to the wav
+                  files.
+                items:
+                  type: string
+                minItems: 1
+            required:
+              - files
+      required:
+        - name
+        - audios
+definitions:
+  eventNames:
+    type: string
+    enum:
+      - PVEAttackMelee
+      - PVEAttackBow

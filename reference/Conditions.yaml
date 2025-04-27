@@ -12,9 +12,9 @@ Definitions:
       - "Simple Text - Needs to be put into ' Characters in conditions, e.g. 'Hello World'"
       - "If a string you want contains special characters (e.g ') you need to double-escape them, e.g. 'J\\'zargo' instead of 'J'zargo'"
     Form String:
-      - "String formatted as FormPluginName|HexFormID, e.g. Skyrim.esm|0x123456"
+      - "String formatted as FormPluginName|HexFormID, e.g. 'Skyrim.esm|0x123456'"
     Keyword String:
-      - "String containing a form's keywords splitted by the | character, e.g. Keyword1|Keyword2|...|..."
+      - "String containing a form's keywords splitted by the | character, e.g. 'Keyword1|Keyword2|...|...'"
       - "Most of the time, you only want to check if a form contains a single keyword. for that you can use the CONTAINS operator, e.g. SomeFormKeywords *= 'Keyword2'"
     Int:
       - "A number without any decimals, e.g. 69"
@@ -42,5 +42,4 @@ Global:
   - RandomBool: Bool
   - PlayerWerewolfState: Int (0 = None, 1 = Human-Form, 2 = Beast Form)
   - PlayerVampireState: Int (0 = None, 1 = Human-Form, 2 = Vampire-Lord Form)
-
 Conditional:

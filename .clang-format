@@ -27,9 +27,10 @@ AllowShortLoopsOnASingleLine: false
 AllowShortCaseExpressionOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortCompoundRequirementOnASingleLine: false
-AllowShortIfStatementsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: Always
 AllowAllArgumentsOnNextLine: false
 # Align Pointers next to the object type, rather than before the key name
 # E.g. "const auto& someKey" instead of "const auto &someKey"
 DerivePointerAlignment: false
 PointerAlignment: Left
+BreakInheritanceList: AfterComma

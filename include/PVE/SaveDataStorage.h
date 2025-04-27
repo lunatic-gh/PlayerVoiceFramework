@@ -154,7 +154,7 @@ namespace PVE {
                                     break;
                                 }
                                 default:
-                                    Util::LogWarning("Unknown variant type {} for key {}.", variantType, key);
+                                    Util::LogError("Unknown variant type {} for key {}.", variantType, key);
                                     return;
                             }
                         }
