@@ -46,4 +46,4 @@ jobs:
         with:
           name: PlayerVoiceEvents-Rewrite
           path: |
-            .zip-temp\*
+            .zip-temp/*
