@@ -45,5 +45,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PlayerVoiceEvents-Rewrite
-          path: |
-            .zip-temp/*
+          include-hidden-files: true
+          path: ./.zip-temp/*
+          retention-days: 90

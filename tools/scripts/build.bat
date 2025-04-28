@@ -56,6 +56,7 @@ if "%GITHUB_ACTIONS%" NEQ "true" (
     xcopy /Q /Y /E ".\run\*" ".\.zip-temp\Core Files\"
     xcopy /Q /Y ".\Data-Optional\PlayerVoiceEvents.ini" ".\.zip-temp\PowerAttackPatch\"
     xcopy /Q /Y /I ".\tools\fomod" ".\.zip-temp\fomod"
+    dir
 )
 
 endlocal
