@@ -10,7 +10,7 @@ namespace PVE {
     public:
         // Registers the internal conditions that come with this mod
         void RegisterInternalConditions() {
-            this->RegisterCondition("PlayerHealthPercentage", [] {
+            this->RegisterGlobalCondition("PlayerHealthPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kHealth); f2 != 0.0f) {
@@ -20,7 +20,7 @@ namespace PVE {
                 }
                 return 0.0f;
             });
-            this->RegisterCondition("PlayerStaminaPercentage", [] {
+            this->RegisterGlobalCondition("PlayerStaminaPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina); f2 != 0.0f) {
@@ -30,7 +30,7 @@ namespace PVE {
                 }
                 return 0.0f;
             });
-            this->RegisterCondition("PlayerMagickaPercentage", [] {
+            this->RegisterGlobalCondition("PlayerMagickaPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka); f2 != 0.0f) {
@@ -40,7 +40,7 @@ namespace PVE {
                 }
                 return 0.0f;
             });
-            this->RegisterCondition("PlayerEquippedWeaponTypeLeft", [] {
+            this->RegisterGlobalCondition("PlayerEquippedWeaponTypeLeft", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
                 if (const auto form = actor->GetEquippedObject(true)) {
                     if (const auto weapon = form->As<RE::TESObjectWEAP>()) {
@@ -49,7 +49,7 @@ namespace PVE {
                 }
                 return std::numeric_limits<int>::lowest();
             });
-            this->RegisterCondition("PlayerEquippedWeaponTypeRight", [] {
+            this->RegisterGlobalCondition("PlayerEquippedWeaponTypeRight", [] {
                 if (const auto actor = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto form = actor->GetEquippedObject(false)) {
                         if (const auto weapon = form->As<RE::TESObjectWEAP>()) {
@@ -59,19 +59,19 @@ namespace PVE {
                 }
                 return std::numeric_limits<int>::lowest();
             });
-            this->RegisterCondition("PlayerName", [] {
+            this->RegisterGlobalCondition("PlayerName", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     return player->GetName();
                 }
                 return "";
             });
-            this->RegisterCondition("PlayerRaceForm", [] {
+            this->RegisterGlobalCondition("PlayerRaceForm", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     return player->GetRace();
                 }
                 return static_cast<RE::TESRace*>(nullptr);
             });
-            this->RegisterCondition("PlayerSex", [] {
+            this->RegisterGlobalCondition("PlayerSex", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto actorBase = player->GetActorBase()) {
                         return static_cast<int>(actorBase->GetSex());
@@ -79,25 +79,25 @@ namespace PVE {
                 }
                 return std::numeric_limits<int>::lowest();
             });
-            this->RegisterCondition("PlayerPosX", [] {
+            this->RegisterGlobalCondition("PlayerPosX", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     return player->GetPositionX();
                 }
                 return std::numeric_limits<float>::lowest();
             });
-            this->RegisterCondition("PlayerPosY", [] {
+            this->RegisterGlobalCondition("PlayerPosY", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     return player->GetPositionY();
                 }
                 return std::numeric_limits<float>::lowest();
             });
-            this->RegisterCondition("PlayerPosZ", [] {
+            this->RegisterGlobalCondition("PlayerPosZ", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     return player->GetPositionZ();
                 }
                 return std::numeric_limits<float>::lowest();
             });
-            this->RegisterCondition("PlayerLocationForm", [] {
+            this->RegisterGlobalCondition("PlayerLocationForm", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto loc = player->GetCurrentLocation()) {
                         return loc;
@@ -105,7 +105,7 @@ namespace PVE {
                 }
                 return static_cast<RE::BGSLocation*>(nullptr);
             });
-            this->RegisterCondition("PlayerLocationKeywords", [] {
+            this->RegisterGlobalCondition("PlayerLocationKeywords", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto loc = player->GetCurrentLocation()) {
                         return FormUtil::ToKeywordString(loc);
@@ -113,10 +113,10 @@ namespace PVE {
                 }
                 return std::string("");
             });
-            this->RegisterCondition("RandomInt", [] { return Util::RandomInt(1, 99); });
-            this->RegisterCondition("RandomFloat", [] { return Util::RandomFloat(1.0f, 99.0f); });
-            this->RegisterCondition("RandomBool", [] { return Util::RandomInt(1, 99) == 1; });
-            this->RegisterCondition("PlayerWerewolfState", [] {
+            this->RegisterGlobalCondition("RandomInt", [] { return Util::RandomInt(1, 99); });
+            this->RegisterGlobalCondition("RandomFloat", [] { return Util::RandomFloat(1.0f, 99.0f); });
+            this->RegisterGlobalCondition("RandomBool", [] { return Util::RandomInt(1, 99) == 1; });
+            this->RegisterGlobalCondition("PlayerWerewolfState", [] {
                 if (const auto globalVar = RE::TESForm::LookupByID(0xed06c)->As<RE::TESGlobal>()) {
                     if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                         if (globalVar->value == 1.0f) {
@@ -129,7 +129,7 @@ namespace PVE {
                 }
                 return 0;
             });
-            this->RegisterCondition("PlayerVampireState", [] {
+            this->RegisterGlobalCondition("PlayerVampireState", [] {
                 if (const auto globalVar = RE::TESForm::LookupByID(0xed06D)->As<RE::TESGlobal>()) {
                     if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                         if (globalVar->value == 1.0f) {
@@ -152,20 +152,35 @@ namespace PVE {
         ConditionManager(const ConditionManager&) = delete;
         ConditionManager& operator=(const ConditionManager&) = delete;
 
+        /**
+         * Registers a condition for the given event (or globally)
+         *
+         * NOTE: If an event has been played (or failed), all events attached to it will be unregistered automatically. There is no need to do that yourself.
+         * @param eventName the name of the event to attach, or GLOBAL to make it globally available
+         * @param conditionName the name of the condition
+         * @param conditionFunction a function whose return value will be used for evaluation.
+         */
         void RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<Value()>& conditionFunction) {
             auto& conditionList = conditions[eventName];
-            // clang-format off
             std::ranges::replace_if(conditionList, [&](const Condition& condition) { return condition.name == conditionName; }, Condition{conditionName, conditionFunction});
-            // clang-format on
-            if (!std::ranges::any_of(conditionList, [&](const Condition& condition) { return condition.name == conditionName; })) {
-                conditionList.emplace_back(Condition{conditionName, conditionFunction});
-            }
+            if (!std::ranges::any_of(conditionList, [&](const Condition& condition) { return condition.name == conditionName; })) conditionList.emplace_back(Condition{conditionName, conditionFunction});
         }
 
-        void RegisterCondition(const std::string& conditionName, const std::function<Value()>& conditionFunction) {
+        /**
+         * Convenience-Function, see above for info
+         * @param conditionName the name of the condition
+         * @param conditionFunction a function whose return value will be used for evaluation.
+         */
+        void RegisterGlobalCondition(const std::string& conditionName, const std::function<Value()>& conditionFunction) {
             RegisterCondition("GLOBAL", conditionName, conditionFunction);
         }
 
+        /**
+         * Unregisters all conditions for the given event.
+         *
+         * NOTE: You should never use this, unless you absolutely know what you're doing - This will be done automatically after an event played.
+         * @param eventName the name of the event
+         */
         void UnregisterConditions(const std::string& eventName) {
             if (eventName == "GLOBAL") {
                 return;
@@ -173,6 +188,12 @@ namespace PVE {
             conditions.erase(eventName);
         }
 
+        /**
+         * Evaluates the given expression for the given event.
+         * @param eventName the name of the event
+         * @param condition the expression to evaluate
+         * @return true if the condition succeeds, false otherwise
+         */
         bool EvaluateExpression(const std::string& eventName, const std::string& condition) const {
             if (condition.empty()) {
                 return true;
@@ -405,6 +426,7 @@ namespace PVE {
                     } else {
                         return false;
                     }
+                    Util::LogDebug("{} | {}", lhs, rhs);
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
                     if (op == "<") return lhs < rhs;
@@ -419,7 +441,8 @@ namespace PVE {
                         rhs = std::get<bool>(literal);
                     } else {
                         return false;
-                    };
+                    }
+                    Util::LogDebug("{} | {}", lhs, rhs);
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
                     return false;
@@ -431,6 +454,7 @@ namespace PVE {
                     } else {
                         return false;
                     }
+                    Util::LogDebug("{} | {}", lhs, rhs);
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
                     if (op == "<") return lhs < rhs;

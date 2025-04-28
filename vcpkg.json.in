@@ -1,6 +1,7 @@
 {
   "name": "player-voice-events",
   "version": "@VERSION@",
+  "license": "MIT",
   "dependencies": [
     "commonlibsse-ng"
   ]

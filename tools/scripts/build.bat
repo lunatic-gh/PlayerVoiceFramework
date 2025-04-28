@@ -48,9 +48,14 @@ if "%GITHUB_ACTIONS%" NEQ "true" (
         exit /b 1
     )
 ) else (
-    powershell -Command Compress-Archive -Path ^
-        .\run\*^
-        -DestinationPath PlayerVoiceEvents.zip -Force
+    :: Create a FOMOD ZIP
+    if exist ".\.zip-temp" (
+        rmdir /S /Q ".\.zip-temp"
+    )
+    mkdir ".\.zip-temp\Core Files"
+    xcopy /Q /Y /E ".\run\*" ".\.zip-temp\Core Files\"
+    xcopy /Q /Y ".\Data-Optional\PlayerVoiceEvents.ini" ".\.zip-temp\PowerAttackPatch\"
+    xcopy /Q /Y /I ".\tools\fomod" ".\.zip-temp\fomod"
 )
 
 endlocal
