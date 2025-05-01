@@ -57,6 +57,7 @@ namespace PVE {
         }
         return false;
     }
+
     std::string FormUtil::ToKeywordString(RE::TESForm* form) {
         std::string s = "";
         if (form) {
@@ -74,8 +75,7 @@ namespace PVE {
     }
 
     std::string StringUtil::ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq) {
-        if (oldSeq.empty())
-            return text;
+        if (oldSeq.empty()) return text;
         std::string result = text;
         size_t pos = 0;
         while ((pos = result.find(oldSeq, pos)) != std::string::npos) {
@@ -163,6 +163,17 @@ namespace PVE {
         std::mt19937 gen(dev());
         std::uniform_real_distribution range(minInclusive, maxInclusive);
         return range(gen);
+    }
+
+    void Util::RunAsync(const std::function<void()>& function) {
+        std::thread([function] { function(); }).detach();
+    }
+
+    void Util::RunAsync(const std::function<void()>& function, const float delaySeconds) {
+        std::thread([function, delaySeconds] {
+            std::this_thread::sleep_for(std::chrono::duration<float>(delaySeconds));
+            function();
+        }).detach();
     }
 
     void Util::LoadSetting(const YAML::Node& node, const std::string& key, const std::variant<std::string, int, float>& def, const std::string& type) {

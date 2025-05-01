@@ -12,7 +12,6 @@ namespace PVE {
     }
 
     void SoundManager::SendSoundEvent(const SoundEvent& event) {
-        Util::LogDebug("Sending event '{}'", event.name);
         static std::atomic cancelFlag(false);
         std::thread([this, event]() {
             const std::string cooldownKey = std::format("pve_{}Cooldown", event.name);
@@ -105,6 +104,7 @@ namespace PVE {
     }
 
     void SoundManager::SendSoundEvent(const std::string& name) {
+        Util::LogDebug("Sending event '{}'", name);
         if (const auto it = this->registeredSoundEvents.find(name); it != this->registeredSoundEvents.end()) {
             SendSoundEvent(it->second);
         }

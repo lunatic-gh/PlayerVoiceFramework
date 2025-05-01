@@ -151,6 +151,10 @@ namespace PVE {
             LogDebug("{}", s);
         }
 
+        static void RunAsync(const std::function<void()>& function);
+
+        static void RunAsync(const std::function<void()>& function, float delaySeconds);
+
     private:
         /**
          * Loads a setting from the "settings" key in the pack config. Used when initially loading the data on game-start

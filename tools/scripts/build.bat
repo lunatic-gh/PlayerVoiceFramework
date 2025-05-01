@@ -33,6 +33,8 @@ call "tools\scripts\compile-scripts.bat"
 if ERRORLEVEL 1 exit /b 1
 
 if "%GITHUB_ACTIONS%" NEQ "true" (
+    :: Include optional files/patches
+    xcopy /Q /Y /E ".\Data-Optional\*" ".\run"
     :: Symlink "run" to a new mo2 mod
     set "MODS_DIR=%MO2_SSE_MODS_PATH%"
     if "!MODS_DIR!"=="" (
@@ -56,7 +58,6 @@ if "%GITHUB_ACTIONS%" NEQ "true" (
     xcopy /Q /Y /E ".\run\*" ".\.zip-temp\Core Files\"
     xcopy /Q /Y ".\Data-Optional\PlayerVoiceEvents.ini" ".\.zip-temp\PowerAttackPatch\"
     xcopy /Q /Y /I ".\tools\fomod" ".\.zip-temp\fomod"
-    dir
 )
 
 endlocal

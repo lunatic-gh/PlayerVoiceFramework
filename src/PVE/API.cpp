@@ -11,27 +11,40 @@
  * RATHER DEPRECATE THEM.
  */
 namespace PVE {
-    // 1.0.3: Added
-    void API::SendSoundEvent(const std::string& name) {
-        SoundManager::GetSingleton()->SendSoundEvent(name);
+
+    PlayerVoiceEventsAPI* PlayerVoiceEventsAPI::GetSingleton() {
+        std::lock_guard lock(mutex);
+        if (!api_ptr) {
+            Util::LogDebug("API Loaded...");
+            api_ptr = Initialize();
+        }
+        return api_ptr.get();
     }
 
     // 1.0.3: Added
-    void API::RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<std::variant<float, int, bool, std::string, RE::TESForm*>()>& conditionFunction) {
-        if (const auto conditionManager = ConditionManager::GetSingleton()) {
+    void PlayerVoiceEventsAPI::SendSoundEvent(const std::string& name) {
+        std::lock_guard lock(mutex);
+        PVE::SoundManager::GetSingleton()->SendSoundEvent(name);
+    }
+
+    // 1.0.3: Added
+    void PlayerVoiceEventsAPI::RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<std::variant<float, int, bool, std::string, RE::TESForm*>()>& conditionFunction) {
+        std::lock_guard lock(mutex);
+        if (const auto conditionManager = PVE::ConditionManager::GetSingleton()) {
             conditionManager->RegisterCondition(eventName, conditionName, conditionFunction);
         }
     }
 
     // 1.0.3: Added
-    void API::SetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
-        if (const auto memoryDataStorage = MemoryDataStorage::GetSingleton())
-            memoryDataStorage->Set(key, value);
+    void PlayerVoiceEventsAPI::SetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
+        std::lock_guard lock(mutex);
+        if (const auto memoryDataStorage = PVE::MemoryDataStorage::GetSingleton()) memoryDataStorage->Set(key, value);
     }
 
     // 1.0.3: Added
-    std::variant<std::string, int, float, RE::TESForm*> API::GetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
-        if (const auto memoryDataStorage = MemoryDataStorage::GetSingleton()) {
+    std::variant<std::string, int, float, RE::TESForm*> PlayerVoiceEventsAPI::GetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
+        std::lock_guard lock(mutex);
+        if (const auto memoryDataStorage = PVE::MemoryDataStorage::GetSingleton()) {
             if (std::holds_alternative<std::string>(def)) {
                 return memoryDataStorage->Get<std::string>(key, std::get<std::string>(def));
             }
@@ -49,15 +62,17 @@ namespace PVE {
     }
 
     // 1.0.3: Added
-    void API::SetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
-        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
+    void PlayerVoiceEventsAPI::SetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
+        std::lock_guard lock(mutex);
+        if (const auto saveDataStorage = PVE::SaveDataStorage::GetSingleton()) {
             saveDataStorage->Set(key, value);
         }
     }
 
     // 1.0.3: Added
-    std::variant<std::string, int, float, RE::TESForm*> API::GetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
-        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
+    std::variant<std::string, int, float, RE::TESForm*> PlayerVoiceEventsAPI::GetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
+        std::lock_guard lock(mutex);
+        if (const auto saveDataStorage = PVE::SaveDataStorage::GetSingleton()) {
             if (std::holds_alternative<std::string>(def)) {
                 return saveDataStorage->Get<std::string>(key, std::get<std::string>(def));
             }
@@ -75,62 +90,65 @@ namespace PVE {
     }
 
     // 1.0.3: Added
-    bool API::FormHasKeyword(RE::TESForm* form, const std::string& keyword) {
-        return FormUtil::HasKeyword(form, keyword);
+    bool PlayerVoiceEventsAPI::FormHasKeyword(RE::TESForm* form, const std::string& keyword) {
+        return PVE::FormUtil::HasKeyword(form, keyword);
     }
 
     // 1.0.3: Added
-    std::string API::FormToString(const RE::TESForm* form) {
-        return FormUtil::ToString(form);
+    std::string PlayerVoiceEventsAPI::FormToString(const RE::TESForm* form) {
+        return PVE::FormUtil::ToString(form);
     }
 
     // 1.0.3: Added
-    RE::TESForm* API::FormFromString(const std::string& formString) {
-        return FormUtil::FromString(formString);
+    RE::TESForm* PlayerVoiceEventsAPI::FormFromString(const std::string& formString) {
+        return PVE::FormUtil::FromString(formString);
     }
 
     // 1.0.3: Added
-    RE::TESForm* API::FormFromID(const std::string& pluginName, const RE::FormID& formId) {
-        return FormUtil::FromID(pluginName, formId);
+    RE::TESForm* PlayerVoiceEventsAPI::FormFromID(const std::string& pluginName, const RE::FormID& formId) {
+        return PVE::FormUtil::FromID(pluginName, formId);
     }
 
     // 1.0.3: Added
-    bool API::CompareForms(const std::string& first, const std::string& second) {
-        return FormUtil::CompareForms(first, second);
+    bool PlayerVoiceEventsAPI::CompareForms(const std::string& first, const std::string& second) {
+        return PVE::FormUtil::CompareForms(first, second);
     }
 
     // 1.0.3: Added
-    bool API::CompareForms(const RE::TESForm* first, const std::string& second) {
-        return FormUtil::CompareForms(first, second);
+    bool PlayerVoiceEventsAPI::CompareForms(const RE::TESForm* first, const std::string& second) {
+        return PVE::FormUtil::CompareForms(first, second);
     }
 
     // 1.0.3: Added
-    std::string API::FormToKeywordString(RE::TESForm* form) {
-        return FormUtil::ToKeywordString(form);
+    std::string PlayerVoiceEventsAPI::FormToKeywordString(RE::TESForm* form) {
+        return PVE::FormUtil::ToKeywordString(form);
     }
 
     // 1.0.3: Added
-    std::string API::ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq) {
-        return StringUtil::ReplaceInString(text, oldSeq, newSeq);
+    std::string PlayerVoiceEventsAPI::ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq) {
+        return PVE::StringUtil::ReplaceInString(text, oldSeq, newSeq);
     }
 
     // 1.0.3: Added
-    std::string API::TrimString(const std::string& text) {
-        return StringUtil::TrimString(text);
+    std::string PlayerVoiceEventsAPI::TrimString(const std::string& text) {
+        return PVE::StringUtil::TrimString(text);
     }
 
     // 1.0.3: Added
-    std::vector<std::string> API::SplitString(const std::string& text, const char& delimiter) {
-        return StringUtil::SplitString(text, delimiter);
+    std::vector<std::string> PlayerVoiceEventsAPI::SplitString(const std::string& text, const char& delimiter) {
+        return PVE::StringUtil::SplitString(text, delimiter);
     }
 
     // 1.0.3: Added
-    int API::RandomInt(const int minInclusive, const int maxInclusive) {
-        return Util::RandomInt(minInclusive, maxInclusive);
+    int PlayerVoiceEventsAPI::RandomInt(const int minInclusive, const int maxInclusive) {
+        return PVE::Util::RandomInt(minInclusive, maxInclusive);
     }
 
     // 1.0.3: Added
-    float API::RandomFloat(const float minInclusive, const float maxInclusive) {
-        return Util::RandomFloat(minInclusive, maxInclusive);
+    float PlayerVoiceEventsAPI::RandomFloat(const float minInclusive, const float maxInclusive) {
+        return PVE::Util::RandomFloat(minInclusive, maxInclusive);
+    }
+    std::unique_ptr<PlayerVoiceEventsAPI> PlayerVoiceEventsAPI::Initialize() {
+        return std::make_unique<PlayerVoiceEventsAPI>();
     }
 }

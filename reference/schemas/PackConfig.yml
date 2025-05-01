@@ -24,7 +24,6 @@ properties:
         name:
           type: string
           description: The name of the event
-          $ref: "#/definitions/eventNames"
         chance:
           type: integer
           description: Chance for the event to play
@@ -40,7 +39,6 @@ properties:
             by this event
           items:
             type: string
-            $ref: "#/definitions/eventNames"
           uniqueItems: true
         audios:
           type: array
@@ -51,8 +49,7 @@ properties:
             properties:
               condition:
                 type: string
-                description: 'Code-Like Condition-Expression. Example: PlayerRace
-                  == ''Nord'' && PlayerName == ''Luna'''
+                description: "Code-Like Condition-Expression. Example: PlayerRace == 'Nord' && PlayerStaminaPercentage < 50"
               files:
                 type: array
                 description: List of relative (from this config) paths to the wav
@@ -65,9 +62,3 @@ properties:
       required:
         - name
         - audios
-definitions:
-  eventNames:
-    type: string
-    enum:
-      - PVEAttackMelee
-      - PVEAttackBow
