@@ -65,7 +65,7 @@ namespace PVE {
                         this->currentHandle.emplace(handle);
                         this->currentSoundEvent.emplace(event);
                         this->currentHandle->Play();
-                        Util::LogDebug("Playing '{}'", filePath);
+                        SKSE::log::debug("Playing '{}'", filePath);
                         if (storage) {
                             storage->Set(cooldownKey, static_cast<int>(event.cooldown));
                         }
@@ -83,7 +83,7 @@ namespace PVE {
                             if (delay >= 2000) {
                                 // For some reason, on occasion the game does not seem to populate the 'Duration' field of a sound that gets played. This is especially an issue on short sounds.
                                 // This is the exact same issue as with the 'voiceTimer' field for dialogue.
-                                Util::LogWarning("Last sound could not be detected as 'playing'. THIS IS AN ISSUE WITH THE GAME'S CODE ITSELF, DO NOT REPORT IT TO ME, I CANT FIX IT!!!");
+                                SKSE::log::warn("Last sound could not be detected as 'playing'. THIS IS AN ISSUE WITH THE GAME'S CODE ITSELF, DO NOT REPORT IT TO ME, I CANT FIX IT!!!");
                                 this->StopCurrentSoundEvent();
                                 return;
                             }
@@ -104,7 +104,8 @@ namespace PVE {
     }
 
     void SoundManager::SendSoundEvent(const std::string& name) {
-        Util::LogDebug("Sending event '{}'", name);
+        // Util::LogDebug("Sending event '{}'", name);
+        SKSE::log::debug("Sending sound event '{}'", name);
         if (const auto it = this->registeredSoundEvents.find(name); it != this->registeredSoundEvents.end()) {
             SendSoundEvent(it->second);
         }

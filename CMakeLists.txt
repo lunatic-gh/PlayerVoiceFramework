@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.10)
 set(ignoreMe "${CMAKE_TOOLCHAIN_FILE}")
 
 # Set Version
-set(VERSION 1.0.4)
+set(VERSION 1.0.5)
 
 # Define Project Data
 project("PlayerVoiceEvents" VERSION ${VERSION} LANGUAGES CXX)
