@@ -105,7 +105,7 @@ namespace PVE {
 
     void SoundManager::SendSoundEvent(const std::string& name) {
         // Util::LogDebug("Sending event '{}'", name);
-        SKSE::log::debug("Sending sound event '{}'", name);
+        // SKSE::log::debug("Sending sound event '{}'", name);
         if (const auto it = this->registeredSoundEvents.find(name); it != this->registeredSoundEvents.end()) {
             SendSoundEvent(it->second);
         }

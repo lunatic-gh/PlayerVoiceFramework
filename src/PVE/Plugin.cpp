@@ -2,7 +2,6 @@
 
 #include "../../include/PVE/ConditionManager.h"
 #include "../../include/PVE/EventHandler.h"
-#include "../../include/PVE/Logger.h"
 #include "../../include/PVE/PapyrusInterface.h"
 #include "../../include/PVE/SaveDataStorage.h"
 
@@ -10,7 +9,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     // Initialize Plugin
     SKSE::Init(skse);
     // Initialize Logger
-    PVE::Logger::Init();
+    PVE::Logger::getInstance();
     SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* message) {
         switch (message->type) {
             case SKSE::MessagingInterface::kDataLoaded:

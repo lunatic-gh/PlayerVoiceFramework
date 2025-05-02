@@ -116,36 +116,51 @@ namespace PVE {
          * Various logging functions
          */
         template <class... Args>
-        static void LogInfo(spdlog::format_string_t<Args...> fmt, Args&&... args) {
-            logger::info(fmt, std::forward<Args>(args)...);
+        static void LogInfo(std::format_string<Args...> fmt, Args&&... args) {
+            try {
+                Logger::getInstance()->LogInfo(fmt, std::forward<Args>(args)...);
+            } catch (...) {
+            }
         }
         static void LogInfo(const std::string& s) {
             LogInfo("{}", s);
         }
         template <class... Args>
-        static void LogWarning(spdlog::format_string_t<Args...> fmt, Args&&... args) {
-            logger::warn(fmt, std::forward<Args>(args)...);
+        static void LogWarning(std::format_string<Args...> fmt, Args&&... args) {
+            try {
+                Logger::getInstance()->LogWarning(fmt, std::forward<Args>(args)...);
+            } catch (...) {
+            }
         }
         static void LogWarning(const std::string& s) {
             LogWarning("{}", s);
         }
         template <class... Args>
-        static void LogError(spdlog::format_string_t<Args...> fmt, Args&&... args) {
-            logger::error(fmt, std::forward<Args>(args)...);
+        static void LogError(std::format_string<Args...> fmt, Args&&... args) {
+            try {
+                Logger::getInstance()->LogError(fmt, std::forward<Args>(args)...);
+            } catch (...) {
+            }
         }
         static void LogError(const std::string& s) {
             LogError("{}", s);
         }
         template <class... Args>
-        static void LogCritical(spdlog::format_string_t<Args...> fmt, Args&&... args) {
-            logger::critical(fmt, std::forward<Args>(args)...);
+        static void LogCritical(std::format_string<Args...> fmt, Args&&... args) {
+            try {
+                Logger::getInstance()->LogCritical(fmt, std::forward<Args>(args)...);
+            } catch (...) {
+            }
         }
         static void LogCritical(const std::string& s) {
             LogCritical("{}", s);
         }
         template <class... Args>
-        static void LogDebug(spdlog::format_string_t<Args...> fmt, Args&&... args) {
-            logger::debug(fmt, std::forward<Args>(args)...);
+        static void LogDebug(std::format_string<Args...> fmt, Args&&... args) {
+            try {
+                Logger::getInstance()->LogDebug(fmt, std::forward<Args>(args)...);
+            } catch (...) {
+            }
         }
         static void LogDebug(const std::string& s) {
             LogDebug("{}", s);
