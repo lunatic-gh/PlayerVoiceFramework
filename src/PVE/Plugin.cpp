@@ -26,14 +26,14 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
                     }
                 });
                 if (const auto api = PVE::PlayerVoiceEventsAPI::GetSingleton()) {
-                    PVE::Util::LogDebug("Successfully loaded API");
+                    PVE::Logger::GetSingleton().LogDebug("Successfully loaded API");
                 } else {
-                    PVE::Util::LogError("Failed to load API");
+                    PVE::Logger::GetSingleton().LogError("Failed to load API");
                 }
                 if (const auto api = PVE::PlayerVoiceEventsAPI::GetSingleton()) {
-                    PVE::Util::LogDebug("Successfully loaded API #2");
+                    PVE::Logger::GetSingleton().LogDebug("Successfully loaded API #2");
                 } else {
-                    PVE::Util::LogError("Failed to load API #2");
+                    PVE::Logger::GetSingleton().LogError("Failed to load API #2");
                 }
                 PVE::Util::LoadData();
                 PVE::ConditionManager::GetSingleton()->RegisterInternalConditions();

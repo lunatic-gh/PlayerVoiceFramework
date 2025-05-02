@@ -132,7 +132,7 @@ namespace PVE {
                                         }
                                     }
                                     SoundManager::GetSingleton()->RegisterSoundEvent(name, chance, cooldown, overrideBlacklist, audios);
-                                    LogInfo("Loaded Event {}", name);
+                                    Logger::GetSingleton().LogInfo(std::format("Loaded Event {}", name));
                                 }
                             }
                         }
@@ -144,10 +144,10 @@ namespace PVE {
                     }
                 }
             } catch (const YAML::Exception&) {
-                Util::LogError("Could not parse Yaml Config...");
+                Logger::GetSingleton().LogError("Could not parse Yaml Config...");
             }
         } else {
-            LogInfo("Config file not found at '{}'", configPath.string());
+            Logger::GetSingleton().LogInfo(std::format("Config file not found at '{}'", configPath.string()));
         }
     }
 
@@ -182,30 +182,30 @@ namespace PVE {
                 case YAML::NodeType::Scalar: {
                     if (type == "string") {
                         MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<std::string>());
-                        LogInfo("Loaded Setting '{}' with value '{}'", key, keyNode.as<std::string>());
+                        Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with value '{}'", key, keyNode.as<std::string>()));
                     } else if (type == "int") {
                         MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<int>());
-                        LogInfo("Loaded Setting '{}' with value '{}'", key, keyNode.as<int>());
+                        Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with value '{}'", key, keyNode.as<int>()));
                     } else if (type == "float") {
                         MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<float>());
-                        LogInfo("Loaded Setting '{}' with value '{}'", key, keyNode.as<float>());
+                        Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with value '{}'", key, keyNode.as<float>()));
                     }
                     return;
                 }
                 default:
-                    LogError("Setting '{}' is of invalid type, expected '{}'", key, type);
+                    Logger::GetSingleton().LogError(std::format("Setting '{}' is of invalid type, expected '{}'", key, type));
                     break;
             }
             // Defaults
             if (std::holds_alternative<std::string>(def)) {
                 MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<std::string>(def));
-                LogInfo("Loaded Setting '{}' with default value '{}'", key, std::get<std::string>(def));
+                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, std::get<std::string>(def)));
             } else if (std::holds_alternative<int>(def)) {
                 MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<int>(def));
-                LogInfo("Loaded Setting '{}' with default value '{}'", key, std::get<int>(def));
+                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, std::get<int>(def)));
             } else if (std::holds_alternative<float>(def)) {
                 MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<float>(def));
-                LogInfo("Loaded Setting '{}' with default value '{}'", key, std::get<float>(def));
+                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, std::get<float>(def)));
             }
         }
     }

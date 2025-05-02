@@ -112,60 +112,6 @@ namespace PVE {
             return std::ranges::find(container, value) != container.end();
         }
 
-        /**
-         * Various logging functions
-         */
-        template <class... Args>
-        static void LogInfo(std::format_string<Args...> fmt, Args&&... args) {
-            try {
-                Logger::GetSingleton().LogInfo(std::format(fmt, std::forward<Args>(args)...));
-            } catch (...) {
-            }
-        }
-        static void LogInfo(const std::string& s) {
-            LogInfo("{}", s);
-        }
-        template <class... Args>
-        static void LogWarning(std::format_string<Args...> fmt, Args&&... args) {
-            try {
-                Logger::GetSingleton().LogWarn(std::format(fmt, std::forward<Args>(args)...));
-            } catch (...) {
-            }
-        }
-        static void LogWarning(const std::string& s) {
-            LogWarning("{}", s);
-        }
-        template <class... Args>
-        static void LogError(std::format_string<Args...> fmt, Args&&... args) {
-            try {
-                Logger::GetSingleton().LogError(std::format(fmt, std::forward<Args>(args)...));
-            } catch (...) {
-            }
-        }
-        static void LogError(const std::string& s) {
-            LogError("{}", s);
-        }
-        template <class... Args>
-        static void LogCritical(std::format_string<Args...> fmt, Args&&... args) {
-            try {
-                Logger::GetSingleton().LogCritical(std::format(fmt, std::forward<Args>(args)...));
-            } catch (...) {
-            }
-        }
-        static void LogCritical(const std::string& s) {
-            LogCritical("{}", s);
-        }
-        template <class... Args>
-        static void LogDebug(std::format_string<Args...> fmt, Args&&... args) {
-            try {
-                Logger::GetSingleton().LogDebug(std::format(fmt, std::forward<Args>(args)...));
-            } catch (...) {
-            }
-        }
-        static void LogDebug(const std::string& s) {
-            LogDebug("{}", s);
-        }
-
         static void RunAsync(const std::function<void()>& function);
 
         static void RunAsync(const std::function<void()>& function, float delaySeconds);

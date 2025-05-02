@@ -15,7 +15,7 @@ namespace PVE {
     PlayerVoiceEventsAPI* PlayerVoiceEventsAPI::GetSingleton() {
         std::lock_guard lock(mutex);
         if (!api_ptr) {
-            Util::LogDebug("API Loaded...");
+            Logger::GetSingleton().LogDebug("API Loaded...");
             api_ptr = Initialize();
         }
         return api_ptr.get();

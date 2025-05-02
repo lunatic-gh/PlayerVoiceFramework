@@ -90,36 +90,36 @@ namespace PVE {
                     if (a_intfc->ReadRecordData(&dataVersion, sizeof(dataVersion))) {
                         std::uint32_t count = 0;
                         if (!a_intfc->ReadRecordData(&count, sizeof(count))) {
-                            Util::LogError("Failed to read entry count.");
+                            Logger::GetSingleton().LogError("Failed to read entry count.");
                             return;
                         }
 
                         for (std::uint32_t i = 0; i < count; ++i) {
                             std::uint32_t keyLength = 0;
                             if (!a_intfc->ReadRecordData(&keyLength, sizeof(keyLength))) {
-                                Util::LogError("Failed to read key length at entry {}.", i);
+                                Logger::GetSingleton().LogError(std::format("Failed to read key length at entry {}.", i));
                                 return;
                             }
                             std::string key(keyLength, ' ');
                             if (!a_intfc->ReadRecordData(key.data(), keyLength)) {
-                                Util::LogError("Failed to read key data at entry {}.", i);
+                                Logger::GetSingleton().LogError(std::format("Failed to read key data at entry {}.", i));
                                 return;
                             }
                             int variantType = 0;
                             if (!a_intfc->ReadRecordData(&variantType, sizeof(variantType))) {
-                                Util::LogError("Failed to read data type at entry {}.", i);
+                                Logger::GetSingleton().LogError(std::format("Failed to read data type at entry {}.", i));
                                 return;
                             }
                             switch (variantType) {
                                 case kString: {
                                     std::uint32_t strLength = 0;
                                     if (!a_intfc->ReadRecordData(&strLength, sizeof(strLength))) {
-                                        Util::LogError("Failed to read string length for key {}.", key);
+                                        Logger::GetSingleton().LogError(std::format("Failed to read string length for key {}.", key));
                                         return;
                                     }
                                     std::string value(strLength, ' ');
                                     if (!a_intfc->ReadRecordData(value.data(), strLength)) {
-                                        Util::LogError("Failed to read string data for key {}.", key);
+                                        Logger::GetSingleton().LogError(std::format("Failed to read string data for key {}.", key));
                                         return;
                                     }
                                     storage[key] = value;
@@ -128,7 +128,7 @@ namespace PVE {
                                 case kInt: {
                                     int value = 0;
                                     if (!a_intfc->ReadRecordData(&value, sizeof(value))) {
-                                        Util::LogError("Failed to read int data for key {}.", key);
+                                        Logger::GetSingleton().LogError(std::format("Failed to read int data for key {}.", key));
                                         return;
                                     }
                                     storage[key] = value;
@@ -137,7 +137,7 @@ namespace PVE {
                                 case kFloat: {
                                     float value = 0.0f;
                                     if (!a_intfc->ReadRecordData(&value, sizeof(value))) {
-                                        Util::LogError("Failed to read float data for key {}.", key);
+                                        Logger::GetSingleton().LogError(std::format("Failed to read float data for key {}.", key));
                                         return;
                                     }
                                     storage[key] = value;
@@ -146,7 +146,7 @@ namespace PVE {
                                 case kForm: {
                                     std::uint32_t formID = 0;
                                     if (!a_intfc->ReadRecordData(&formID, sizeof(formID))) {
-                                        Util::LogError("Failed to read formID for key {}.", key);
+                                        Logger::GetSingleton().LogError(std::format("Failed to read formID for key {}.", key));
                                         return;
                                     }
                                     RE::TESForm* form = RE::TESForm::LookupByID(formID);
@@ -154,7 +154,7 @@ namespace PVE {
                                     break;
                                 }
                                 default:
-                                    Util::LogError("Unknown variant type {} for key {}.", variantType, key);
+                                    Logger::GetSingleton().LogError(std::format("Unknown variant type {} for key {}.", variantType, key));
                                     return;
                             }
                         }

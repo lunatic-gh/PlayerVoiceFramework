@@ -409,7 +409,7 @@ namespace PVE {
                     } else {
                         return false;
                     }
-                    Util::LogDebug("{} | {}", lhs, rhs);
+                    Logger::GetSingleton().LogDebug(std::format("{} | {}", lhs, rhs));
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
                     if (op == "<") return lhs < rhs;
@@ -426,7 +426,7 @@ namespace PVE {
                     } else {
                         return false;
                     }
-                    Util::LogDebug("{} | {}", lhs, rhs);
+                    Logger::GetSingleton().LogDebug(std::format("{} | {}", lhs, rhs));
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
                     if (op == "<") return lhs < rhs;
@@ -442,7 +442,7 @@ namespace PVE {
                     } else {
                         return false;
                     }
-                    Util::LogDebug("{} | {}", lhs, rhs);
+                    Logger::GetSingleton().LogDebug(std::format("{} | {}", lhs, rhs));
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
                     return false;
@@ -454,7 +454,7 @@ namespace PVE {
                     } else {
                         return false;
                     }
-                    Util::LogDebug("{} | {}", lhs, rhs);
+                    Logger::GetSingleton().LogDebug(std::format("{} | {}", lhs, rhs));
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
                     if (op == "<") return lhs < rhs;
