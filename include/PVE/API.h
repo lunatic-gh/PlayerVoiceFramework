@@ -89,10 +89,12 @@ namespace PVE_API {
 
     inline extern PlayerVoiceEventsAPI* api_ptr = nullptr;
 
-    // call only after kDataLoaded event!
     inline bool LoadAPI() {
         if (api_ptr != nullptr) return true;
         SKSE::GetMessagingInterface()->Dispatch(API_TYPE_KEY, (void*)&api_ptr, sizeof(void*), NULL);
-        return api_ptr != nullptr;
+        if (api_ptr) {
+            return true;
+        }
+        return false;
     }
 }

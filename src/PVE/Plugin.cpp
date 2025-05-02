@@ -28,16 +28,27 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
                 PVE::Util::LoadData();
                 PVE::ConditionManager::GetSingleton()->RegisterInternalConditions();
                 PVE::PublicEventSink::Register();
+                if (!PVE_API::api_ptr) PVE_API::api_ptr = new PVE_API::PlayerVoiceEventsAPI;
                 break;
             case SKSE::MessagingInterface::kNewGame:
             case SKSE::MessagingInterface::kPostLoadGame: {
-
                 std::thread([] {
                     while (!RE::PlayerCharacter::GetSingleton()->Is3DLoaded()) {
                         std::this_thread::sleep_for(std::chrono::seconds(1));
                     }
                     PVE::DynamicEventSink::Register();
                 }).detach();
+            }
+            default:
+                break;
+        }
+    });
+    SKSE::GetMessagingInterface()->RegisterListener(NULL, [](SKSE::MessagingInterface::Message* message) {
+        switch (message->type) {
+            case API_TYPE_KEY: {
+                message->dataLen = sizeof(PVE_API::PlayerVoiceEventsAPI*);
+                *(PVE_API::PlayerVoiceEventsAPI**)message->data = PVE_API::api_ptr;
+                break;
             }
             default:
                 break;

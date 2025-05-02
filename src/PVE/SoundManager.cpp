@@ -104,7 +104,7 @@ namespace PVE {
 
     void SoundManager::SendSoundEvent(const std::string& name) {
         // PVE::Logger::GetSingleton().LogInfo(std::format("Sending event '{}'", name));
-        if (const auto it = this->registeredSoundEvents.find(name); it != this->registeredSoundEvents.end()) {
+        if (const auto it = registeredSoundEvents.find(name); it != registeredSoundEvents.end()) {
             SendSoundEvent(it->second);
         }
     }
