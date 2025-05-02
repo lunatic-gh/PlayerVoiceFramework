@@ -31,24 +31,24 @@ namespace PVE {
             if (const auto cameraEventSource = SKSE::GetCameraEventSource()) {
                 cameraEventSource->AddEventSink<SKSE::CameraEvent>(&sink);
             }
-            std::thread([] {
-                static bool isInKillmove = false;
-                while (true) {
-                    if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                        if (player->IsInKillMove() && !isInKillmove) {
-                            isInKillmove = true;
-                            sink.ProcessKillmoveEvent(0);
-                            continue;
-                        }
-                        if (!player->IsInKillMove() && isInKillmove) {
-                            isInKillmove = false;
-                            sink.ProcessKillmoveEvent(1);
-                            continue;
-                        }
-                    }
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                }
-            }).detach();
+            //std::thread([] {
+            //    static bool isInKillmove = false;
+            //    while (true) {
+            //        if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+            //            if (player->IsInKillMove() && !isInKillmove) {
+            //                isInKillmove = true;
+            //                sink.ProcessKillmoveEvent(0);
+            //                continue;
+            //            }
+            //            if (!player->IsInKillMove() && isInKillmove) {
+            //                isInKillmove = false;
+            //                sink.ProcessKillmoveEvent(1);
+            //                continue;
+            //            }
+            //        }
+            //        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            //    }
+            //}).detach();
         }
 
         RE::BSEventNotifyControl ProcessEvent(const RE::MenuOpenCloseEvent* a_event, RE::BSTEventSource<RE::MenuOpenCloseEvent>* a_eventSource) override;

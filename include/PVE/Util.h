@@ -118,7 +118,7 @@ namespace PVE {
         template <class... Args>
         static void LogInfo(std::format_string<Args...> fmt, Args&&... args) {
             try {
-                Logger::getInstance()->LogInfo(fmt, std::forward<Args>(args)...);
+                Logger::GetSingleton().LogInfo(std::format(fmt, std::forward<Args>(args)...));
             } catch (...) {
             }
         }
@@ -128,7 +128,7 @@ namespace PVE {
         template <class... Args>
         static void LogWarning(std::format_string<Args...> fmt, Args&&... args) {
             try {
-                Logger::getInstance()->LogWarning(fmt, std::forward<Args>(args)...);
+                Logger::GetSingleton().LogWarn(std::format(fmt, std::forward<Args>(args)...));
             } catch (...) {
             }
         }
@@ -138,7 +138,7 @@ namespace PVE {
         template <class... Args>
         static void LogError(std::format_string<Args...> fmt, Args&&... args) {
             try {
-                Logger::getInstance()->LogError(fmt, std::forward<Args>(args)...);
+                Logger::GetSingleton().LogError(std::format(fmt, std::forward<Args>(args)...));
             } catch (...) {
             }
         }
@@ -148,7 +148,7 @@ namespace PVE {
         template <class... Args>
         static void LogCritical(std::format_string<Args...> fmt, Args&&... args) {
             try {
-                Logger::getInstance()->LogCritical(fmt, std::forward<Args>(args)...);
+                Logger::GetSingleton().LogCritical(std::format(fmt, std::forward<Args>(args)...));
             } catch (...) {
             }
         }
@@ -158,7 +158,7 @@ namespace PVE {
         template <class... Args>
         static void LogDebug(std::format_string<Args...> fmt, Args&&... args) {
             try {
-                Logger::getInstance()->LogDebug(fmt, std::forward<Args>(args)...);
+                Logger::GetSingleton().LogDebug(std::format(fmt, std::forward<Args>(args)...));
             } catch (...) {
             }
         }

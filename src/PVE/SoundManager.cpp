@@ -26,8 +26,7 @@ namespace PVE {
                 }
                 for (int i = 0; i < event.audios.size(); ++i) {
                     const auto expr = event.audios[i].first;
-                    const auto files = event.audios[i].second;
-                    if (!files.empty() && ConditionManager::GetSingleton()->EvaluateExpression(event.name, expr)) {
+                    if (const auto files = event.audios[i].second; !files.empty() && ConditionManager::GetSingleton()->EvaluateExpression(event.name, expr)) {
                         ConditionManager::GetSingleton()->UnregisterConditions(event.name);
                         cancelFlag.store(true);
                         while (this->currentHandle.has_value() || this->currentSoundEvent.has_value()) {
@@ -104,8 +103,7 @@ namespace PVE {
     }
 
     void SoundManager::SendSoundEvent(const std::string& name) {
-        // Util::LogDebug("Sending event '{}'", name);
-        // SKSE::log::debug("Sending sound event '{}'", name);
+        Util::LogDebug("Sending event '{}'", name);
         if (const auto it = this->registeredSoundEvents.find(name); it != this->registeredSoundEvents.end()) {
             SendSoundEvent(it->second);
         }

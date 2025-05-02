@@ -30,26 +30,17 @@ namespace PVE {
                 const auto oldState = a_event->oldState->id;
                 const auto newState = a_event->newState->id;
                 const auto player = RE::PlayerCharacter::GetSingleton();
-                if (newState == RE::CameraState::kVATS && player && player->IsInKillMove()) {
-                    ProcessKillmoveEvent(0);
-                } else if (oldState == RE::CameraState::kVATS) {
-                    ProcessKillmoveEvent(1);
-                }
+                //            if (newState == RE::CameraState::kVATS && player && player->IsInKillMove()) {
+                //                ProcessKillmoveEvent(0);
+                //            } else if (oldState == RE::CameraState::kVATS) {
+                //                ProcessKillmoveEvent(1);
+                //            }
             }
         }
         return RE::BSEventNotifyControl::kContinue;
     }
 
     RE::BSEventNotifyControl PublicEventSink::ProcessEvent(const SKSE::ActionEvent* a_event, RE::BSTEventSource<SKSE::ActionEvent>* a_eventSource) {
-        static std::atomic<bool> cooldownFlag(false);
-        static auto cooldownTime = std::chrono::steady_clock::now();
-        const auto now = std::chrono::steady_clock::now();
-        if (cooldownFlag.load() && now < cooldownTime) {
-            return RE::BSEventNotifyControl::kContinue;
-        }
-        cooldownFlag.store(true);
-        cooldownTime = now + std::chrono::milliseconds(200);
-
         if (!a_event || !a_event->actor) {
             return RE::BSEventNotifyControl::kContinue;
         }
@@ -155,6 +146,7 @@ namespace PVE {
         }
         return RE::BSEventNotifyControl::kContinue;
     }
+
     RE::BSEventNotifyControl PublicEventSink::ProcessEvent(const RE::TESSpellCastEvent* a_event, RE::BSTEventSource<RE::TESSpellCastEvent>* a_eventSource) {
         static std::atomic isCasting(false);
         if (const auto baseForm = RE::TESForm::LookupByID(a_event->spell)) {
@@ -184,19 +176,30 @@ namespace PVE {
         }
         return RE::BSEventNotifyControl::kContinue;
     }
+
+    /**
+     * I have no idea why, but killmoves are a buggy mess... disabled for now.
+     */
     void PublicEventSink::ProcessKillmoveEvent(const int state) {
-        ConditionManager::GetSingleton()->RegisterCondition("PVEFinisher", "FinisherState", [state] { return state; });
-        ConditionManager::GetSingleton()->RegisterCondition("PVEFinisher", "FinisherTargetForm", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                if (const auto proc = player->GetHighProcess()) {
-                    if (const auto target = proc->lastTarget.get()) {
-                        return target.get();
-                    }
-                }
-            }
-            return static_cast<RE::TESObjectREFR*>(nullptr);
-        });
-        SoundManager::GetSingleton()->SendSoundEvent("PVEFinisher");
+        //     ConditionManager::GetSingleton()->RegisterCondition("PVEFinisher", "FinisherState", [state] { return state; });
+        //     ConditionManager::GetSingleton()->RegisterCondition("PVEFinisher", "FinisherTargetForm", [] {
+        //         if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+        //             if (const auto proc = player->GetHighProcess()) {
+        //                 if (const auto target = proc->lastTarget.get()) {
+        //                     return target.get();
+        //                 }
+        //             }
+        //         }
+        //         return static_cast<RE::TESObjectREFR*>(nullptr);
+        //     });
+        //     if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+        //         if (const auto proc = player->GetHighProcess()) {
+        //             if (const auto target = proc->lastTarget.get()) {
+        //                 Util::LogDebug(target->GetName());
+        //             }
+        //         }
+        //     }
+        //     SoundManager::GetSingleton()->SendSoundEvent("PVEFinisher");
     }
 
     RE::BSEventNotifyControl DynamicEventSink::ProcessEvent(const RE::BSAnimationGraphEvent* e, RE::BSTEventSource<RE::BSAnimationGraphEvent>* a_eventSource) {
