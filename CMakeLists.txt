@@ -23,7 +23,6 @@ set(headers
         include/PVE/MemoryDataStorage.h
         include/PVE/SaveDataStorage.h
         include/PVE/SoundManager.h
-        include/PVE/DF_API.h
         include/PVE/API.h
 )
 
