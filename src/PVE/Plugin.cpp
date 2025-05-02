@@ -25,22 +25,13 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
                         saveDataStorage->Save(a_intfc);
                     }
                 });
-                if (const auto api = PVE::PlayerVoiceEventsAPI::GetSingleton()) {
-                    PVE::Logger::GetSingleton().LogDebug("Successfully loaded API");
-                } else {
-                    PVE::Logger::GetSingleton().LogError("Failed to load API");
-                }
-                if (const auto api = PVE::PlayerVoiceEventsAPI::GetSingleton()) {
-                    PVE::Logger::GetSingleton().LogDebug("Successfully loaded API #2");
-                } else {
-                    PVE::Logger::GetSingleton().LogError("Failed to load API #2");
-                }
                 PVE::Util::LoadData();
                 PVE::ConditionManager::GetSingleton()->RegisterInternalConditions();
                 PVE::PublicEventSink::Register();
                 break;
             case SKSE::MessagingInterface::kNewGame:
             case SKSE::MessagingInterface::kPostLoadGame: {
+
                 std::thread([] {
                     while (!RE::PlayerCharacter::GetSingleton()->Is3DLoaded()) {
                         std::this_thread::sleep_for(std::chrono::seconds(1));

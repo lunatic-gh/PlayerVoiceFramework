@@ -10,29 +10,15 @@
  * NOTE TO MYSELF: DON'T CHANGE EXISTING DEFINITIONS UNLESS ABSOLUTELY NECESSARY!
  * RATHER DEPRECATE THEM.
  */
-namespace PVE {
-
-    PlayerVoiceEventsAPI* PlayerVoiceEventsAPI::GetSingleton() {
-        std::lock_guard lock(mutex);
-        if (!api_ptr) {
-            Logger::GetSingleton().LogDebug("API Loaded...");
-            api_ptr = Initialize();
-        }
-        return api_ptr.get();
-    }
-    SoundManager* PlayerVoiceEventsAPI::GetSoundManager() {
-        return SoundManager::GetSingleton();
-    }
+namespace PVE_API {
 
     // 1.0.3: Added
     void PlayerVoiceEventsAPI::SendSoundEvent(const std::string& name) {
-        std::lock_guard lock(mutex);
         PVE::SoundManager::GetSingleton()->SendSoundEvent(name);
     }
 
     // 1.0.3: Added
     void PlayerVoiceEventsAPI::RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<std::variant<float, int, bool, std::string, RE::TESForm*>()>& conditionFunction) {
-        std::lock_guard lock(mutex);
         if (const auto conditionManager = PVE::ConditionManager::GetSingleton()) {
             conditionManager->RegisterCondition(eventName, conditionName, conditionFunction);
         }
@@ -40,13 +26,11 @@ namespace PVE {
 
     // 1.0.3: Added
     void PlayerVoiceEventsAPI::SetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
-        std::lock_guard lock(mutex);
         if (const auto memoryDataStorage = PVE::MemoryDataStorage::GetSingleton()) memoryDataStorage->Set(key, value);
     }
 
     // 1.0.3: Added
     std::variant<std::string, int, float, RE::TESForm*> PlayerVoiceEventsAPI::GetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
-        std::lock_guard lock(mutex);
         if (const auto memoryDataStorage = PVE::MemoryDataStorage::GetSingleton()) {
             if (std::holds_alternative<std::string>(def)) {
                 return memoryDataStorage->Get<std::string>(key, std::get<std::string>(def));
@@ -66,7 +50,6 @@ namespace PVE {
 
     // 1.0.3: Added
     void PlayerVoiceEventsAPI::SetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
-        std::lock_guard lock(mutex);
         if (const auto saveDataStorage = PVE::SaveDataStorage::GetSingleton()) {
             saveDataStorage->Set(key, value);
         }
@@ -74,7 +57,6 @@ namespace PVE {
 
     // 1.0.3: Added
     std::variant<std::string, int, float, RE::TESForm*> PlayerVoiceEventsAPI::GetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) {
-        std::lock_guard lock(mutex);
         if (const auto saveDataStorage = PVE::SaveDataStorage::GetSingleton()) {
             if (std::holds_alternative<std::string>(def)) {
                 return saveDataStorage->Get<std::string>(key, std::get<std::string>(def));
@@ -150,8 +132,5 @@ namespace PVE {
     // 1.0.3: Added
     float PlayerVoiceEventsAPI::RandomFloat(const float minInclusive, const float maxInclusive) {
         return PVE::Util::RandomFloat(minInclusive, maxInclusive);
-    }
-    std::unique_ptr<PlayerVoiceEventsAPI> PlayerVoiceEventsAPI::Initialize() {
-        return std::make_unique<PlayerVoiceEventsAPI>();
     }
 }
