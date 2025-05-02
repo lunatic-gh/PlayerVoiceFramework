@@ -64,7 +64,7 @@ namespace PVE {
                         this->currentHandle.emplace(handle);
                         this->currentSoundEvent.emplace(event);
                         this->currentHandle->Play();
-                        SKSE::log::debug("Playing '{}'", filePath);
+                        Logger::GetSingleton().LogDebug(std::format("Playing '{}'", filePath));
                         if (storage) {
                             storage->Set(cooldownKey, static_cast<int>(event.cooldown));
                         }
@@ -103,7 +103,7 @@ namespace PVE {
     }
 
     void SoundManager::SendSoundEvent(const std::string& name) {
-        PVE::Logger::GetSingleton().LogInfo(std::format("Sending event '{}'", name));
+        // PVE::Logger::GetSingleton().LogInfo(std::format("Sending event '{}'", name));
         if (const auto it = this->registeredSoundEvents.find(name); it != this->registeredSoundEvents.end()) {
             SendSoundEvent(it->second);
         }
