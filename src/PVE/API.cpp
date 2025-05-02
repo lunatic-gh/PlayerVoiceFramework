@@ -20,6 +20,9 @@ namespace PVE {
         }
         return api_ptr.get();
     }
+    SoundManager* PlayerVoiceEventsAPI::GetSoundManager() {
+        return SoundManager::GetSingleton();
+    }
 
     // 1.0.3: Added
     void PlayerVoiceEventsAPI::SendSoundEvent(const std::string& name) {

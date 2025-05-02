@@ -5,12 +5,15 @@
 #else
 #define PVE_EXPORT __declspec(dllimport)
 #endif
+#include "SoundManager.h"
 
 namespace PVE {
     class PlayerVoiceEventsAPI {
     public:
         // Returns the pointer to the API
         PVE_EXPORT static PlayerVoiceEventsAPI* GetSingleton();
+
+        PVE_EXPORT static SoundManager* GetSoundManager();
 
         // 1.0.3: Added
         // Sends a sound-event with the given name.
