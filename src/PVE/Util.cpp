@@ -1,5 +1,6 @@
 #include "../../include/PVE/Util.h"
 
+#include "../../include/PVE/API.h"
 #include "../../include/PVE/MemoryDataStorage.h"
 #include "../../include/PVE/SoundManager.h"
 
@@ -59,7 +60,7 @@ namespace PVE {
     }
 
     std::string FormUtil::ToKeywordString(RE::TESForm* form) {
-        std::string s = "";
+        std::string s;
         if (form) {
             if (const auto keywordForm = form->As<RE::BGSKeywordForm>()) {
                 const auto keywords = keywordForm->GetKeywords();
@@ -108,9 +109,9 @@ namespace PVE {
                     if (config["sounds"]) {
                         for (const YAML::Node soundNode : config["sounds"]) {
                             if (soundNode["name"]) {
-                                const std::string name = soundNode["name"].as<std::string>();
+                                const auto name = soundNode["name"].as<std::string>();
                                 const int chance = soundNode["chance"] ? soundNode["chance"].as<int>() : 100;
-                                const float cooldown = soundNode["cooldown"] ? soundNode["cooldown"].as<float>() : 0.0f;
+                                const int cooldown = soundNode["cooldown"] ? soundNode["cooldown"].as<int>() : 0;
                                 std::vector<std::string> overrideBlacklist;
                                 if (soundNode["overrideBlacklist"]) {
                                     if (soundNode["overrideBlacklist"].IsSequence()) {
@@ -139,7 +140,7 @@ namespace PVE {
                     }
                     if (config["settings"]) {
                         if (auto settingsNode = config["settings"]; settingsNode.IsMap()) {
-                            LoadSetting(settingsNode, "rngMode", "default", "string");
+                            LoadSetting(settingsNode, "rngMode", DataType("default"), "string");
                         }
                     }
                 }
@@ -165,30 +166,24 @@ namespace PVE {
         return range(gen);
     }
 
-    void Util::RunAsync(const std::function<void()>& function) {
-        std::thread([function] { function(); }).detach();
-    }
-
-    void Util::RunAsync(const std::function<void()>& function, const float delaySeconds) {
-        std::thread([function, delaySeconds] {
-            std::this_thread::sleep_for(std::chrono::duration<float>(delaySeconds));
-            function();
-        }).detach();
-    }
-
-    void Util::LoadSetting(const YAML::Node& node, const std::string& key, const std::variant<std::string, int, float>& def, const std::string& type) {
+    void Util::LoadSetting(const YAML::Node& node, const std::string& key, const DataType& def, const std::string& type) {
         if (const auto keyNode = node[key]) {
             switch (keyNode.Type()) {
                 case YAML::NodeType::Scalar: {
                     if (type == "string") {
-                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<std::string>());
-                        Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with value '{}'", key, keyNode.as<std::string>()));
+                        const auto s = keyNode.as<std::string>();
+                        const auto data = DataType(s.c_str());
+                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), data);
+                        Logger::GetSingleton().LogInfo(std::format("2 Loaded Setting '{}' with value '{}'", key, data.AsString()));
+
                     } else if (type == "int") {
-                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<int>());
-                        Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with value '{}'", key, keyNode.as<int>()));
+                        const auto data = DataType(keyNode.as<int>());
+                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), data);
+                        Logger::GetSingleton().LogInfo(std::format("2 Loaded Setting '{}' with value '{}'", key, data.AsInt()));
                     } else if (type == "float") {
-                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), keyNode.as<float>());
-                        Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with value '{}'", key, keyNode.as<float>()));
+                        const auto data = DataType(keyNode.as<float>());
+                        MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), data);
+                        Logger::GetSingleton().LogInfo(std::format("3 Loaded Setting '{}' with value '{}'", key, data.AsFloat()));
                     }
                     return;
                 }
@@ -196,16 +191,15 @@ namespace PVE {
                     Logger::GetSingleton().LogError(std::format("Setting '{}' is of invalid type, expected '{}'", key, type));
                     break;
             }
-            // Defaults
-            if (std::holds_alternative<std::string>(def)) {
-                MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<std::string>(def));
-                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, std::get<std::string>(def)));
-            } else if (std::holds_alternative<int>(def)) {
-                MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<int>(def));
-                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, std::get<int>(def)));
-            } else if (std::holds_alternative<float>(def)) {
-                MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), std::get<float>(def));
-                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, std::get<float>(def)));
+            MemoryDataStorage::GetSingleton()->Set(std::format("pve_{}", key), def);
+            if (def.GetType() == DataType::kString) {
+                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, def.AsString()));
+            } else if (def.GetType() == DataType::kInt) {
+                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, def.AsInt()));
+            } else if (def.GetType() == DataType::kFloat) {
+                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, def.AsFloat()));
+            } else if (def.GetType() == DataType::kBool) {
+                Logger::GetSingleton().LogInfo(std::format("Loaded Setting '{}' with default value '{}'", key, def.AsBool()));
             }
         }
     }

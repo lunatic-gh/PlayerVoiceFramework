@@ -5,18 +5,15 @@
         <folder source="Core Files" destination="" priority="0"/>
     </requiredInstallFiles>
     <installSteps order="Explicit">
-        <installStep name="Power-Attack Patch">
+        <installStep name="Optional">
             <optionalFileGroups order="Explicit">
-                <group name="Power-Attack Patch" type="SelectAny">
+                <group name="Optional" type="SelectAny">
                     <plugins order="Explicit">
                         <plugin name="Power-Attack Patch">
                             <description>This INI-Edit fixes a bug in vanilla, where power-attacking will still send an event for the normal attack, because some weapons (e.g. daggers) are too quick.
 This sets the time you'll have to hold your attack-button to 250ms. Anything higher than this will make the bug appear.
                             </description>
                             <image path=""/>
-                            <conditionFlags>
-                                <flag name="PowerAttackPatch">On</flag>
-                            </conditionFlags>
                             <files>
                                 <file source="PowerAttackPatch\PlayerVoiceEvents.ini" destination="" priority="0"/>
                             </files>

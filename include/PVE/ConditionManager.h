@@ -1,146 +1,164 @@
 #pragma once
 
+#include "API.h"
 #include "Util.h"
 
 namespace PVE {
 
     class ConditionManager {
-        using Value = std::variant<float, int, bool, std::string, RE::TESForm*>;
+        using Value = DataType;
 
     public:
-        // Registers the internal conditions that come with this mod
+        // Registers the internal conditions that come with this mod.
         void RegisterInternalConditions() {
             this->RegisterGlobalCondition("PlayerHealthPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kHealth); f2 != 0.0f) {
                         const float f = (f1 / f2) * 100.0f;
-                        return f;
+                        return DataType(f);
                     }
                 }
-                return 0.0f;
+                return DataType(0.0f);
             });
+
             this->RegisterGlobalCondition("PlayerStaminaPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina); f2 != 0.0f) {
                         const float f = (f1 / f2) * 100.0f;
-                        return f;
+                        return DataType(f);
                     }
                 }
-                return 0.0f;
+                return DataType(0.0f);
             });
+
             this->RegisterGlobalCondition("PlayerMagickaPercentage", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
                     const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka);
                     if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka); f2 != 0.0f) {
                         const float f = (f1 / f2) * 100.0f;
-                        return f;
+                        return DataType(f);
                     }
                 }
-                return 0.0f;
+                return DataType(0.0f);
             });
+
             this->RegisterGlobalCondition("PlayerEquippedWeaponTypeLeft", [] {
                 const auto actor = RE::PlayerCharacter::GetSingleton();
                 if (const auto form = actor->GetEquippedObject(true)) {
                     if (const auto weapon = form->As<RE::TESObjectWEAP>()) {
-                        return static_cast<int>(weapon->GetWeaponType());
+                        return DataType(static_cast<int>(weapon->GetWeaponType()));
                     }
                 }
-                return std::numeric_limits<int>::lowest();
+                return DataType(std::numeric_limits<int>::lowest());
             });
+
             this->RegisterGlobalCondition("PlayerEquippedWeaponTypeRight", [] {
                 if (const auto actor = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto form = actor->GetEquippedObject(false)) {
                         if (const auto weapon = form->As<RE::TESObjectWEAP>()) {
-                            return static_cast<int>(weapon->GetWeaponType());
+                            return DataType(static_cast<int>(weapon->GetWeaponType()));
                         }
                     }
                 }
-                return std::numeric_limits<int>::lowest();
+                return DataType(std::numeric_limits<int>::lowest());
             });
+
             this->RegisterGlobalCondition("PlayerName", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                    return player->GetName();
+                    return DataType(player->GetName());
                 }
-                return "";
+                return DataType("");
             });
+
             this->RegisterGlobalCondition("PlayerRaceForm", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                    return player->GetRace();
+                    // Assuming GetRace() returns a pointer convertible to RE::TESForm*
+                    return DataType(static_cast<RE::TESForm*>(player->GetRace()));
                 }
-                return static_cast<RE::TESRace*>(nullptr);
+                return DataType(static_cast<RE::TESForm*>(nullptr));
             });
+
             this->RegisterGlobalCondition("PlayerSex", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto actorBase = player->GetActorBase()) {
-                        return static_cast<int>(actorBase->GetSex());
+                        return DataType(static_cast<int>(actorBase->GetSex()));
                     }
                 }
-                return std::numeric_limits<int>::lowest();
+                return DataType(std::numeric_limits<int>::lowest());
             });
+
             this->RegisterGlobalCondition("PlayerPosX", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                    return player->GetPositionX();
+                    return DataType(player->GetPositionX());
                 }
-                return std::numeric_limits<float>::lowest();
+                return DataType(std::numeric_limits<float>::lowest());
             });
+
             this->RegisterGlobalCondition("PlayerPosY", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                    return player->GetPositionY();
+                    return DataType(player->GetPositionY());
                 }
-                return std::numeric_limits<float>::lowest();
+                return DataType(std::numeric_limits<float>::lowest());
             });
+
             this->RegisterGlobalCondition("PlayerPosZ", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                    return player->GetPositionZ();
+                    return DataType(player->GetPositionZ());
                 }
-                return std::numeric_limits<float>::lowest();
+                return DataType(std::numeric_limits<float>::lowest());
             });
+
             this->RegisterGlobalCondition("PlayerLocationForm", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto loc = player->GetCurrentLocation()) {
-                        return loc;
+                        return DataType(static_cast<RE::TESForm*>(loc));
                     }
                 }
-                return static_cast<RE::BGSLocation*>(nullptr);
+                return DataType(static_cast<RE::TESForm*>(nullptr));
             });
+
             this->RegisterGlobalCondition("PlayerLocationKeywords", [] {
                 if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                     if (const auto loc = player->GetCurrentLocation()) {
-                        return FormUtil::ToKeywordString(loc);
+                        // Assuming FormUtil::ToKeywordString returns a std::string.
+                        return DataType(FormUtil::ToKeywordString(loc).c_str());
                     }
                 }
-                return std::string("");
+                return DataType("");
             });
-            this->RegisterGlobalCondition("RandomInt", [] { return Util::RandomInt(1, 99); });
-            this->RegisterGlobalCondition("RandomFloat", [] { return Util::RandomFloat(1.0f, 99.0f); });
-            this->RegisterGlobalCondition("RandomBool", [] { return Util::RandomInt(1, 99) == 1; });
+
+            this->RegisterGlobalCondition("RandomInt", [] { return DataType(Util::RandomInt(1, 99)); });
+            this->RegisterGlobalCondition("RandomFloat", [] { return DataType(Util::RandomFloat(1.0f, 99.0f)); });
+            this->RegisterGlobalCondition("RandomBool", [] { return DataType(Util::RandomInt(1, 99) == 1); });
+
             this->RegisterGlobalCondition("PlayerWerewolfState", [] {
                 if (const auto globalVar = RE::TESForm::LookupByID(0xed06c)->As<RE::TESGlobal>()) {
                     if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                         if (globalVar->value == 1.0f) {
                             if (player->GetRace()->GetLocalFormID() == 0xCDD84) {
-                                return 2;
+                                return DataType(2);
                             }
-                            return 1;
+                            return DataType(1);
                         }
                     }
                 }
-                return 0;
+                return DataType(0);
             });
+
             this->RegisterGlobalCondition("PlayerVampireState", [] {
                 if (const auto globalVar = RE::TESForm::LookupByID(0xed06D)->As<RE::TESGlobal>()) {
                     if (const auto player = RE::PlayerCharacter::GetSingleton()) {
                         if (globalVar->value == 1.0f) {
                             if (player->GetRace()->GetLocalFormID() == 0x283A) {
-                                return 2;
+                                return DataType(2);
                             }
-                            return 1;
+                            return DataType(1);
                         }
                     }
                 }
-                return 0;
+                return DataType(0);
             });
         }
 
@@ -153,33 +171,34 @@ namespace PVE {
         ConditionManager& operator=(const ConditionManager&) = delete;
 
         /**
-         * Registers a condition for the given event (or globally)
+         * Registers a condition for the given event (or globally).
          *
-         * NOTE: If an event has been played (or failed), all events attached to it will be unregistered automatically. There is no need to do that yourself.
-         * @param eventName the name of the event to attach, or GLOBAL to make it globally available
-         * @param conditionName the name of the condition
-         * @param conditionFunction a function whose return value will be used for evaluation.
+         * @param eventName the name of the event to attach, or "GLOBAL" for a global condition.
+         * @param conditionName the name of the condition.
+         * @param conditionFunction a function whose return value (a VariantType) is used for evaluation.
          */
-        void RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<Value()>& conditionFunction) {
+        void RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<DataType()>& conditionFunction) {
             auto& conditionList = conditions[eventName];
+            // Replace an existing condition if one exists.
             std::ranges::replace_if(conditionList, [&](const Condition& condition) { return condition.name == conditionName; }, Condition{conditionName, conditionFunction});
-            if (!std::ranges::any_of(conditionList, [&](const Condition& condition) { return condition.name == conditionName; })) conditionList.emplace_back(Condition{conditionName, conditionFunction});
+            // Add the condition if it did not exist.
+            if (!std::ranges::any_of(conditionList, [&](const Condition& condition) { return condition.name == conditionName; })) {
+                conditionList.emplace_back(Condition{conditionName, conditionFunction});
+            }
         }
 
         /**
-         * Convenience-Function, see above for info
-         * @param conditionName the name of the condition
-         * @param conditionFunction a function whose return value will be used for evaluation.
+         * Convenience function to register a global condition.
          */
-        void RegisterGlobalCondition(const std::string& conditionName, const std::function<Value()>& conditionFunction) {
+        void RegisterGlobalCondition(const std::string& conditionName, const std::function<DataType()>& conditionFunction) {
             RegisterCondition("GLOBAL", conditionName, conditionFunction);
         }
 
         /**
          * Unregisters all conditions for the given event.
+         * (Global conditions are not removed.)
          *
-         * NOTE: You should never use this, unless you absolutely know what you're doing - This will be done automatically after an event played.
-         * @param eventName the name of the event
+         * @param eventName the name of the event.
          */
         void UnregisterConditions(const std::string& eventName) {
             if (eventName == "GLOBAL") {
@@ -228,7 +247,7 @@ namespace PVE {
 
         struct Condition {
             std::string name;
-            std::function<Value()> function;
+            std::function<DataType()> function;
         };
 
         std::vector<Token> tokenize(const std::string& str) const {
@@ -364,14 +383,14 @@ namespace PVE {
         public:
             std::string var;
             std::string op;
-            Value literal;
+            DataType literal;
 
-            CondExpr(const std::string& v, const std::string& o, const Value& lit) : var(v), op(o), literal(lit) {
+            CondExpr(const std::string& v, const std::string& o, const DataType& lit) : var(v), op(o), literal(lit) {
             }
 
             bool eval(const std::string& eventName) const override {
-                Value val;
-                auto searchConditions = [&](const std::string& key) -> std::optional<Value> {
+                DataType val;
+                auto searchConditions = [&](const std::string& key) -> std::optional<DataType> {
                     if (GetSingleton()->conditions.contains(key)) {
                         auto eventConditions = GetSingleton()->conditions[key];
                         if (const auto it = std::ranges::find_if(eventConditions, [&](const auto& cond) { return cond.name == var; }); it != eventConditions.end()) {
@@ -382,30 +401,30 @@ namespace PVE {
                 };
                 if (const auto eventVal = searchConditions(eventName); eventVal.has_value()) {
                     val = eventVal.value();
-                } else if (auto globalVal = searchConditions("GLOBAL"); globalVal.has_value()) {
+                } else if (const auto globalVal = searchConditions("GLOBAL"); globalVal.has_value()) {
                     val = globalVal.value();
                 } else {
                     return false;
                 }
 
-                if (std::holds_alternative<RE::TESForm*>(val) && (op == "==" || op == "!=")) {
-                    const auto lhs = std::get<RE::TESForm*>(val);
+                if (val.GetType() == DataType::Type::kForm && (op == "==" || op == "!=")) {
+                    const auto lhs = val.AsForm();
                     std::string rhs = "";
-                    if (std::holds_alternative<std::string>(literal)) {
-                        rhs = std::get<std::string>(literal);
+                    if (literal.GetType() == DataType::Type::kString) {
+                        rhs = literal.AsString();
                     } else {
                         return false;
                     }
                     const bool result = FormUtil::CompareForms(lhs, rhs);
                     return op == "==" ? result : !result;
                 }
-                if (std::holds_alternative<float>(val)) {
-                    const float lhs = std::get<float>(val);
+                if (val.GetType() == DataType::Type::kFloat) {
+                    float lhs = val.AsFloat();
                     float rhs = 0.0f;
-                    if (std::holds_alternative<float>(literal)) {
-                        rhs = std::get<float>(literal);
-                    } else if (std::holds_alternative<int>(literal)) {
-                        rhs = static_cast<float>(std::get<int>(literal));
+                    if (literal.GetType() == DataType::Type::kFloat) {
+                        rhs = literal.AsFloat();
+                    } else if (literal.GetType() == DataType::Type::kInt) {
+                        rhs = static_cast<float>(literal.AsInt());
                     } else {
                         return false;
                     }
@@ -416,13 +435,15 @@ namespace PVE {
                     if (op == "<=") return lhs <= rhs;
                     if (op == ">") return lhs > rhs;
                     if (op == ">=") return lhs >= rhs;
-                } else if (std::holds_alternative<int>(val)) {
-                    const int lhs = std::get<int>(val);
+                }
+                // Compare int values.
+                else if (val.GetType() == DataType::Type::kInt) {
+                    int lhs = val.AsInt();
                     int rhs = 0;
-                    if (std::holds_alternative<int>(literal)) {
-                        rhs = std::get<int>(literal);
-                    } else if (std::holds_alternative<float>(literal)) {
-                        rhs = static_cast<int>(std::get<float>(literal));
+                    if (literal.GetType() == DataType::Type::kInt) {
+                        rhs = literal.AsInt();
+                    } else if (literal.GetType() == DataType::Type::kFloat) {
+                        rhs = static_cast<int>(literal.AsFloat());
                     } else {
                         return false;
                     }
@@ -433,34 +454,30 @@ namespace PVE {
                     if (op == "<=") return lhs <= rhs;
                     if (op == ">") return lhs > rhs;
                     if (op == ">=") return lhs >= rhs;
-                    return false;
-                } else if (std::holds_alternative<bool>(val)) {
-                    const bool lhs = std::get<bool>(val);
+                }
+                // Compare bool values.
+                else if (val.GetType() == DataType::Type::kBool) {
+                    bool lhs = val.AsBool();
                     bool rhs = false;
-                    if (std::holds_alternative<bool>(literal)) {
-                        rhs = std::get<bool>(literal);
+                    if (literal.GetType() == DataType::Type::kBool) {
+                        rhs = literal.AsBool();
                     } else {
                         return false;
                     }
                     Logger::GetSingleton().LogDebug(std::format("{} | {}", lhs, rhs));
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
-                    return false;
-                } else if (std::holds_alternative<std::string>(val)) {
-                    const std::string& lhs = std::get<std::string>(val);
+                } else if (val.GetType() == DataType::Type::kString) {
+                    auto lhs = val.AsString();
                     std::string rhs = "";
-                    if (std::holds_alternative<std::string>(literal)) {
-                        rhs = std::get<std::string>(literal);
+                    if (literal.GetType() == DataType::Type::kString) {
+                        rhs = literal.AsString();
                     } else {
                         return false;
                     }
                     Logger::GetSingleton().LogDebug(std::format("{} | {}", lhs, rhs));
                     if (op == "==") return lhs == rhs;
                     if (op == "!=") return lhs != rhs;
-                    if (op == "<") return lhs < rhs;
-                    if (op == "<=") return lhs <= rhs;
-                    if (op == ">") return lhs > rhs;
-                    if (op == ">=") return lhs >= rhs;
                     if (op == "*=") return lhs.contains(rhs);
                     return false;
                 }
@@ -542,28 +559,39 @@ namespace PVE {
                 if (current().type == TokenType::Float) {
                     float num = std::stof(current().value);
                     consume();
-                    return std::make_unique<CondExpr>(varName, op, Value(num));
+                    Logger::GetSingleton().LogDebug("1");
+                    Logger::GetSingleton().LogDebug(std::format("{}", num));
+                    return std::make_unique<CondExpr>(varName, op, DataType(num));
                 }
                 if (current().type == TokenType::Int) {
                     int num = std::stoi(current().value, nullptr, current().value.starts_with("0x") ? 16 : 10);
                     consume();
-                    return std::make_unique<CondExpr>(varName, op, Value(num));
+                    Logger::GetSingleton().LogDebug("2");
+                    Logger::GetSingleton().LogDebug(std::format("{}", num));
+                    return std::make_unique<CondExpr>(varName, op, DataType(num));
                 }
                 if (current().type == TokenType::Bool) {
                     auto s = current().value;
                     std::ranges::transform(s, s.begin(), [](const unsigned char c) { return std::tolower(c); });
                     consume();
-                    return std::make_unique<CondExpr>(varName, op, Value(s == "true"));
+                    Logger::GetSingleton().LogDebug("3");
+                    Logger::GetSingleton().LogDebug(std::format("{}", s));
+                    return std::make_unique<CondExpr>(varName, op, DataType(s == "true"));
                 }
                 if (current().type == TokenType::String) {
-                    std::string s = current().value;
+                    auto str = current().value.c_str();
                     consume();
-                    return std::make_unique<CondExpr>(varName, op, Value(s));
+                    Logger::GetSingleton().LogDebug("4");
+                    Logger::GetSingleton().LogDebug(std::format("{}", str));
+                    return std::make_unique<CondExpr>(varName, op, DataType(str));
                 }
+                Logger::GetSingleton().LogDebug("5");
+                Logger::GetSingleton().LogDebug(std::format("NULL"));
                 return nullptr;
             }
         };
 
         std::unordered_map<std::string, std::vector<Condition>> conditions;
     };
+
 }

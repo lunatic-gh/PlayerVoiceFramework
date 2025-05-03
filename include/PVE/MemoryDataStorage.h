@@ -2,8 +2,6 @@
 
 #include <mutex>
 #include <unordered_map>
-#include <variant>
-#include <RE/T/TESForm.h>
 
 namespace PVE {
     class MemoryDataStorage {
@@ -16,26 +14,25 @@ namespace PVE {
         MemoryDataStorage(const MemoryDataStorage&) = delete;
         MemoryDataStorage& operator=(const MemoryDataStorage&) = delete;
 
-        void Set(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
+        void Set(const std::string& key, const DataType& value) {
             std::lock_guard lock(mutex);
             storage[key] = value;
+            Logger::GetSingleton().LogDebug(std::format("Stored: {}", value.AsString()));
         }
 
-        template <typename T>
-        T Get(const std::string& key, const T& def) const {
+        void ModifyIfExists(const std::string& key, const std::function<DataType(DataType data)>& modifyFnct) {
             std::lock_guard lock(mutex);
-            try {
-                if (const auto it = storage.find(key); it != storage.end())
-                    return std::get<T>(it->second);
-            } catch (...) {
+            if (const auto it = storage.find(key); it != storage.end()) {
+                it->second = modifyFnct(it->second);
             }
-            return def;
         }
 
-        std::variant<std::string, int, float, RE::TESForm*> Get(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def) const {
+        DataType Get(const std::string& key, DataType def) {
             std::lock_guard lock(mutex);
-            if (const auto it = storage.find(key); it != storage.end())
+            if (const auto it = storage.find(key); it != storage.end()) {
+                Logger::GetSingleton().LogDebug(std::format("Get: {}", it->second.AsString()));
                 return it->second;
+            }
             return def;
         }
 
@@ -46,6 +43,6 @@ namespace PVE {
     private:
         MemoryDataStorage() = default;
         mutable std::mutex mutex;
-        std::unordered_map<std::string, std::variant<std::string, int, float, RE::TESForm*>> storage;
+        std::unordered_map<std::string, DataType> storage;
     };
 }

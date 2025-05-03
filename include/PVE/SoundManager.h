@@ -4,7 +4,7 @@ namespace PVE {
     struct SoundEvent {
         std::string name;
         int chance;
-        float cooldown;
+        int cooldown;
         std::vector<std::string> overrideBlacklist;
         std::vector<std::pair<std::string, std::vector<std::string>>> audios;
     };
@@ -19,7 +19,7 @@ namespace PVE {
         SoundManager(const SoundManager&) = delete;
         SoundManager& operator=(const SoundManager&) = delete;
 
-        void RegisterSoundEvent(const std::string& name, int chance, float cooldown, const std::vector<std::string>& overrideBlacklist, const std::vector<std::pair<std::string, std::vector<std::string>>>& audios);
+        void RegisterSoundEvent(const std::string& name, int chance, int cooldown, const std::vector<std::string>& overrideBlacklist, const std::vector<std::pair<std::string, std::vector<std::string>>>& audios);
 
         void SendSoundEvent(const SoundEvent& event);
 

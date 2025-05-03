@@ -1,99 +1,79 @@
 #pragma once
 
-#define API_TYPE_KEY static_cast<uint32_t>(0x00000109)
+#define API_TYPE_KEY static_cast<uint32_t>(0xed01a811)
+
+#define API_VERSION_MAJOR 1
+#define API_VERSION_MINOR 0
+
+#include "DataType.h"
 
 namespace PVE_API {
+    class ConditionFunction {
+        using Function = PVE::DataType (*)();
+
+    public:
+        Function function;
+        explicit ConditionFunction(const Function fnct) : function(fnct) {};
+    };
+
     class PlayerVoiceEventsAPI {
     public:
-        // 1.0.3: Added
+        virtual int GetAPIVersionMajor();
+
+        virtual int GetAPIVersionMinor();
+
         // Sends a sound-event with the given name.
         // If a sound with that name isn't registered in a user's voice-pack, it'll be ignored.
-        virtual void SendSoundEvent(const std::string& name);
+        virtual void SendSoundEvent(const char* name);
 
-        // 1.0.3: Added
-        // Registers a custom condition
-        // For 'eventName', use either 'GLOBAL' for registering a global condition, or the name of the event to attach it to.
-        // Conditions attached to events will automatically unregister once the event is sent/played, so you should only send non-global events right before sending an event.
-        virtual void RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<std::variant<float, int, bool, std::string, RE::TESForm*>()>& conditionFunction);
+        // Registers a custom condition for the given event.
+        // For 'eventName', use the name of the event to attach it to.
+        // Conditions attached to events will automatically unregister once the event is sent/played, so you should only send conditions right before sending the corresponding event.
+        virtual void RegisterCondition(const char* eventName, const char* conditionName, const ConditionFunction& conditionFunction);
 
-        // 1.0.3: Added
+        // Registers a custom condition that is globally available.
+        // They will never unregister, and be available from the moment you register them.
+        virtual void RegisterGlobalCondition(const char* conditionName, const ConditionFunction& conditionFunction);
+
         // Sets a value into the Memory Data Storage.
         // As the name suggests, this storage is only in memory, and will be flushed once the game is closed.
-        virtual void SetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value);
+        virtual void SetMemoryData(const char* key, const PVE::DataType& value);
 
-        // 1.0.3: Added
         // Retrieves a value from the Memory Data Storage. If the given key has no value, it returns 'def'
         // As the name suggests, this storage is only in memory, and will be flushed once the game is closed.
-        virtual std::variant<std::string, int, float, RE::TESForm*> GetMemoryData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def);
+        virtual PVE::DataType GetMemoryData(const char* key, const PVE::DataType& def);
 
-        // 1.0.3: Added
         // Sets a value into the Save Data Storage.
         // This Storage is linked to the currently loaded Playthrough, and will be saved/loaded whenever the game is saved/loaded.
         // Therefore, Anything saved before a save is loaded will be discarded once a save is loaded.
-        virtual void SetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value);
+        virtual void SetSaveData(const char* key, const PVE::DataType& value);
 
-        // 1.0.3: Added
         // Retrieves a value from the Save Data Storage. If the given key has no value, it returns 'def'
         // This Storage is linked to the currently loaded Playthrough, and will be saved/loaded whenever the game is saved/loaded.
         // Therefore, Anything saved before a save is loaded will be discarded once a save is loaded.
-        virtual std::variant<std::string, int, float, RE::TESForm*> GetSaveData(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& def);
+        virtual PVE::DataType GetSaveData(const char* key, PVE::DataType def);
 
-        // 1.0.3: Added
         // Returns whether or not the given form contains the given keyword.
-        virtual bool FormHasKeyword(RE::TESForm* form, const std::string& keyword);
+        virtual bool FormHasKeyword(RE::TESForm* form, const char* keyword);
 
-        // 1.0.3: Added
-        // Returns the given form as a string-representation in the format 'PluginName|HexFormID', e.g. 'Skyrim.esm|0x123456'
-        virtual std::string FormToString(const RE::TESForm* form);
-
-        // 1.0.3: Added
-        // Returns the form associated to the given form string. The string must be in the format 'PluginName|HexFormID', e.g. 'Skyrim.esm|0x123456'
-        virtual RE::TESForm* FormFromString(const std::string& formString);
-
-        // 1.0.3: Added
-        // Returns the form associated to the given plugin name and Form ID.
-        virtual RE::TESForm* FormFromID(const std::string& pluginName, const RE::FormID& formId);
-
-        // 1.0.3: Added
-        // Returns whether or not the two given forms are the same.
-        virtual bool CompareForms(const std::string& first, const std::string& second);
-
-        // 1.0.3: Added
-        // Returns whether or not the two given forms are the same. 'second' must be in the format 'PluginName|HexFormID', e.g. 'Skyrim.esm|0x123456'
-        virtual bool CompareForms(const RE::TESForm* first, const std::string& second);
-
-        // 1.0.3: Added
-        // Returns the given form's attached keywords as string, in the format 'keyword1|keyword2|...'
-        virtual std::string FormToKeywordString(RE::TESForm* form);
-
-        // 1.0.3: Added
-        // Returns the given string, with all occurences of 'oldSeq' replaced with 'newSeq'
-        virtual std::string ReplaceInString(const std::string& text, const std::string& oldSeq, const std::string& newSeq);
-
-        // 1.0.3: Added
-        // Returns the given string with all leading and trailing whitespaces removed
-        virtual std::string TrimString(const std::string& text);
-
-        // 1.0.3: Added
-        // Returns a vector that contains all parts of the given string split by the given delimiter char
-        virtual std::vector<std::string> SplitString(const std::string& text, const char& delimiter);
-
-        // 1.0.3: Added
         // Returns a random integer between 'minInclusive' and 'maxInclusive'
         virtual int RandomInt(int minInclusive, int maxInclusive);
 
-        // 1.0.3: Added
         // Returns a random float between 'minInclusive' and 'maxInclusive'
         virtual float RandomFloat(float minInclusive, float maxInclusive);
     };
 
     inline extern PlayerVoiceEventsAPI* api_ptr = nullptr;
 
+    inline extern PlayerVoiceEventsAPI* GetAPI() {
+        return api_ptr;
+    }
+
     inline bool LoadAPI() {
         if (api_ptr != nullptr) return true;
         SKSE::GetMessagingInterface()->Dispatch(API_TYPE_KEY, (void*)&api_ptr, sizeof(void*), NULL);
         if (api_ptr) {
-            return true;
+            return API_VERSION_MAJOR == api_ptr->GetAPIVersionMajor() && API_VERSION_MINOR <= api_ptr->GetAPIVersionMinor();
         }
         return false;
     }

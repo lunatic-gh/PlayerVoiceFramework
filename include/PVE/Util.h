@@ -1,5 +1,6 @@
 #pragma once
 
+#include "API.h"
 #include "Logger.h"
 
 #include <yaml-cpp/node/node.h>
@@ -124,6 +125,6 @@ namespace PVE {
          * @param def   the default value to load if the key isn't present
          * @param type  the expected type of the setting. Can be one of "string", "int", "float"
          */
-        static void LoadSetting(const YAML::Node& node, const std::string& key, const std::variant<std::string, int, float>& def, const std::string& type);
+        static void LoadSetting(const YAML::Node& node, const std::string& key, const DataType& def, const std::string& type);
     };
 }

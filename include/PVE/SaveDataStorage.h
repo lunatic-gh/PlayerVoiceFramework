@@ -3,6 +3,7 @@
 #include "Util.h"
 
 namespace PVE {
+
     class SaveDataStorage {
     public:
         static SaveDataStorage* GetSingleton() {
@@ -16,20 +17,28 @@ namespace PVE {
         SaveDataStorage(const SaveDataStorage&) = delete;
         SaveDataStorage& operator=(const SaveDataStorage&) = delete;
 
-        void Set(const std::string& key, const std::variant<std::string, int, float, RE::TESForm*>& value) {
+        void Set(const std::string& key, const DataType& value) {
             std::lock_guard lock(mutex);
             storage[key] = value;
         }
 
-        template <typename T>
-        T Get(const std::string& key, const T& def) const {
+        void ModifyIfExists(const std::string& key, const std::function<DataType(DataType data)>& modifyFnct) {
             std::lock_guard lock(mutex);
-            try {
-                if (const auto it = storage.find(key); it != storage.end())
-                    return std::get<T>(it->second);
-            } catch (...) {
+            if (const auto it = storage.find(key); it != storage.end()) {
+                it->second = modifyFnct(it->second);
             }
+        }
+
+        DataType Get(const std::string& key, const DataType& def) {
+            std::lock_guard lock(mutex);
+            if (const auto it = storage.find(key); it != storage.end()) return it->second;
             return def;
+        }
+
+        DataType Get(const std::string& key) {
+            std::lock_guard lock(mutex);
+            if (const auto it = storage.find(key); it != storage.end()) return it->second;
+            return DataType();
         }
 
         bool Has(const std::string& key) const {
@@ -47,35 +56,46 @@ namespace PVE {
                 const auto count = static_cast<std::uint32_t>(storage.size());
                 a_intfc->WriteRecordData(&count, sizeof(count));
 
-                for (const auto& [key, value] : storage) {
-                    auto keyLength = static_cast<std::uint32_t>(key.size());
+                for (const auto& [key, data] : storage) {
+                    const auto keyLength = static_cast<std::uint32_t>(key.size());
                     a_intfc->WriteRecordData(&keyLength, sizeof(keyLength));
                     a_intfc->WriteRecordData(key.data(), keyLength);
-                    std::visit(
-                        [&]<typename T0>(T0&& arg) {
-                            using T = std::decay_t<T0>;
-                            if constexpr (std::is_same_v<T, std::string>) {
-                                constexpr int type = kString;
-                                a_intfc->WriteRecordData(&type, sizeof(type));
-                                const auto strLength = static_cast<std::uint32_t>(arg.size());
-                                a_intfc->WriteRecordData(&strLength, sizeof(strLength));
-                                a_intfc->WriteRecordData(arg.data(), strLength);
-                            } else if constexpr (std::is_same_v<T, int>) {
-                                constexpr int type = kInt;
-                                a_intfc->WriteRecordData(&type, sizeof(type));
-                                a_intfc->WriteRecordData(&arg, sizeof(arg));
-                            } else if constexpr (std::is_same_v<T, float>) {
-                                constexpr int type = kFloat;
-                                a_intfc->WriteRecordData(&type, sizeof(type));
-                                a_intfc->WriteRecordData(&arg, sizeof(arg));
-                            } else if constexpr (std::is_same_v<T, RE::TESForm*>) {
-                                constexpr int type = kForm;
-                                const std::uint32_t formID = arg ? arg->GetFormID() : 0;
-                                a_intfc->WriteRecordData(&type, sizeof(type));
-                                a_intfc->WriteRecordData(&formID, sizeof(formID));
-                            }
-                        },
-                        value);
+                    const int type = static_cast<int>(data.GetType());
+                    a_intfc->WriteRecordData(&type, sizeof(type));
+                    switch (data.GetType()) {
+                        case DataType::kString: {
+                            const char* str = data.AsCString();
+                            const auto strLength = static_cast<std::uint32_t>(std::strlen(str));
+                            a_intfc->WriteRecordData(&strLength, sizeof(strLength));
+                            a_intfc->WriteRecordData(str, strLength);
+                            break;
+                        }
+                        case DataType::kInt: {
+                            const int intVal = data.AsInt();
+                            a_intfc->WriteRecordData(&intVal, sizeof(intVal));
+                            break;
+                        }
+                        case DataType::kFloat: {
+                            const float floatVal = data.AsFloat();
+                            a_intfc->WriteRecordData(&floatVal, sizeof(floatVal));
+                            break;
+                        }
+                        case DataType::kBool: {
+                            const bool boolVal = data.AsBool();
+                            a_intfc->WriteRecordData(&boolVal, sizeof(boolVal));
+                            break;
+                        }
+                        case DataType::kForm: {
+                            const char* str = FormUtil::ToString(data.AsForm()).c_str();
+                            const auto strLength = static_cast<std::uint32_t>(std::strlen(str));
+                            a_intfc->WriteRecordData(&strLength, sizeof(strLength));
+                            a_intfc->WriteRecordData(str, strLength);
+                            break;
+                        }
+                        case DataType::kNull:
+                        default:
+                            break;
+                    }
                 }
             }
             // ReSharper restore CppExpressionWithoutSideEffects
@@ -105,56 +125,65 @@ namespace PVE {
                                 Logger::GetSingleton().LogError(std::format("Failed to read key data at entry {}.", i));
                                 return;
                             }
-                            int variantType = 0;
-                            if (!a_intfc->ReadRecordData(&variantType, sizeof(variantType))) {
+                            int dataTypeInt = 0;
+                            if (!a_intfc->ReadRecordData(&dataTypeInt, sizeof(dataTypeInt))) {
                                 Logger::GetSingleton().LogError(std::format("Failed to read data type at entry {}.", i));
                                 return;
                             }
-                            switch (variantType) {
-                                case kString: {
+                            switch (static_cast<DataType::Type>(dataTypeInt)) {
+                                case DataType::kString: {
                                     std::uint32_t strLength = 0;
                                     if (!a_intfc->ReadRecordData(&strLength, sizeof(strLength))) {
                                         Logger::GetSingleton().LogError(std::format("Failed to read string length for key {}.", key));
                                         return;
                                     }
-                                    std::string value(strLength, ' ');
-                                    if (!a_intfc->ReadRecordData(value.data(), strLength)) {
+                                    std::string strValue(strLength, ' ');
+                                    if (!a_intfc->ReadRecordData(strValue.data(), strLength)) {
                                         Logger::GetSingleton().LogError(std::format("Failed to read string data for key {}.", key));
                                         return;
                                     }
-                                    storage[key] = value;
+                                    storage[key] = DataType(strValue.c_str());
                                     break;
                                 }
-                                case kInt: {
-                                    int value = 0;
-                                    if (!a_intfc->ReadRecordData(&value, sizeof(value))) {
+                                case DataType::kInt: {
+                                    int intVal = 0;
+                                    if (!a_intfc->ReadRecordData(&intVal, sizeof(intVal))) {
                                         Logger::GetSingleton().LogError(std::format("Failed to read int data for key {}.", key));
                                         return;
                                     }
-                                    storage[key] = value;
+                                    storage[key] = DataType(intVal);
                                     break;
                                 }
-                                case kFloat: {
-                                    float value = 0.0f;
-                                    if (!a_intfc->ReadRecordData(&value, sizeof(value))) {
+                                case DataType::kFloat: {
+                                    float floatVal = 0.0f;
+                                    if (!a_intfc->ReadRecordData(&floatVal, sizeof(floatVal))) {
                                         Logger::GetSingleton().LogError(std::format("Failed to read float data for key {}.", key));
                                         return;
                                     }
-                                    storage[key] = value;
+                                    storage[key] = DataType(floatVal);
                                     break;
                                 }
-                                case kForm: {
+                                case DataType::kBool: {
+                                    bool boolVal = false;
+                                    if (!a_intfc->ReadRecordData(&boolVal, sizeof(boolVal))) {
+                                        Logger::GetSingleton().LogError(std::format("Failed to read bool data for key {}.", key));
+                                        return;
+                                    }
+                                    storage[key] = DataType(boolVal);
+                                    break;
+                                }
+                                case DataType::kForm: {
                                     std::uint32_t formID = 0;
                                     if (!a_intfc->ReadRecordData(&formID, sizeof(formID))) {
                                         Logger::GetSingleton().LogError(std::format("Failed to read formID for key {}.", key));
                                         return;
                                     }
                                     RE::TESForm* form = RE::TESForm::LookupByID(formID);
-                                    storage[key] = form;
+                                    storage[key] = DataType(form);
                                     break;
                                 }
                                 default:
-                                    Logger::GetSingleton().LogError(std::format("Unknown variant type {} for key {}.", variantType, key));
+                                    Logger::GetSingleton().LogError(std::format("Unknown data type {} for key {}.", dataTypeInt, key));
                                     return;
                             }
                         }
@@ -166,12 +195,7 @@ namespace PVE {
     private:
         SaveDataStorage() = default;
         mutable std::mutex mutex;
-        enum VariantType : int {
-            kString = 0,
-            kInt = 1,
-            kFloat = 2,
-            kForm = 3
-        };
-        std::unordered_map<std::string, std::variant<std::string, int, float, RE::TESForm*>> storage;
+        std::unordered_map<std::string, DataType> storage;
     };
+
 }

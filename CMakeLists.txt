@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.10)
 set(ignoreMe "${CMAKE_TOOLCHAIN_FILE}")
 
 # Set Version
-set(VERSION 1.0.5)
+set(VERSION 1.0.0)
 
 # Define Project Data
 project("PlayerVoiceEvents" VERSION ${VERSION} LANGUAGES CXX)
@@ -24,6 +24,7 @@ set(headers
         include/PVE/SaveDataStorage.h
         include/PVE/SoundManager.h
         include/PVE/API.h
+        include/PVE/DataType.h
 )
 
 # Define Source Files (.cpp)
