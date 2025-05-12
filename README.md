@@ -1,4 +1,4 @@
-# PlayerVoiceEvents
+# Player Voice Framework
 
 ## NOTE: I'm currently in the process of re-writing the entire mod. The whole process is done on the rewrite branch and will be pushed to the master once it's in a stable state.
 
@@ -10,10 +10,10 @@ See the Mod-Page at [Nexusmods](https://www.nexusmods.com/skyrimspecialedition/m
 <br>
 <br>
 <br>
-This Mod is essentially a modern replacement for both PCHT and Dragonborn Voice-Barks. It allows for way more
+This Framework is essentially a modern replacement for both PCHT and Dragonborn Voice-Barks. It allows for way more
 customization, with way less issues.
 
 ### Requirements:
 
-- SKSE - This mod is like 99% Based on SKSE. Requirement should be obvious...
-- Address Library - Required for providing cross-version compatibility.
+- SKSE - The Framework is written in C++, and SKSE-Plugins are the easiest way to inject C++ Code into Skyrim.
+- Address Library - The Framework uses the CommonLibSSE-NG Helper-Library. This requires Address Library to be installed so it can work on multiple Game-Versions.

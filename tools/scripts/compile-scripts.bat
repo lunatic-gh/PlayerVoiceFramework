@@ -9,13 +9,17 @@ if not exist "tools\pyro" (
         del pyro.zip
     )
 )
-if not exist "tools\papyrus-include" (
-    :: Download Dependency Scripts
-    git clone "https://github.com/MrOctopus/nl_online" "tools\nl_online"
-    mkdir "tools\papyrus-include"
-    xcopy "tools\nl_online\sse\source\*" "tools\papyrus-include\" /E /I /Y
-    xcopy "tools\nl_online\skse64\source\*" "tools\papyrus-include\" /E /I /Y
+
+:: Download Dependency Scripts
+IF EXIST "tools\papyrus-include" (
+    rmdir "tools\papyrus-include" /S /Q
 )
+git clone "https://github.com/MrOctopus/nl_online" "tools\nl_online"
+mkdir "tools\papyrus-include"
+xcopy "tools\nl_online\sse\source\*" "tools\papyrus-include\" /I /Y
+xcopy "tools\nl_online\skse64\source\*" "tools\papyrus-include\" /I /Y
+xcopy "tools\nl_online\skyui\source\*" "tools\papyrus-include\" /I /Y
+
 :: Compile Scripts
 "tools\pyro\pyro.exe" --compiler-path "tools\papyrus-compiler\PapyrusCompiler.exe" -i skyrimse.ppj
 

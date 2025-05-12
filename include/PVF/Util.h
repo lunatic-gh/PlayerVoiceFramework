@@ -1,11 +1,10 @@
 #pragma once
 
 #include "API.h"
-#include "Logger.h"
 
 #include <yaml-cpp/node/node.h>
 
-namespace PVE {
+namespace PVF {
 
     /**
      * Various Form-Related Utils
@@ -102,20 +101,9 @@ namespace PVE {
          */
         static float RandomFloat(float minInclusive, float maxInclusive);
 
-        /**
-         * Checks whether a container contains the given value or not.
-         * @param container the container to check
-         * @param value the value to search for
-         * @return true if the container contains the value, false otherwise
-         */
-        template <typename T>
-        static bool Contains(std::vector<T> container, T value) {
-            return std::ranges::find(container, value) != container.end();
-        }
+        static std::string GetActivePack();
 
-        static void RunAsync(const std::function<void()>& function);
-
-        static void RunAsync(const std::function<void()>& function, float delaySeconds);
+        static void SetActivePack(const std::string& name);
 
     private:
         /**
@@ -125,6 +113,6 @@ namespace PVE {
          * @param def   the default value to load if the key isn't present
          * @param type  the expected type of the setting. Can be one of "string", "int", "float"
          */
-        static void LoadSetting(const YAML::Node& node, const std::string& key, const DataType& def, const std::string& type);
+        static void LoadSetting(const YAML::Node& node, const std::string& key, const DataValue& def, const std::string& type);
     };
 }

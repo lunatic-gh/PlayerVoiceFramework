@@ -47,34 +47,32 @@ Events:
     - RandomBool: Bool
   # Below is a list of Events, and their conditions.
   # Those can be used only on the respective event, and will be invalid anywhere else
-  PVEAttackMelee:
+  PVFAttackMelee:
     - AttackType: Int (0 = Normal, 1 = Power-Attack)
     - WeaponType: Int (0 = Unknown/Unarmed, 1-9 = Weapon Types)
     - WeaponForm: Form String
     - WeaponKeywords: Keyword String
-  PVESpellCast:
+  PVFSpellCast:
     - SpellForm: Form
     - SpellKeywords: Keyword String
     - IsDualCast: Bool
-  PVEAttackBash:
-  PVEAttackBow:
+  PVFAttackBash:
+  PVFAttackBow:
     - WeaponForm: Form
     - WeaponKeywords: Keyword String
     - DrawPower: Float (0.0 - 1.0)
-  PVEJump:
-  PVESprintIdle:
-  PVEUnsheatheSpell, PVESheatheSpell:
+  PVFJump:
+  PVFSprintIdle:
+  PVFUnsheatheSpell, PVFSheatheSpell:
     - SpellForm: Form
     - SpellKeywords: Keyword String
-  PVEUnsheatheWeapon, PVESheatheWeapon:
+  PVFUnsheatheWeapon, PVFSheatheWeapon:
     - WeaponForm: Form
     - WeaponKeywords: Keyword String
-  PVEDeath:
+  PVFDeath:
     - KillerForm: Form
-  PVEHit:
+  PVFHit:
     - IsPowerAttack: Bool
     - IsBashAttack: Bool
     - IsAttackBlocked: Bool
     - IsHealingAttack: Bool
-  PVEFinisher:
-    - FinisherState: Int (0 = Start, 1 = End)

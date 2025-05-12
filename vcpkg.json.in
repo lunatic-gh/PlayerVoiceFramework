@@ -1,5 +1,5 @@
 {
-  "name": "player-voice-events",
+  "name": "player-voice-framework",
   "version": "@VERSION@",
   "license": "MIT",
   "dependencies": [

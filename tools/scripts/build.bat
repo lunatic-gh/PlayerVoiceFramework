@@ -24,8 +24,8 @@ if exist "run" (
     rmdir /S /Q "run"
 )
 mkdir "run"
-echo D | xcopy /Q /Y ".\build\release\PlayerVoiceEvents.dll" ".\run\SKSE\Plugins"
-echo D | xcopy /Q /Y ".\build\release\PlayerVoiceEvents.pdb" ".\run\SKSE\Plugins"
+echo D | xcopy /Q /Y ".\build\release\PlayerVoiceFramework.dll" ".\run\SKSE\Plugins"
+echo D | xcopy /Q /Y ".\build\release\PlayerVoiceFramework.pdb" ".\run\SKSE\Plugins"
 xcopy /Q /Y /E ".\Data\*" ".\run"
 
 :: Compile Scripts
@@ -41,23 +41,14 @@ if "%GITHUB_ACTIONS%" NEQ "true" (
         echo Could not find Mods directory, skipping deploy...
         exit /b
     )
-    if exist "!MODS_DIR!\Player-Voice-Events" (
-        rmdir /S /Q "!MODS_DIR!\Player-Voice-Events"
+    if exist "!MODS_DIR!\Player-Voice-Framework" (
+        rmdir /S /Q "!MODS_DIR!\Player-Voice-Framework"
     )
-    mklink /J "!MODS_DIR!\Player-Voice-Events" "run"
+    mklink /J "!MODS_DIR!\Player-Voice-Framework" "run"
     if errorlevel 1 (
         echo Failed to create symlink...
         exit /b 1
     )
-) else (
-    :: Create a FOMOD ZIP
-    if exist ".\.zip-temp" (
-        rmdir /S /Q ".\.zip-temp"
-    )
-    mkdir ".\.zip-temp\Core Files"
-    xcopy /Q /Y /E ".\run\*" ".\.zip-temp\Core Files\"
-    xcopy /Q /Y ".\Data-Optional\PlayerVoiceEvents.ini" ".\.zip-temp\PowerAttackPatch\"
-    xcopy /Q /Y /I ".\tools\fomod" ".\.zip-temp\fomod"
 )
 
 endlocal

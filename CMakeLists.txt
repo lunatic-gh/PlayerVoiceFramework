@@ -8,32 +8,34 @@ set(ignoreMe "${CMAKE_TOOLCHAIN_FILE}")
 set(VERSION 1.0.0)
 
 # Define Project Data
-project("PlayerVoiceEvents" VERSION ${VERSION} LANGUAGES CXX)
+project("PlayerVoiceFramework" VERSION ${VERSION} LANGUAGES CXX)
 
 # Make dynamic vcpkg.json
 configure_file("${PROJECT_SOURCE_DIR}/vcpkg.json.in" "${PROJECT_SOURCE_DIR}/vcpkg.json" @ONLY)
 
 # Define Header Files (.h)
 set(headers
-        include/PVE/Logger.h
-        include/PVE/PapyrusInterface.h
-        include/PVE/Util.h
-        include/PVE/EventHandler.h
-        include/PVE/ConditionManager.h
-        include/PVE/MemoryDataStorage.h
-        include/PVE/SaveDataStorage.h
-        include/PVE/SoundManager.h
-        include/PVE/API.h
-        include/PVE/DataType.h
+        include/PVF/Logger.h
+        include/PVF/PapyrusInterface.h
+        include/PVF/Util.h
+        include/PVF/ConditionManager.h
+        include/PVF/MemoryDataStorage.h
+        include/PVF/SaveDataStorage.h
+        include/PVF/SoundManager.h
+        include/PVF/API.h
 )
 
 # Define Source Files (.cpp)
 set(sources
-        src/PVE/Plugin.cpp
-        src/PVE/EventHandler.cpp
-        src/PVE/SoundManager.cpp
-        src/PVE/Util.cpp
-        src/PVE/API.cpp
+        src/PVF/Plugin.cpp
+        src/PVF/Logger.cpp
+        src/PVF/PapyrusInterface.cpp
+        src/PVF/Util.cpp
+        src/PVF/ConditionManager.cpp
+        src/PVF/MemoryDataStorage.cpp
+        src/PVF/SaveDataStorage.cpp
+        src/PVF/SoundManager.cpp
+        src/PVF/API.cpp
 )
 
 # Dependencies
@@ -52,7 +54,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE PCH.h)
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp)
 
 # Add export definitions, so the API-Functions get exported.
-target_compile_definitions(${PROJECT_NAME} PRIVATE PVE_EXPORTS)
+target_compile_definitions(${PROJECT_NAME} PRIVATE PVF_EXPORTS)

@@ -1,5 +1,5 @@
 $schema: https://json-schema.org/draft-07/schema#
-title: PlayerVoiceEvents Pack-Config Schema
+title: PlayerVoiceFramework Pack-Config Schema
 description: Schema for the Pack-File
 type: object
 properties:

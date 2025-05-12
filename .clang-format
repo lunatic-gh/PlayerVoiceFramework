@@ -21,12 +21,12 @@ BinPackArguments: true
 BinPackParameters: true
 AllowShortFunctionsOnASingleLine: None
 AllowShortLambdasOnASingleLine: All
-AllowShortBlocksOnASingleLine: Never
+AllowShortBlocksOnASingleLine: Always
 AllowShortEnumsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AllowShortCaseExpressionOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortCompoundRequirementOnASingleLine: false
+AllowShortCompoundRequirementOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: Always
 AllowAllArgumentsOnNextLine: false
 # Align Pointers next to the object type, rather than before the key name

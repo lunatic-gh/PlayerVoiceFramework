@@ -2,7 +2,7 @@
 <PapyrusProject xmlns="PapyrusProject.xsd" 
     Flags="TESV_Papyrus_Flags.flg" 
     Game="sse" 
-    Output="run\Scripts" 
+    Output="run\Scripts"
     Optimize="false" 
     Release="false" 
     Final="false"
