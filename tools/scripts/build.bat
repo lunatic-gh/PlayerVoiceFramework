@@ -41,10 +41,10 @@ if "%GITHUB_ACTIONS%" NEQ "true" (
         echo Could not find Mods directory, skipping deploy...
         exit /b
     )
-    if exist "!MODS_DIR!\Player-Voice-Framework" (
-        rmdir /S /Q "!MODS_DIR!\Player-Voice-Framework"
+    if exist "!MODS_DIR!\PlayerVoiceFramework" (
+        rmdir /S /Q "!MODS_DIR!\PlayerVoiceFramework"
     )
-    mklink /J "!MODS_DIR!\Player-Voice-Framework" "run"
+    mklink /J "!MODS_DIR!\PlayerVoiceFramework" "run"
     if errorlevel 1 (
         echo Failed to create symlink...
         exit /b 1

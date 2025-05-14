@@ -3,21 +3,39 @@
 #include "../../include/PVF/ConditionManager.h"
 #include "../../include/PVF/SoundManager.h"
 #include "../../include/PVF/Util.h"
-#include "../../include/PVF/MemoryDataStorage.h"
-#include "../../include/PVF/SaveDataStorage.h"
 
 namespace PVF_API {
+
+    void PlayerVoiceFrameworkAPI::LogInfo(const char* message) {
+        PVF::Logger::LogInfo(message);
+    }
+
+    void PlayerVoiceFrameworkAPI::LogWarn(const char* message) {
+        PVF::Logger::LogWarn(message);
+    }
+
+    void PlayerVoiceFrameworkAPI::LogError(const char* message) {
+        PVF::Logger::LogError(message);
+    }
+
+    void PlayerVoiceFrameworkAPI::LogCritical(const char* message) {
+        PVF::Logger::LogCritical(message);
+    }
+
+    void PlayerVoiceFrameworkAPI::LogDebug(const char* message) {
+        PVF::Logger::LogDebug(message);
+    }
 
     void PlayerVoiceFrameworkAPI::SendSoundEvent(const char* name) {
         PVF::SoundManager::GetSingleton()->SendSoundEvent(name);
     }
 
-    void PlayerVoiceFrameworkAPI::RegisterCondition(const char* eventName, const char* conditionName, const ConditionFunction& conditionFunction) {
-        PVF::ConditionManager::GetSingleton()->RegisterCondition(eventName, conditionName, [conditionFunction] { return conditionFunction.function(); });
+    void PlayerVoiceFrameworkAPI::RegisterCondition(const char* eventName, const char* conditionName, const PVF::ConditionFunction& conditionFunction) {
+        PVF::ConditionManager::GetSingleton()->RegisterCondition(eventName, conditionName, conditionFunction);
     }
 
-    void PlayerVoiceFrameworkAPI::RegisterGlobalCondition(const char* conditionName, const ConditionFunction& conditionFunction) {
-        PVF::ConditionManager::GetSingleton()->RegisterGlobalCondition(conditionName, [conditionFunction] { return conditionFunction.function(); });
+    void PlayerVoiceFrameworkAPI::RegisterGlobalCondition(const char* conditionName, const PVF::ConditionFunction& conditionFunction) {
+        PVF::ConditionManager::GetSingleton()->RegisterGlobalCondition(conditionName, conditionFunction);
     }
 
     bool PlayerVoiceFrameworkAPI::FormHasKeyword(RE::TESForm* form, const char* keyword) {

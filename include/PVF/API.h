@@ -3,116 +3,195 @@
 #define API_TYPE_KEY static_cast<uint32_t>(0xed01a811)
 
 namespace PVF {
-    using Variant = std::variant<std::string, int, float, bool, RE::TESForm*>;
-
-    class DataValue {
-    public:
-        enum class Type : int {
-            kString = 0,
-            kInt = 1,
-            kFloat = 2,
-            kBool = 3,
-            kForm = 4,
-            kNull = -1
+    struct DataValue {
+        enum Type : int {
+            kNone = 0,
+            kString = 1,
+            kInt = 2,
+            kFloat = 3,
+            kBool = 4,
+            kForm = 5
         };
 
-        DataValue() = default;
+        Type type;
+        union {
+            std::string stringValue;
+            int intValue;
+            float floatValue;
+            bool boolValue;
+            RE::TESForm* formValue;
+            void* noneValue;
+        };
 
-        explicit DataValue(const char* val) {
-            type = Type::kString;
-            data = std::string(val);
+        DataValue() : type(kNone), noneValue(nullptr) {
+        }
+        explicit DataValue(const char* value) : type(kString), stringValue(value) {
+        }
+        explicit DataValue(const int value) : type(kInt), intValue(value) {
+        }
+        explicit DataValue(const float value) : type(kFloat), floatValue(value) {
+        }
+        explicit DataValue(const bool value) : type(kBool), boolValue(value) {
+        }
+        explicit DataValue(RE::TESForm* value) : type(kForm), formValue(value) {
         }
 
-        explicit DataValue(int val) {
-            type = Type::kInt;
-            data = val;
+        DataValue(const DataValue& other) : type(other.type) {
+            switch (type) {
+                case kString:
+                    new (&stringValue) std::string(other.stringValue);
+                    break;
+                case kInt:
+                    intValue = other.intValue;
+                    break;
+                case kFloat:
+                    floatValue = other.floatValue;
+                    break;
+                case kBool:
+                    boolValue = other.boolValue;
+                    break;
+                case kForm:
+                    formValue = other.formValue;
+                    break;
+                default:
+                    noneValue = nullptr;
+                    break;
+            }
         }
 
-        explicit DataValue(float val) {
-            type = Type::kFloat;
-            data = val;
+        DataValue& operator=(const DataValue& other) {
+            if (this != &other) {
+                this->~DataValue();
+                type = other.type;
+                switch (type) {
+                    case kString:
+                        new (&stringValue) std::string(other.stringValue);
+                        break;
+                    case kInt:
+                        intValue = other.intValue;
+                        break;
+                    case kFloat:
+                        floatValue = other.floatValue;
+                        break;
+                    case kBool:
+                        boolValue = other.boolValue;
+                        break;
+                    case kForm:
+                        formValue = other.formValue;
+                        break;
+                    default:
+                        noneValue = nullptr;
+                        break;
+                }
+            }
+            return *this;
         }
 
-        explicit DataValue(bool val) {
-            type = Type::kBool;
-            data = val;
-        }
-
-        explicit DataValue(RE::TESForm* val) {
-            type = Type::kForm;
-            data = val;
+        ~DataValue() {
+            if (type == kString) { stringValue.~basic_string(); }
         }
 
         Type GetType() const {
             return type;
-        };
+        }
 
         std::string AsString() const {
-            return type == Type::kString ? std::get<std::string>(data) : "";
+            return type == kString ? stringValue : std::string("");
         }
-
         const char* AsCString() const {
-            return type == Type::kString ? std::get<std::string>(data).c_str() : "";
+            return type == kString ? stringValue.c_str() : "";
         }
-
         int AsInt() const {
-            return type == Type::kInt ? std::get<int>(data) : 0;
+            return type == kInt ? intValue : 0;
         }
-
         float AsFloat() const {
-            return type == Type::kFloat ? std::get<float>(data) : 0.0f;
+            return type == kFloat ? floatValue : 0.0f;
         }
-
         bool AsBool() const {
-            return type == Type::kBool ? std::get<bool>(data) : false;
+            return type == kBool ? boolValue : false;
         }
-
         RE::TESForm* AsForm() const {
-            return type == Type::kForm ? std::get<RE::TESForm*>(data) : static_cast<RE::TESForm*>(nullptr);
+            return type == kForm ? formValue : static_cast<RE::TESForm*>(nullptr);
         }
 
         void SetString(const char* val) {
-            this->type = Type::kString;
-            data = std::string(val);
+            type = kString;
+            stringValue = val;
         }
-
         void SetInt(const int val) {
-            this->type = Type::kInt;
-            data = val;
+            type = kInt;
+            intValue = val;
         }
-
-        void SetFloat(float val) {
-            this->type = Type::kFloat;
-            data = val;
+        void SetFloat(const float val) {
+            type = kFloat;
+            floatValue = val;
         }
-
-        void SetBool(bool val) {
-            this->type = Type::kBool;
-            data = val;
+        void SetBool(const bool val) {
+            type = kBool;
+            boolValue = val;
         }
-
         void SetForm(RE::TESForm* val) {
-            this->type = Type::kFloat;
-            data = val;
+            type = kForm;
+            formValue = val;
         }
-
-    private:
-        Type type;
-        Variant data;
     };
+
+    typedef DataValue (*ConditionFunctionCallback)(void* context);
+    typedef void (*ConditionFunctionCleanup)(void* context);
+
+    struct ConditionFunction {
+        ConditionFunctionCallback callback;
+        void* context;
+        ConditionFunctionCleanup cleanup;
+    };
+
+    struct IConditionFunctor {
+        virtual ~IConditionFunctor() {
+        }
+        virtual DataValue call() = 0;
+    };
+
+    inline ConditionFunction CreateConditionFunction(IConditionFunctor* functor) {
+        auto adapter = [](void* context) -> DataValue {
+            const auto f = static_cast<IConditionFunctor*>(context);
+            return f->call();
+        };
+        auto cleanupFunc = [](void* context) {
+            const auto f = static_cast<IConditionFunctor*>(context);
+            delete f;
+        };
+        return ConditionFunction{adapter, static_cast<void*>(functor), cleanupFunc};
+    }
+
+    template <typename F>
+    IConditionFunctor* MakeConditionFunctor(F&& f) {
+        struct FunctorImpl : IConditionFunctor {
+            std::decay_t<F> func;
+            explicit FunctorImpl(F&& funcIn) : func(std::forward<F>(funcIn)) {
+            }
+            DataValue call() override {
+                return func();
+            }
+        };
+        return new FunctorImpl(std::forward<F>(f));
+    }
+
+    template <typename F>
+    ConditionFunction CreateConditionFunction(F&& f) {
+        return CreateConditionFunction(MakeConditionFunctor(std::forward<F>(f)));
+    }
 }
 
 namespace PVF_API {
-    class ConditionFunction {
-        using Function = PVF::DataValue (*)();
-
-    public:
-        Function function;
-        explicit ConditionFunction(const Function fnct) : function(fnct) {};
-    };
-
     class PlayerVoiceFrameworkAPI {
     public:
+        // Logs a message at various log-levels
+        virtual void LogInfo(const char* message);
+        virtual void LogWarn(const char* message);
+        virtual void LogError(const char* message);
+        virtual void LogCritical(const char* message);
+        virtual void LogDebug(const char* message);
+
         // Sends a sound-event with the given name.
         // If a sound with that name isn't registered in a user's voice-pack, it'll be ignored.
         virtual void SendSoundEvent(const char* name);
@@ -120,11 +199,11 @@ namespace PVF_API {
         // Registers a custom condition for the given event.
         // For 'eventName', use the name of the event to attach it to.
         // Conditions attached to events will automatically unregister once the event is sent/played, so you should only send conditions right before sending the corresponding event.
-        virtual void RegisterCondition(const char* eventName, const char* conditionName, const ConditionFunction& conditionFunction);
+        virtual void RegisterCondition(const char* eventName, const char* conditionName, const PVF::ConditionFunction& conditionFunction);
 
         // Registers a custom condition that is globally available.
         // They will never unregister, and be available from the moment you register them.
-        virtual void RegisterGlobalCondition(const char* conditionName, const ConditionFunction& conditionFunction);
+        virtual void RegisterGlobalCondition(const char* conditionName, const PVF::ConditionFunction& conditionFunction);
 
         // Returns whether or not the given form contains the given keyword.
         virtual bool FormHasKeyword(RE::TESForm* form, const char* keyword);
@@ -136,9 +215,9 @@ namespace PVF_API {
         virtual float RandomFloat(float minInclusive, float maxInclusive);
     };
 
-    // USE 'GetAPI' instead!
     inline extern PlayerVoiceFrameworkAPI* ptr = nullptr;
 
+    // Use this to get the reference to the API
     inline extern PlayerVoiceFrameworkAPI* GetAPI() {
         if (ptr == nullptr) {
             // Try to Load API

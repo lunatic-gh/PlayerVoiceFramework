@@ -1,8 +1,9 @@
 {
   "name": "player-voice-framework",
-  "version": "1.0.0",
+  "version-string": "1",
   "license": "MIT",
   "dependencies": [
-    "commonlibsse-ng"
+    "commonlibsse-ng",
+    "nlohmann-json"
   ]
 }

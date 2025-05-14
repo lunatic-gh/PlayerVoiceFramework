@@ -13,11 +13,11 @@ namespace PVF {
 
         void RegisterInternalConditions();
 
-        void RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<DataValue()>& valueFunction);
+        void RegisterCondition(const std::string& eventName, const std::string& conditionName, const ConditionFunction& valueFunction);
 
         void UnregisterConditions(const std::string& eventName);
 
-        void RegisterGlobalCondition(const std::string& conditionName, const std::function<DataValue()>& valueFunction);
+        void RegisterGlobalCondition(const std::string& conditionName, const ConditionFunction& valueFunction);
 
         [[nodiscard]] bool EvaluateExpression(const std::string& eventName, const std::string& expression) const;
 
@@ -26,7 +26,7 @@ namespace PVF {
 
         struct Condition {
             std::string name;
-            std::function<DataValue()> valueFunction;
+            ConditionFunction valueFunction;
         };
 
         enum TokenType {

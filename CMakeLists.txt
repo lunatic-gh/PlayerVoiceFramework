@@ -5,13 +5,10 @@ cmake_minimum_required(VERSION 3.10)
 set(ignoreMe "${CMAKE_TOOLCHAIN_FILE}")
 
 # Set Version
-set(VERSION 1.0.0)
+set(VERSION 1.0)
 
 # Define Project Data
 project("PlayerVoiceFramework" VERSION ${VERSION} LANGUAGES CXX)
-
-# Make dynamic vcpkg.json
-configure_file("${PROJECT_SOURCE_DIR}/vcpkg.json.in" "${PROJECT_SOURCE_DIR}/vcpkg.json" @ONLY)
 
 # Define Header Files (.h)
 set(headers

@@ -94,7 +94,7 @@ namespace PVF {
 
     void Util::LoadData() {
         try {
-            for (const auto& dir : std::filesystem::directory_iterator("Data/PlayerVoiceFramework/Packs", std::filesystem::directory_options::skip_permission_denied)) {
+            for (const auto& dir : std::filesystem::directory_iterator("Data/Sound/PlayerVoiceFramework/Packs", std::filesystem::directory_options::skip_permission_denied)) {
                 if (dir.exists() && dir.is_directory()) {
                     const auto packName = dir.path().filename().string();
                     if (std::filesystem::path configPath = dir.path() / "config.yml"; std::filesystem::exists(configPath) && std::filesystem::is_regular_file(configPath)) {
@@ -136,12 +136,11 @@ namespace PVF {
                                             }
                                         }
                                     }
-                                    SoundManager::GetSingleton()->RegisterSoundEvent(packName, name, chance, cooldown, overrideBlacklist, audios);
-                                    Logger::LogInfo(std::format("Loaded Event '{}'", name));
+                                    if (auto soundManager = SoundManager::GetSingleton()) soundManager->RegisterSoundEvent(packName, name, chance, cooldown, overrideBlacklist, audios);
                                 }
                             }
                         }
-                        Logger::LogInfo(std::format("Loaded Pack '{}'", packName));
+                        Logger::LogInfo(std::format("Loaded Voice-Pack '{}'", packName));
                     } else {
                         Logger::LogDebug(std::format("Found Voice-Pack without Config at '{}', ignoring...", dir.path().string()));
                         continue;
@@ -166,12 +165,21 @@ namespace PVF {
     }
 
     std::string Util::GetActivePack() {
-        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) { return saveDataStorage->Get("activePack", DataValue("")).AsString(); }
+        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
+            auto s = saveDataStorage->Get("activePack").AsString();
+            return s;
+        }
         return "";
     }
 
     void Util::SetActivePack(const std::string& name) {
-        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) { saveDataStorage->Set("activePack", DataValue(name.c_str())); }
+        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) {
+            if (name.empty()) {
+                saveDataStorage->Remove("activePack");
+                return;
+            }
+            saveDataStorage->Set("activePack", DataValue(name.empty() ? "" : name.c_str()));
+        }
     }
 
     void Util::LoadSetting(const YAML::Node& node, const std::string& key, const DataValue& def, const std::string& type) {

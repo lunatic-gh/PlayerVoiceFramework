@@ -1,14 +1,18 @@
 #include "../include/PVF/PapyrusInterface.h"
 
-#include "../../include/PVF/SaveDataStorage.h"
 #include "../../include/PVF/Util.h"
 #include "../../include/PVF/SoundManager.h"
 
-// Disable const warnings. The papyrus-interface internally breaks with const-values.
+// Disable const warnings for parameters. The papyrus-interface internally breaks with const-parameters.
 // ReSharper disable CppPassValueParameterByConstReference CppParameterMayBeConst CppParameterMayBeConstPtrOrRef
 namespace PVF {
 
     bool PapyrusInterface::PapyrusFunctions(RE::BSScript::IVirtualMachine* vm) {
+        vm->RegisterFunction("LogInfo", "PlayerVoiceFramework", LogInfo);
+        vm->RegisterFunction("LogWarn", "PlayerVoiceFramework", LogWarn);
+        vm->RegisterFunction("LogError", "PlayerVoiceFramework", LogError);
+        vm->RegisterFunction("LogCritical", "PlayerVoiceFramework", LogCritical);
+        vm->RegisterFunction("LogDebug", "PlayerVoiceFramework", LogDebug);
         vm->RegisterFunction("FormHasKeyword", "PlayerVoiceFramework", FormHasKeyword);
         vm->RegisterFunction("FormFromID", "PlayerVoiceFramework", FormFromID);
         vm->RegisterFunction("FormToString", "PlayerVoiceFramework", FormToString);
@@ -26,6 +30,26 @@ namespace PVF {
 
     void PapyrusInterface::Register() {
         SKSE::GetPapyrusInterface()->Register(PapyrusFunctions);
+    }
+
+    void PapyrusInterface::LogInfo(RE::StaticFunctionTag*, std::string message) {
+        Logger::LogInfo(message);
+    }
+
+    void PapyrusInterface::LogWarn(RE::StaticFunctionTag*, std::string message) {
+        Logger::LogWarn(message);
+    }
+
+    void PapyrusInterface::LogError(RE::StaticFunctionTag*, std::string message) {
+        Logger::LogError(message);
+    }
+
+    void PapyrusInterface::LogCritical(RE::StaticFunctionTag*, std::string message) {
+        Logger::LogCritical(message);
+    }
+
+    void PapyrusInterface::LogDebug(RE::StaticFunctionTag*, std::string message) {
+        Logger::LogDebug(message);
     }
 
     bool PapyrusInterface::FormHasKeyword(RE::StaticFunctionTag*, RE::TESForm* form, std::string keyword) {
@@ -66,7 +90,6 @@ namespace PVF {
 
     std::string PapyrusInterface::GetActivePack(RE::StaticFunctionTag*) {
         auto pack = Util::GetActivePack();
-        Logger::LogInfo(pack);
         return pack;
     }
 

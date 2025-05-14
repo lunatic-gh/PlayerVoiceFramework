@@ -6,6 +6,16 @@ namespace PVF {
         static void Register();
 
     private:
+        static void LogInfo(RE::StaticFunctionTag*, std::string message);
+
+        static void LogWarn(RE::StaticFunctionTag*, std::string message);
+
+        static void LogError(RE::StaticFunctionTag*, std::string message);
+
+        static void LogCritical(RE::StaticFunctionTag*, std::string message);
+
+        static void LogDebug(RE::StaticFunctionTag*, std::string message);
+
         static bool PapyrusFunctions(RE::BSScript::IVirtualMachine* vm);
 
         static bool FormHasKeyword(RE::StaticFunctionTag*, RE::TESForm* form, std::string keyword);

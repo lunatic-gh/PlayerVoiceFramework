@@ -16,6 +16,8 @@ namespace PVF {
 
         void ModifyIfExists(const std::string& key, const std::function<DataValue(DataValue data)>& modifyFnct);
 
+        void Remove(const std::string& key);
+
         DataValue Get(const std::string& key, const DataValue& def);
 
         DataValue Get(const std::string& key);
@@ -30,6 +32,7 @@ namespace PVF {
         SaveDataStorage() = default;
         mutable std::mutex mutex;
         std::unordered_map<std::string, DataValue> storage;
+        std::uint32_t storageVersion = 1;
     };
 
 }

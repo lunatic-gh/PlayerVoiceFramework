@@ -1,8 +1,0 @@
-{
-  "name": "player-voice-framework",
-  "version": "@VERSION@",
-  "license": "MIT",
-  "dependencies": [
-    "commonlibsse-ng"
-  ]
-}

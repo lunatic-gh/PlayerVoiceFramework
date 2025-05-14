@@ -1,6 +1,21 @@
 Scriptname PlayerVoiceFramework Hidden
 { Some Helpful Papyrus Functions relayed from the plugin. }
 
+; Logs an info message
+Function LogInfo(String _message) Global Native
+
+; Logs a warning message
+Function LogWarn(String _message) Global Native
+
+; Logs an error message
+Function LogError(String _message) Global Native
+
+; Logs a critical error message
+Function LogCritical(String _message) Global Native
+
+; Logs a debug message
+Function LogDebug(String _message) Global Native
+
 ; Returns whether or not the given form has the given keyword.
 Bool Function FormHasKeyword(Form _form, String _keyword) Global Native
 

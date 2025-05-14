@@ -10,181 +10,159 @@ namespace PVF {
 
     // ReSharper disable once CppMemberFunctionMayBeStatic
     void ConditionManager::RegisterInternalConditions() {
-        this->RegisterGlobalCondition("PlayerHealthPercentage", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
-                const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
-                if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kHealth); f2 != 0.0f) {
-                    const float f = (f1 / f2) * 100.0f;
-                    return DataValue(f);
-                }
-            }
-            return DataValue(0.0f);
-        });
+        this->RegisterGlobalCondition("PlayerHealthPercentage", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
+                                              const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
+                                              if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kHealth); f2 != 0.0f) {
+                                                  const float f = (f1 / f2) * 100.0f;
+                                                  return DataValue(f);
+                                              }
+                                          }
+                                          return DataValue(0.0f);
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerStaminaPercentage", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
-                const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina);
-                if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina); f2 != 0.0f) {
-                    const float f = (f1 / f2) * 100.0f;
-                    return DataValue(f);
-                }
-            }
-            return DataValue(0.0f);
-        });
+        this->RegisterGlobalCondition("PlayerStaminaPercentage", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
+                                              const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina);
+                                              if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina); f2 != 0.0f) {
+                                                  const float f = (f1 / f2) * 100.0f;
+                                                  return DataValue(f);
+                                              }
+                                          }
+                                          return DataValue(0.0f);
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerMagickaPercentage", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
-                const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka);
-                if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka); f2 != 0.0f) {
-                    const float f = (f1 / f2) * 100.0f;
-                    return DataValue(f);
-                }
-            }
-            return DataValue(0.0f);
-        });
+        this->RegisterGlobalCondition("PlayerMagickaPercentage", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton(); player->AsActorValueOwner() != nullptr) {
+                                              const float f1 = player->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka);
+                                              if (const float f2 = player->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka); f2 != 0.0f) {
+                                                  const float f = (f1 / f2) * 100.0f;
+                                                  return DataValue(f);
+                                              }
+                                          }
+                                          return DataValue(0.0f);
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerEquippedWeaponTypeLeft", [] {
-            const auto actor = RE::PlayerCharacter::GetSingleton();
-            if (const auto form = actor->GetEquippedObject(true)) {
-                if (const auto weapon = form->As<RE::TESObjectWEAP>()) {
-                    return DataValue(static_cast<int>(weapon->GetWeaponType()));
-                }
-            }
-            return DataValue(std::numeric_limits<int>::lowest());
-        });
+        this->RegisterGlobalCondition("PlayerEquippedWeaponTypeLeft", CreateConditionFunction([] {
+                                          const auto actor = RE::PlayerCharacter::GetSingleton();
+                                          if (const auto form = actor->GetEquippedObject(true)) {
+                                              if (const auto weapon = form->As<RE::TESObjectWEAP>()) { return DataValue(static_cast<int>(weapon->GetWeaponType())); }
+                                          }
+                                          return DataValue(std::numeric_limits<int>::lowest());
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerEquippedWeaponTypeRight", [] {
-            if (const auto actor = RE::PlayerCharacter::GetSingleton()) {
-                if (const auto form = actor->GetEquippedObject(false)) {
-                    if (const auto weapon = form->As<RE::TESObjectWEAP>()) {
-                        return DataValue(static_cast<int>(weapon->GetWeaponType()));
-                    }
-                }
-            }
-            return DataValue(std::numeric_limits<int>::lowest());
-        });
+        this->RegisterGlobalCondition("PlayerEquippedWeaponTypeRight", CreateConditionFunction([] {
+                                          if (const auto actor = RE::PlayerCharacter::GetSingleton()) {
+                                              if (const auto form = actor->GetEquippedObject(false)) {
+                                                  if (const auto weapon = form->As<RE::TESObjectWEAP>()) { return DataValue(static_cast<int>(weapon->GetWeaponType())); }
+                                              }
+                                          }
+                                          return DataValue(std::numeric_limits<int>::lowest());
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerName", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                return DataValue(player->GetName());
-            }
-            return DataValue("");
-        });
+        this->RegisterGlobalCondition("PlayerName", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) { return DataValue(player->GetName()); }
+                                          return DataValue("");
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerRaceForm", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                // Assuming GetRace() returns a pointer convertible to RE::TESForm*
-                return DataValue(static_cast<RE::TESForm*>(player->GetRace()));
-            }
-            return DataValue(static_cast<RE::TESForm*>(nullptr));
-        });
+        this->RegisterGlobalCondition("PlayerRaceForm", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+                                              // Assuming GetRace() returns a pointer convertible to RE::TESForm*
+                                              return DataValue(static_cast<RE::TESForm*>(player->GetRace()));
+                                          }
+                                          return DataValue(static_cast<RE::TESForm*>(nullptr));
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerSex", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                if (const auto actorBase = player->GetActorBase()) {
-                    return DataValue(static_cast<int>(actorBase->GetSex()));
-                }
-            }
-            return DataValue(std::numeric_limits<int>::lowest());
-        });
+        this->RegisterGlobalCondition("PlayerSex", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+                                              if (const auto actorBase = player->GetActorBase()) { return DataValue(static_cast<int>(actorBase->GetSex())); }
+                                          }
+                                          return DataValue(std::numeric_limits<int>::lowest());
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerPosX", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                return DataValue(player->GetPositionX());
-            }
-            return DataValue(std::numeric_limits<float>::lowest());
-        });
+        this->RegisterGlobalCondition("PlayerPosX", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) { return DataValue(player->GetPositionX()); }
+                                          return DataValue(std::numeric_limits<float>::lowest());
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerPosY", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                return DataValue(player->GetPositionY());
-            }
-            return DataValue(std::numeric_limits<float>::lowest());
-        });
+        this->RegisterGlobalCondition("PlayerPosY", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) { return DataValue(player->GetPositionY()); }
+                                          return DataValue(std::numeric_limits<float>::lowest());
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerPosZ", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                return DataValue(player->GetPositionZ());
-            }
-            return DataValue(std::numeric_limits<float>::lowest());
-        });
+        this->RegisterGlobalCondition("PlayerPosZ", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) { return DataValue(player->GetPositionZ()); }
+                                          return DataValue(std::numeric_limits<float>::lowest());
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerLocationForm", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                if (const auto loc = player->GetCurrentLocation()) {
-                    return DataValue(static_cast<RE::TESForm*>(loc));
-                }
-            }
-            return DataValue(static_cast<RE::TESForm*>(nullptr));
-        });
+        this->RegisterGlobalCondition("PlayerLocationForm", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+                                              if (const auto loc = player->GetCurrentLocation()) { return DataValue(static_cast<RE::TESForm*>(loc)); }
+                                          }
+                                          return DataValue(static_cast<RE::TESForm*>(nullptr));
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerLocationKeywords", [] {
-            if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                if (const auto loc = player->GetCurrentLocation()) {
-                    // Assuming FormUtil::ToKeywordString returns a std::string.
-                    return DataValue(FormUtil::ToKeywordString(loc).c_str());
-                }
-            }
-            return DataValue("");
-        });
+        this->RegisterGlobalCondition("PlayerLocationKeywords", CreateConditionFunction([] {
+                                          if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+                                              if (const auto loc = player->GetCurrentLocation()) {
+                                                  // Assuming FormUtil::ToKeywordString returns a std::string.
+                                                  return DataValue(FormUtil::ToKeywordString(loc).c_str());
+                                              }
+                                          }
+                                          return DataValue("");
+                                      }));
 
-        this->RegisterGlobalCondition("RandomInt", [] { return DataValue(Util::RandomInt(1, 99)); });
-        this->RegisterGlobalCondition("RandomFloat", [] { return DataValue(Util::RandomFloat(1.0f, 99.0f)); });
-        this->RegisterGlobalCondition("RandomBool", [] { return DataValue(Util::RandomInt(1, 99) == 1); });
+        this->RegisterGlobalCondition("RandomInt", CreateConditionFunction([] { return DataValue(Util::RandomInt(1, 99)); }));
+        this->RegisterGlobalCondition("RandomFloat", CreateConditionFunction([] { return DataValue(Util::RandomFloat(1.0f, 99.0f)); }));
+        this->RegisterGlobalCondition("RandomBool", CreateConditionFunction([] { return DataValue(Util::RandomInt(1, 99) == 1); }));
 
-        this->RegisterGlobalCondition("PlayerWerewolfState", [] {
-            if (const auto globalVar = RE::TESForm::LookupByID(0xed06c)->As<RE::TESGlobal>()) {
-                if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                    if (globalVar->value == 1.0f) {
-                        if (player->GetRace()->GetLocalFormID() == 0xCDD84) {
-                            return DataValue(2);
-                        }
-                        return DataValue(1);
-                    }
-                }
-            }
-            return DataValue(0);
-        });
+        this->RegisterGlobalCondition("PlayerWerewolfState", CreateConditionFunction([] {
+                                          if (const auto globalVar = RE::TESForm::LookupByID(0xed06c)->As<RE::TESGlobal>()) {
+                                              if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+                                                  if (globalVar->value == 1.0f) {
+                                                      if (player->GetRace()->GetLocalFormID() == 0xCDD84) { return DataValue(2); }
+                                                      return DataValue(1);
+                                                  }
+                                              }
+                                          }
+                                          return DataValue(0);
+                                      }));
 
-        this->RegisterGlobalCondition("PlayerVampireState", [] {
-            if (const auto globalVar = RE::TESForm::LookupByID(0xed06D)->As<RE::TESGlobal>()) {
-                if (const auto player = RE::PlayerCharacter::GetSingleton()) {
-                    if (globalVar->value == 1.0f) {
-                        if (player->GetRace()->GetLocalFormID() == 0x283A) {
-                            return DataValue(2);
-                        }
-                        return DataValue(1);
-                    }
-                }
-            }
-            return DataValue(0);
-        });
+        this->RegisterGlobalCondition("PlayerVampireState", CreateConditionFunction([] {
+                                          if (const auto globalVar = RE::TESForm::LookupByID(0xed06D)->As<RE::TESGlobal>()) {
+                                              if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+                                                  if (globalVar->value == 1.0f) {
+                                                      if (player->GetRace()->GetLocalFormID() == 0x283A) { return DataValue(2); }
+                                                      return DataValue(1);
+                                                  }
+                                              }
+                                          }
+                                          return DataValue(0);
+                                      }));
     }
 
-    void ConditionManager::RegisterCondition(const std::string& eventName, const std::string& conditionName, const std::function<DataValue()>& valueFunction) {
+    void ConditionManager::RegisterCondition(const std::string& eventName, const std::string& conditionName, const ConditionFunction& valueFunction) {
         auto& conditionList = conditions[eventName];
-        std::ranges::replace_if(conditionList, [&](const Condition& condition) { return condition.name == conditionName; }, Condition{conditionName, valueFunction});
-        if (!std::ranges::any_of(conditionList, [&](const Condition& condition) { return condition.name == conditionName; })) {
+        if (const auto it = std::ranges::find_if(conditionList, [&](const Condition& condition) { return condition.name == conditionName; }); it != conditionList.end()) {
+            if (it->valueFunction.cleanup) { it->valueFunction.cleanup(it->valueFunction.context); }
+            *it = Condition{conditionName, valueFunction};
+        } else {
             conditionList.emplace_back(Condition{conditionName, valueFunction});
         }
     }
 
     void ConditionManager::UnregisterConditions(const std::string& eventName) {
-        if (eventName == "GLOBAL") {
-            return;
-        }
+        if (eventName == "GLOBAL") { return; }
         conditions.erase(eventName);
     }
 
-    void ConditionManager::RegisterGlobalCondition(const std::string& conditionName, const std::function<DataValue()>& valueFunction) {
+    void ConditionManager::RegisterGlobalCondition(const std::string& conditionName, const ConditionFunction& valueFunction) {
         RegisterCondition("GLOBAL", conditionName, valueFunction);
     }
 
     // ReSharper disable once CppMemberFunctionMayBeStatic
     bool ConditionManager::EvaluateExpression(const std::string& eventName, const std::string& expression) const { // NOLINT(*-convert-member-functions-to-static)
-        if (expression.empty() || expression.find_first_not_of(' ') == std::string::npos) {
-            return true;
-        }
+        if (expression.empty() || expression.find_first_not_of(' ') == std::string::npos) { return true; }
         std::vector<Token> tokens;
         int i = 0;
         while (i < expression.size()) {
@@ -295,9 +273,7 @@ namespace PVF {
     }
 
     bool ConditionManager::LogicalExpr::eval(const std::string& eventName) const {
-        if (op == Op::And) {
-            return left->eval(eventName) && right->eval(eventName);
-        }
+        if (op == Op::And) { return left->eval(eventName) && right->eval(eventName); }
         return left->eval(eventName) || right->eval(eventName);
     }
 
@@ -310,7 +286,8 @@ namespace PVF {
             if (GetSingleton()->conditions.contains(key)) {
                 auto eventConditions = GetSingleton()->conditions[key];
                 if (const auto it = std::ranges::find_if(eventConditions, [&](const auto& cond) { return cond.name == var; }); it != eventConditions.end()) {
-                    return it->valueFunction();
+                    const auto fnct = it->valueFunction;
+                    return fnct.callback(fnct.context);
                 }
             }
             return std::nullopt;
@@ -437,15 +414,11 @@ namespace PVF {
     }
 
     std::unique_ptr<ConditionManager::Expr> ConditionManager::Parser::parseCondition() {
-        if (current().type != kIdentifier) {
-            return nullptr;
-        }
+        if (current().type != kIdentifier) { return nullptr; }
         std::string varName = current().value;
         consume();
 
-        if (current().type != kOperator) {
-            return nullptr;
-        }
+        if (current().type != kOperator) { return nullptr; }
         std::string op = current().value;
         consume();
 
