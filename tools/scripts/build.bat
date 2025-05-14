@@ -33,8 +33,6 @@ call "tools\scripts\compile-scripts.bat"
 if ERRORLEVEL 1 exit /b 1
 
 if "%GITHUB_ACTIONS%" NEQ "true" (
-    :: Include optional files/patches
-    xcopy /Q /Y /E ".\Data-Optional\*" ".\run"
     :: Symlink "run" to a new mo2 mod
     set "MODS_DIR=%MO2_SSE_MODS_PATH%"
     if "!MODS_DIR!"=="" (

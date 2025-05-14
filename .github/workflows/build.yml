@@ -3,7 +3,8 @@ name: Build Mod
 on:
   push:
     branches:
-      - main
+      - '**'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -12,11 +13,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
+      - name: Cache vcpkg archives and build directory
+        uses: actions/cache@v3
         with:
-          # Cmake 4 broke support for building <3.5 projects, which seem to be A LOT.
-          cmake-version: '3.31.6'
+          path: |
+            %GITHUB_WORKSPACE%\build
+            C:\Users\runneradmin\AppData\Local\vcpkg\archives
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: ${{ runner.os }}-vcpkg-
+
+      # GitHub reverted CMake to v3, so for now this isn't needed
+      #- name: Setup cmake
+      #  uses: jwlawson/actions-setup-cmake@v2
+      #  with:
+      #    # Cmake 4 broke support for building <3.5 projects, which seem to be A LOT.
+      #    cmake-version: '3.31.6'
 
       - name: Setup Environment
         shell: cmd
@@ -30,23 +41,10 @@ jobs:
         run: |
           call tools/scripts/build.bat
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: nightly-${{ github.run_number }}
-          release_name: PlayerVoiceFramework-Nightly ${{ github.run_number }}
-          body: ${{ github.event.head_commit.message }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            PlayerVoiceFramework.zip
-          tag_name: nightly-${{ github.run_number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: PlayerVoiceFramework-Rewrite
+          include-hidden-files: true
+          path: ./.zip-temp/*
+          retention-days: 90

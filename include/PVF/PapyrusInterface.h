@@ -6,6 +6,10 @@ namespace PVF {
         static void Register();
 
     private:
+        static bool IsDebugMode(RE::StaticFunctionTag*);
+
+        static void SetDebugMode(RE::StaticFunctionTag*, bool value);
+
         static void LogInfo(RE::StaticFunctionTag*, std::string message);
 
         static void LogWarn(RE::StaticFunctionTag*, std::string message);

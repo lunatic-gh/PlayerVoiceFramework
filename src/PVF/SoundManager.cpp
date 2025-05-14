@@ -27,7 +27,7 @@ namespace PVF {
     }
 
     void SoundManager::SendSoundEvent(const std::string& name) {
-        Logger::LogInfo(std::format("Sending event '{}'", name));
+        Logger::LogDebug(std::format("Sending event '{}'", name));
         if (const auto activePack = Util::GetActivePack(); !activePack.empty()) {
             if (const auto packIt = registeredSoundEvents.find(activePack); packIt != registeredSoundEvents.end()) {
                 for (const auto& event : packIt->second) {
@@ -64,7 +64,6 @@ namespace PVF {
             // ReSharper disable once CppDFAEndlessLoop
             while (true) {
                 if (this->currentSoundHandle.has_value() && !this->currentSoundHandle->IsPlaying()) {
-                    Logger::LogDebug(std::format("1 Stopping Sound '{}'", currentSoundEvent->name));
                     this->StopCurrentSoundEvent();
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -83,7 +82,6 @@ namespace PVF {
                     }
                 }
                 if (!files.empty()) {
-                    Logger::LogDebug(std::format("2 Stopping Sound '{}'", currentSoundEvent->name));
                     StopCurrentSoundEvent();
                     const unsigned int eventToken = currentSoundID.load();
                     const std::string file = GetRandomFile(pack, files);

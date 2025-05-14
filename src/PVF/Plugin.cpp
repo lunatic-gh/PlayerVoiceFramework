@@ -19,16 +19,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
                 PVF_API::ptr = new PVF_API::PlayerVoiceFrameworkAPI;
                 SKSE::GetSerializationInterface()->SetUniqueID('PVF');
                 SKSE::GetSerializationInterface()->SetLoadCallback([](SKSE::SerializationInterface* a_intfc) {
-                    if (const auto saveDataStorage = PVF::SaveDataStorage::GetSingleton()) {
-                        saveDataStorage->Load(a_intfc);
-                        // if (const auto soundManager = PVF::SoundManager::GetSingleton()) {
-                        //     const auto activePack = PVF::Util::GetActivePack();
-                        //     if (const auto packs = soundManager->GetRegisteredPacks(); std::ranges::find(packs, activePack) == packs.end()) {
-                        //         PVF::Util::SetActivePack("");
-                        //         PVF::Logger::LogInfo("Disabled Active Pack, as it's not registered anymore...");
-                        //     }
-                        // }
-                    }
+                    if (const auto saveDataStorage = PVF::SaveDataStorage::GetSingleton()) { saveDataStorage->Load(a_intfc); }
                 });
                 SKSE::GetSerializationInterface()->SetSaveCallback([](SKSE::SerializationInterface* a_intfc) {
                     if (const auto saveDataStorage = PVF::SaveDataStorage::GetSingleton()) { saveDataStorage->Save(a_intfc); }

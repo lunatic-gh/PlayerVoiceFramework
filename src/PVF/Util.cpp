@@ -92,6 +92,15 @@ namespace PVF {
         return result;
     }
 
+    bool Util::IsDebugMode() {
+        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) { return saveDataStorage->Get("debug-mode", false).AsBool(); }
+        return false;
+    }
+
+    void Util::SetDebugMode(const bool value) {
+        if (const auto saveDataStorage = SaveDataStorage::GetSingleton()) { saveDataStorage->Set("debug-mode", value); }
+    }
+
     void Util::LoadData() {
         try {
             for (const auto& dir : std::filesystem::directory_iterator("Data/Sound/PlayerVoiceFramework/Packs", std::filesystem::directory_options::skip_permission_denied)) {

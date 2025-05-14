@@ -25,15 +25,15 @@ namespace PVF {
 
         DataValue() : type(kNone), noneValue(nullptr) {
         }
-        explicit DataValue(const char* value) : type(kString), stringValue(value) {
+        DataValue(const char* value) : type(kString), stringValue(value) {
         }
-        explicit DataValue(const int value) : type(kInt), intValue(value) {
+        DataValue(const int value) : type(kInt), intValue(value) {
         }
-        explicit DataValue(const float value) : type(kFloat), floatValue(value) {
+        DataValue(const float value) : type(kFloat), floatValue(value) {
         }
-        explicit DataValue(const bool value) : type(kBool), boolValue(value) {
+        DataValue(const bool value) : type(kBool), boolValue(value) {
         }
-        explicit DataValue(RE::TESForm* value) : type(kForm), formValue(value) {
+        DataValue(RE::TESForm* value) : type(kForm), formValue(value) {
         }
 
         DataValue(const DataValue& other) : type(other.type) {

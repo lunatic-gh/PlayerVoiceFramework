@@ -1,6 +1,12 @@
 Scriptname PlayerVoiceFramework Hidden
 { Some Helpful Papyrus Functions relayed from the plugin. }
 
+; Returns whether or not debug mode is enabled.
+Bool Function IsDebugMode() Global Native
+
+; Enables or disables debug mode.
+Function SetDebugMode(Bool _value) Global Native
+
 ; Logs an info message
 Function LogInfo(String _message) Global Native
 

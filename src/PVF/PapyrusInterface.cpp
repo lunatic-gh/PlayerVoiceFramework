@@ -1,5 +1,6 @@
 #include "../include/PVF/PapyrusInterface.h"
 
+#include "../../include/PVF/SaveDataStorage.h"
 #include "../../include/PVF/Util.h"
 #include "../../include/PVF/SoundManager.h"
 
@@ -8,6 +9,8 @@
 namespace PVF {
 
     bool PapyrusInterface::PapyrusFunctions(RE::BSScript::IVirtualMachine* vm) {
+        vm->RegisterFunction("IsDebugMode", "PlayerVoiceFramework", IsDebugMode);
+        vm->RegisterFunction("SetDebugMode", "PlayerVoiceFramework", SetDebugMode);
         vm->RegisterFunction("LogInfo", "PlayerVoiceFramework", LogInfo);
         vm->RegisterFunction("LogWarn", "PlayerVoiceFramework", LogWarn);
         vm->RegisterFunction("LogError", "PlayerVoiceFramework", LogError);
@@ -30,6 +33,14 @@ namespace PVF {
 
     void PapyrusInterface::Register() {
         SKSE::GetPapyrusInterface()->Register(PapyrusFunctions);
+    }
+
+    bool PapyrusInterface::IsDebugMode(RE::StaticFunctionTag*) {
+        return Util::IsDebugMode();
+    }
+
+    void PapyrusInterface::SetDebugMode(RE::StaticFunctionTag*, bool value) {
+        Util::SetDebugMode(value);
     }
 
     void PapyrusInterface::LogInfo(RE::StaticFunctionTag*, std::string message) {

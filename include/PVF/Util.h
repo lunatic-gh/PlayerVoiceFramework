@@ -83,6 +83,10 @@ namespace PVF {
      */
     class Util {
     public:
+        static bool IsDebugMode();
+
+        static void SetDebugMode(bool value);
+
         static void LoadData();
 
         /**
