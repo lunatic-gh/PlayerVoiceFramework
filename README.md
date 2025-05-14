@@ -17,3 +17,4 @@ customization, with way less issues.
 
 - SKSE - The Framework is written in C++, and SKSE-Plugins are the easiest way to inject C++ Code into Skyrim.
 - Address Library - The Framework uses the CommonLibSSE-NG Helper-Library. This requires Address Library to be installed so it can work on multiple Game-Versions.
+- At least one Event-Pack - As of now this framework is still in development, so there obviously aren't any except [the default one](https://github.com/lunatic-gh/PVFDefaultEvents), which is also still in Development.
