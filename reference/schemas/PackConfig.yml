@@ -6,15 +6,8 @@ properties:
   settings:
     type: object
     description: General Settings
-    properties:
-      rngMode:
-        type: string
-        description: Mode of the Random number generator used for event file-selections.
-          Default is entirely random, biased won't repeat files unless all files were
-          played at least once
-        enum:
-          - default
-          - biased
+      #properties:
+
   events:
     type: array
     description: Sound Events to register
