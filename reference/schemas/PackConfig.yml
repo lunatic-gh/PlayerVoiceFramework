@@ -15,7 +15,7 @@ properties:
         enum:
           - default
           - biased
-  sounds:
+  events:
     type: array
     description: Sound Events to register
     items:

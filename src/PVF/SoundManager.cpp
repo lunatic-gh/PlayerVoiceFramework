@@ -63,9 +63,7 @@ namespace PVF {
         std::thread([this] {
             // ReSharper disable once CppDFAEndlessLoop
             while (true) {
-                if (this->currentSoundHandle.has_value() && !this->currentSoundHandle->IsPlaying()) {
-                    this->StopCurrentSoundEvent();
-                }
+                if (this->currentSoundHandle.has_value() && !this->currentSoundHandle->IsPlaying()) { this->StopCurrentSoundEvent(); }
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
         }).detach();
@@ -73,34 +71,36 @@ namespace PVF {
 
     void SoundManager::SendSoundEvent(const SoundEvent& event, const std::string& pack) {
         if (const auto storage = SaveDataStorage::GetSingleton()) {
-            if (const std::string cooldownKey = std::format("{}.{}.cooldown", pack, event.name); !storage->Get(cooldownKey).AsInt() && Util::RandomInt(0, 99) < event.chance) {
-                std::vector<std::string> files;
-                for (const auto& [left, right] : event.audios) {
-                    if (ConditionManager::GetSingleton()->EvaluateExpression(event.name, left)) {
-                        files = right;
-                        break;
+            if (!this->currentSoundEvent.has_value() || std::ranges::find(this->currentSoundEvent->overrideBlacklist, event.name) == this->currentSoundEvent->overrideBlacklist.end()) {
+                if (const std::string cooldownKey = std::format("{}.{}.cooldown", pack, event.name); !storage->Get(cooldownKey).AsInt() && Util::RandomInt(0, 99) < event.chance) {
+                    std::vector<std::string> files;
+                    for (const auto& [left, right] : event.audios) {
+                        if (ConditionManager::GetSingleton()->EvaluateExpression(event.name, left)) {
+                            files = right;
+                            break;
+                        }
                     }
-                }
-                if (!files.empty()) {
-                    StopCurrentSoundEvent();
-                    const unsigned int eventToken = currentSoundID.load();
-                    const std::string file = GetRandomFile(pack, files);
-                    RE::BSSoundHandle handle;
-                    RE::BSResource::ID id;
-                    id.GenerateFromPath(file.c_str());
-                    RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
-                    handle.Play();
-                    Logger::LogDebug(std::format("Playing '{}'", file));
-                    storage->Set(cooldownKey, DataValue(event.cooldown));
-                    int i = 0;
-                    while (!handle.IsPlaying()) {
-                        if (eventToken != currentSoundID.load()) { break; }
-                        if (i++ >= 500) break;
-                        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                    }
-                    if (eventToken == currentSoundID.load()) {
-                        this->currentSoundHandle.emplace(handle);
-                        this->currentSoundEvent.emplace(event);
+                    if (!files.empty()) {
+                        StopCurrentSoundEvent();
+                        const unsigned int eventToken = currentSoundID.load();
+                        const std::string file = GetRandomFile(pack, files);
+                        RE::BSSoundHandle handle;
+                        RE::BSResource::ID id;
+                        id.GenerateFromPath(file.c_str());
+                        RE::BSAudioManager::GetSingleton()->BuildSoundDataFromFile(handle, id, 0x1A, 1);
+                        handle.Play();
+                        Logger::LogDebug(std::format("Playing '{}'", file));
+                        storage->Set(cooldownKey, DataValue(event.cooldown));
+                        int i = 0;
+                        while (!handle.IsPlaying()) {
+                            if (eventToken != currentSoundID.load()) { break; }
+                            if (i++ >= 500) break;
+                            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                        }
+                        if (eventToken == currentSoundID.load()) {
+                            this->currentSoundHandle.emplace(handle);
+                            this->currentSoundEvent.emplace(event);
+                        }
                     }
                 }
             }
