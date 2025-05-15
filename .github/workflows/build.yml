@@ -22,13 +22,6 @@ jobs:
           key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
           restore-keys: ${{ runner.os }}-vcpkg-
 
-      # GitHub reverted CMake to v3, so for now this isn't needed
-      #- name: Setup cmake
-      #  uses: jwlawson/actions-setup-cmake@v2
-      #  with:
-      #    # Cmake 4 broke support for building <3.5 projects, which seem to be A LOT.
-      #    cmake-version: '3.31.6'
-
       - name: Setup Environment
         shell: cmd
         run: |
@@ -44,7 +37,7 @@ jobs:
       - name: Create Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PlayerVoiceFramework-Rewrite
+          name: PlayerVoiceFramework - Default Events
           include-hidden-files: true
-          path: ./.zip-temp/*
+          path: ./run/*
           retention-days: 90

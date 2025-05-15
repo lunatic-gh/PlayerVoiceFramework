@@ -37,7 +37,7 @@ if "%GITHUB_ACTIONS%" NEQ "true" (
     set "MODS_DIR=%MO2_SSE_MODS_PATH%"
     if "!MODS_DIR!"=="" (
         echo Could not find Mods directory, skipping deploy...
-        exit /b
+        exit /b 1
     )
     if exist "!MODS_DIR!\PlayerVoiceFramework" (
         rmdir /S /Q "!MODS_DIR!\PlayerVoiceFramework"
