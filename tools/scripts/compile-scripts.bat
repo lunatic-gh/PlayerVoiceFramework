@@ -24,6 +24,9 @@ xcopy "tools\nl_online\skyui\source\*" "tools\papyrus-include\" /I /Y
 "tools\pyro\pyro.exe" --compiler-path "tools\papyrus-compiler\PapyrusCompiler.exe" -i skyrimse.ppj
 
 :: Cleanup
-IF EXIST "tools\nl_online" (
+if exist "tools\papyrus-include" (
+    rmdir "tools\papyrus-include" /S /Q
+)
+if exist "tools\nl_online" (
     rmdir "tools\nl_online" /S /Q
 )
