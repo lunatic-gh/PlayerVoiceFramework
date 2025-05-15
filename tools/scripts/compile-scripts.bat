@@ -1,5 +1,13 @@
 @echo off
 
+:: Cleanup
+if exist "tools\papyrus-include" (
+    rmdir "tools\papyrus-include" /S /Q
+)
+if exist "tools\nl_online" (
+    rmdir "tools\nl_online" /S /Q
+)
+
 if not exist "tools\pyro" (
     :: Download Pyro
     curl -L -o pyro.zip "https://github.com/fireundubh/pyro/releases/download/1656807840/pyro-master-1656807840.zip"
@@ -24,9 +32,7 @@ xcopy "tools\nl_online\skyui\source\*" "tools\papyrus-include\" /I /Y
 "tools\pyro\pyro.exe" --compiler-path "tools\papyrus-compiler\PapyrusCompiler.exe" -i skyrimse.ppj
 
 :: Cleanup
-if exist "tools\papyrus-include" (
-    rmdir "tools\papyrus-include" /S /Q
-)
+:: Keep "papyrus-include" for local Papyrus Development
 if exist "tools\nl_online" (
     rmdir "tools\nl_online" /S /Q
 )
