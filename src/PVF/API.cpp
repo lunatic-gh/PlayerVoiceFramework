@@ -41,6 +41,9 @@ namespace PVF_API {
     bool PlayerVoiceFrameworkAPI::FormHasKeyword(RE::TESForm* form, const char* keyword) {
         return PVF::FormUtil::HasKeyword(form, keyword);
     }
+    const char* PlayerVoiceFrameworkAPI::FormToKeywordString(RE::TESForm* form) {
+        return PVF::FormUtil::ToKeywordString(form).c_str();
+    }
 
     int PlayerVoiceFrameworkAPI::RandomInt(const int minInclusive, const int maxInclusive) {
         return PVF::Util::RandomInt(minInclusive, maxInclusive);

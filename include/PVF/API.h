@@ -208,6 +208,8 @@ namespace PVF_API {
         // Returns whether or not the given form contains the given keyword.
         virtual bool FormHasKeyword(RE::TESForm* form, const char* keyword);
 
+        virtual const char* FormToKeywordString(RE::TESForm* form);
+
         // Returns a random integer between 'minInclusive' and 'maxInclusive'
         virtual int RandomInt(int minInclusive, int maxInclusive);
 
