@@ -2,7 +2,7 @@
 
 ## Building:
 
-#### Requirements:
+### Requirements:
 
 - Visual Studio Build-Tools with workload `Desktop Development with C++`
 - VCPKG (Part of the above by default)
