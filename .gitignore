@@ -1,7 +1,4 @@
-/build
-/run
-/.idea
-/tools/pyro
-/tools/nl_online
-/tools/papyrus-include
-/Dev-Pack
+build/
+deploy/
+.idea/discord.xml
+.idea/material*.xml

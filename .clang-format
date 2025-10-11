@@ -1,36 +1,19 @@
-# Base
+---
 BasedOnStyle: Google
-# Don't use tab characters
 UseTab: Never
-# 4 Spaces between "groups"
-TabWidth: 4
-IndentWidth: 4
-# Allow me to fucking write my code will ya?
-ColumnLimit: 300
-# Indent everything in headers
+TabWidth: 2
+IndentWidth: 2
+ContinuationIndentWidth: 2
+BracedInitializerIndentWidth: 2
+ConstructorInitializerIndentWidth: 2
+ObjCBlockIndentWidth: 2
+PPIndentWidth: 2
+ColumnLimit: 180
 NamespaceIndentation: All
-# The fuck
-AccessModifierOffset: -4
-# Breaks Functionality
+AccessModifierOffset: -2
 SortIncludes: Never
-# Why?
 FixNamespaceComments: false
 SpacesBeforeTrailingComments: 1
-# I dont like single line functions
-BinPackArguments: true
-BinPackParameters: true
-AllowShortFunctionsOnASingleLine: None
-AllowShortLambdasOnASingleLine: All
-AllowShortBlocksOnASingleLine: Always
-AllowShortEnumsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-AllowShortCaseExpressionOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortCompoundRequirementOnASingleLine: true
-AllowShortIfStatementsOnASingleLine: Always
-AllowAllArgumentsOnNextLine: false
-# Align Pointers next to the object type, rather than before the key name
-# E.g. "const auto& someKey" instead of "const auto &someKey"
 DerivePointerAlignment: false
 PointerAlignment: Left
 BreakInheritanceList: AfterComma

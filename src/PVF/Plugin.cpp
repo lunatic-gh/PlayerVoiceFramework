@@ -1,46 +1,49 @@
-// ReSharper disable CppParameterMayBeConstPtrOrRef
+#include <pvf/pvf_api.hpp>
+#include <pvf/configuration.hpp>
+#include <pvf/sound_manager.hpp>
+#include <pvf/pack_manager.hpp>
 
-#include "../../include/PVF/ConditionManager.h"
-#include "../../include/PVF/PapyrusInterface.h"
-#include "../../include/PVF/SaveDataStorage.h"
-#include "../../include/PVF/SoundManager.h"
+SKSEPluginLoad(const SKSE::LoadInterface* intfc) {
+  SKSE::Init(intfc);
+  init_logger();
+  std::this_thread::sleep_for(500ms); // Without this, the logger won't be ready early enough. No idea why...
+  api = new PlayerVoiceFrameworkAPI;
+  log_info("Loaded API.");
 
-#include <SKSE/Interfaces.h>
+  if (Configuration::get_singleton()->load()) {
+    log_info("Loaded Configuration.");
+  } else {
+    log_error("Failed to load Configuration.");
+  }
 
-SKSEPluginLoad(const SKSE::LoadInterface* skse) {
-    // Initialize Plugin
-    SKSE::Init(skse);
-    // Initialize Logger
-    PVF::Logger::Initialize();
-    SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* message) {
-        switch (message->type) {
-            case SKSE::MessagingInterface::kDataLoaded:
-                PVF::PapyrusInterface::Register();
-                PVF_API::ptr = new PVF_API::PlayerVoiceFrameworkAPI;
-                SKSE::GetSerializationInterface()->SetUniqueID('PVF');
-                SKSE::GetSerializationInterface()->SetLoadCallback([](SKSE::SerializationInterface* a_intfc) {
-                    if (const auto saveDataStorage = PVF::SaveDataStorage::GetSingleton()) { saveDataStorage->Load(a_intfc); }
-                });
-                SKSE::GetSerializationInterface()->SetSaveCallback([](SKSE::SerializationInterface* a_intfc) {
-                    if (const auto saveDataStorage = PVF::SaveDataStorage::GetSingleton()) { saveDataStorage->Save(a_intfc); }
-                });
-                PVF::Util::LoadData();
-                PVF::ConditionManager::GetSingleton()->RegisterInternalConditions();
-                break;
-            default:
-                break;
-        }
-    });
-    SKSE::GetMessagingInterface()->RegisterListener(NULL, [](SKSE::MessagingInterface::Message* message) {
-        switch (message->type) {
-            case API_TYPE_KEY: {
-                message->dataLen = sizeof(PVF_API::PlayerVoiceFrameworkAPI*);
-                *(PVF_API::PlayerVoiceFrameworkAPI**)message->data = PVF_API::ptr;
-                break;
-            }
-            default:
-                break;
-        }
-    });
-    return true;
+  if (PackManager::get_singleton()->load()) {
+    log_info("Loaded Voice-Pack Data.");
+  } else {
+    log_error("Failed to load Voice-Pack Data.");
+  }
+
+  SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* a_msg) {
+    switch (a_msg->type) {
+      case SKSE::MessagingInterface::kDataLoaded: {
+        break;
+      }
+      case SKSE::MessagingInterface::kPostLoadGame: {
+        break;
+      }
+    }
+  });
+
+  SKSE::GetMessagingInterface()->RegisterListener(nullptr, [](SKSE::MessagingInterface::Message* message) {
+    if (!message) return;
+    switch (message->type) {
+      case PVF_API_KEY:
+        log_info("Received API-Load Request from '{}'", message->sender);
+        message->dataLen = sizeof(PlayerVoiceFrameworkAPI*);
+        *static_cast<PlayerVoiceFrameworkAPI**>(message->data) = api;
+        break;
+      default:
+        break;
+    }
+  });
+  return true;
 }
