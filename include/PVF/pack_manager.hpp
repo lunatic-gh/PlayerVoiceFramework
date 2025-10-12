@@ -6,6 +6,7 @@
 #include <ranges>
 #include <yaml-cpp/yaml.h>
 #include <pvf/util.hpp>
+#include <pvf/sound_manager.hpp>
 
 namespace pvf {
   class PackManager : public lntc::Singleton<PackManager> {

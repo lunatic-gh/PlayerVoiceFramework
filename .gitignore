@@ -2,3 +2,5 @@ build/
 deploy/
 .idea/discord.xml
 .idea/material*.xml
+papyrus_include/
+*.pex

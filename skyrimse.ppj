@@ -1,0 +1,17 @@
+<?xml version='1.0'?><!-- Game is either sse, tesv, or fo4 -->
+<PapyrusProject xmlns="PapyrusProject.xsd" 
+    Flags="TESV_Papyrus_Flags.flg" 
+    Game="sse"
+    Output="Scripts"
+    Optimize="false"
+    Release="false"
+    Final="false">
+    <Imports>
+        <Import>.\papyrus_include\sse\source</Import>
+        <Import>.\papyrus_include\skse\source</Import>
+        <Import>.\papyrus_include\skyui\source</Import>
+    </Imports>
+    <Folders>
+        <Folder>.\Data\Scripts\Source</Folder>
+    </Folders>
+</PapyrusProject>

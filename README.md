@@ -14,8 +14,13 @@
 - Run the following commands:
 - ```cmd 
   git clone "https://github.com/lunatic-gh/PlayerVoiceFramework" "%HOMEPATH%/Downloads/PlayerVoiceFramework"
+  
   cd "%HOMEPATH%/Downloads/PlayerVoiceFramework"
+  
+  .\compile_papyrus.bat
+  
   cmake --preset release -S . -B .\build\release
+  
   cmake --build .\build\release
   ```
 - This will give you a ready-to-use mod-folder at `Downloads/PlayerVoiceFramework/deploy`.

@@ -45,6 +45,8 @@ if (EXISTS "${DEPLOY_PATH}/..")
             COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dll" "${DEPLOY_PATH}/SKSE/Plugins"
             COMMAND powershell -Command "echo '  Copying Data...'"
             COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Data" "${DEPLOY_PATH}"
+            COMMAND powershell -Command "echo '  Compiling ^& Copying Papyrus Scripts...'"
+            COMMAND "${CMAKE_SOURCE_DIR}\\compile_papyrus.bat" "${CMAKE_SOURCE_DIR}\\Data\\Scripts\\Source" "${DEPLOY_PATH}\\Scripts"
             COMMAND powershell -Command "echo '  Copying README...'"
             COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "${DEPLOY_PATH}/README.md"
             COMMAND powershell -Command "echo '  Copying LICENSES...'"

@@ -6,33 +6,33 @@
 #include <vector>
 
 namespace pvf {
-  inline bool eval_condition(const std::tuple<std::string, std::string, std::string>& condition, const std::vector<SoundEvent::SoundEventVariable>& variables) {
+  inline bool eval_condition(const std::tuple<std::string, std::string, std::string>& condition, const std::vector<pvf_api::SoundEvent::Variable*>& variables) {
     try {
       const auto condition_var_name = std::get<0>(condition);
       const auto condition_var_op = std::get<1>(condition);
       const auto condition_var_value = std::get<2>(condition);
 
-      auto find_var = [&](const std::string& name) -> const SoundEvent::SoundEventVariable* {
+      auto find_var = [&](const std::string& name) -> const pvf_api::SoundEvent::Variable* {
         for (const auto& var : variables) {
-          if (lntc::str_equals_ci(var.name(), name)) return &var;
+          if (var && lntc::str_equals_ci(var->name().c_str(), name)) return var;
         }
         return nullptr;
       };
 
-      auto compare = [](const SoundEvent::SoundEventVariable& left, const std::string& right, std::string op) {
+      auto compare = [](const pvf_api::SoundEvent::Variable* left, const std::string& right, std::string op) {
         lntc::str_to_lower(op);
-        switch (left.type()) {
-          case SoundEvent::SoundEventVariable::Type::STRING: {
-            if (op == "equal_to") return std::string(left.as_str()) == right;
-            if (op == "not_equal_to") return std::string(left.as_str()) != right;
-            if (op == "contains") return std::string(left.as_str()).contains(right);
-            if (op == "not_contains") return !std::string(left.as_str()).contains(right);
+        switch (left->type()) {
+          case pvf_api::SoundEvent::Variable::Type::STRING: {
+            if (op == "equal_to") return std::string(left->as_str()) == right;
+            if (op == "not_equal_to") return std::string(left->as_str()) != right;
+            if (op == "contains") return std::string(left->as_str()).contains(right);
+            if (op == "not_contains") return !std::string(left->as_str()).contains(right);
             break;
           }
-          case SoundEvent::SoundEventVariable::Type::INT:
-          case SoundEvent::SoundEventVariable::Type::DOUBLE: {
-            const double dbl_left = left.type() == SoundEvent::SoundEventVariable::Type::DOUBLE ? left.as_double() : left.as_int();
-            const double dbl_right = right.contains(".") ? std::stod(right) : std::stoi(right, nullptr, right.starts_with("0x") ? 16 : 10);
+          case pvf_api::SoundEvent::Variable::Type::INT:
+          case pvf_api::SoundEvent::Variable::Type::FLOAT: {
+            const float dbl_left = left->type() == pvf_api::SoundEvent::Variable::Type::FLOAT ? left->as_float() : left->as_int();
+            const float dbl_right = right.contains(".") ? std::stof(right) : std::stoi(right, nullptr, right.starts_with("0x") ? 16 : 10);
             if (op == "equal_to") return dbl_left == dbl_right;
             if (op == "not_equal_to") return dbl_left != dbl_right;
             if (op == "less_than") return dbl_left < dbl_right;
@@ -41,8 +41,8 @@ namespace pvf {
             if (op == "greater_than_or_equal_to") return dbl_left >= dbl_right;
             break;
           }
-          case SoundEvent::SoundEventVariable::Type::BOOL: {
-            const bool b_left = left.as_bool();
+          case pvf_api::SoundEvent::Variable::Type::BOOL: {
+            const bool b_left = left->as_bool();
             bool b_right = false;
             if (lntc::str_equals_ci(right, "true")) {
               b_right = true;
@@ -57,9 +57,9 @@ namespace pvf {
         return false;
       };
 
-      const SoundEvent::SoundEventVariable* var = find_var(condition_var_name);
+      const pvf_api::SoundEvent::Variable* var = find_var(condition_var_name);
       if (!var) return false;
-      return compare(*var, condition_var_value, condition_var_op);
+      return compare(var, condition_var_value, condition_var_op);
     } catch (const std::exception& e) {
     }
     return false;
