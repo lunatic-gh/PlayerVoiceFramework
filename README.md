@@ -17,8 +17,6 @@
   
   cd "%HOMEPATH%/Downloads/PlayerVoiceFramework"
   
-  .\compile_papyrus.bat
-  
   cmake --preset release -S . -B .\build\release
   
   cmake --build .\build\release
